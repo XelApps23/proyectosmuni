@@ -54,6 +54,7 @@ export default function Home() {
 <Button text="Invitar Miembros" icon={<MenuIcon/>} onlyText={true} variant="primary"/>    
 <Button text="Text" icon={<MenuIcon/>} variant="primary"/>    
 <Button text="Iniciar Sesion" onlyText={true}  variant="login"/>    
+<Button text="Cancelar" onlyText={true}  variant="cancelar"/>    
 <CardFolder text='Proyectos Example' />
 
 </div>

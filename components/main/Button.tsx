@@ -15,27 +15,27 @@ type ButtonProps = {
 const buttonVariants = {
   menu:
   {
-    button: `w-full flex px-1 py-1.5 rounded hover:bg-[#ECEFF8] focus:bg-[#CCE5FF] `,
+    button: `w-full flex px-1 py-1.5 rounded hover:bg-fondo focus:bg-skyBlue `,
     icon: `w-5 h-5 `,
-    text: `text-sm text-black	`
+    text: `text-sm text-black2	`
   },
   primary:
   {
-    button: `w-full flex px-2.5 py-2.5 rounded-lg bg-[#0073EA] hover:bg-[#1F76C2] `,
+    button: `w-full flex px-2.5 py-2.5 rounded-lg bg-blue2 hover:bg-blue1`,
     icon: `w-4 h-4 `,
-    text: `text-base	text-white `
+    text: `text-base text-white1 `
   },
   login:
   {
-    button: `w-full flex text-white  px-2.5 py-2.5 rounded-[50px] bg-[#0073EA]
-    hover:outline hover:bg-[#FFFFFF] hover:text-[#0073EA]` ,
+    button: `w-full flex text-white1 px-2.5 py-2.5 rounded-[50px] bg-blue2
+    hover:outline hover:bg-white1 hover:text-blue2` ,
     text: `text-base `,
     icon: ``
   },
   cancelar:
   {
-    button: `w-full flex text-white  px-2.5 py-2.5 rounded-[50px] bg-[#0073EA]
-    hover:bg-[#FFFFFF] hover:border-[1px] hover:border-[#0073EA] hover:text-[#0073EA]` ,
+    button: `w-full flex text-white1  px-2.5 py-2.5 rounded-[50px] bg-errorDefault
+    hover:bg-white1  hover:outline hover:text-errorHoverig ` ,
     text: `text-base `,
     icon: ``
   }
