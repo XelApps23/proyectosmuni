@@ -1,13 +1,25 @@
 import MenuIcon from "@/components/icons/MenuIcon";
 import Button from "@/components/main/Button";
 import CardFolder from "@/components/main/CardFolder";
+import SearchIcon from "@/components/icons/SearchIcon";
+import CancelIcon from "@/components/icons/CancelIcon";
+import ArrowRightIcon from "@/components/icons/ArrowRightIcon";
+import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
+import MiniButton from "@/components/main/MiniButton";
 import Folder from "@/public/Folder.svg"
 import Next from "@/public/next.svg"
 import Image from "next/image";
-
+import Input from "@/components/main/Input";
+import { useState } from "react";
+import VisibilityIcon from "@/components/icons/VisibilityIcon";
+import InvisibilityIcon from "@/components/icons/InvisibilityIcon";
+import SearchFocusIcon from "@/components/icons/SearchFocusIcon";
 export default function Home() {
-  
 
+  const [inputValue, setInputValue] = useState('');
+  const handleInputChange = (event: any) => {
+    setInputValue(event.target.value);
+  };
   return (
 
 
@@ -56,7 +68,20 @@ export default function Home() {
 <Button text="Iniciar Sesion" onlyText={true}  variant="login"/>    
 <Button text="Cancelar" onlyText={true}  variant="cancelar"/>    
 <CardFolder text='Proyectos Example' />
-
+</div>
+<div className="pl-6">
+  <p>Email</p>
+  <Input variant='normal' typeInput="email" text='empresa@correo.com' whitIcon={false} value={inputValue} onChange={handleInputChange}/>
+  <p>Text</p>
+  <Input variant='normal' typeInput="text" whitIcon={false} value={inputValue} onChange={handleInputChange}/>
+  <p>Password</p>
+  <Input variant='normal' typeInput="password" whitIcon={true} icon={<VisibilityIcon/>} secondaryIcon={<InvisibilityIcon/>} value={inputValue} onChange={handleInputChange}/>
+  <p>Search</p>
+  <Input variant='search' typeInput="text" text='Buscar notificaciones' whitIcon={true} icon={<SearchFocusIcon/>} secondaryIcon={<SearchIcon/>} value={inputValue} onChange={handleInputChange}/>
+  <p>Cancel</p>
+  <MiniButton icon={<CancelIcon/>} variant="cancel"/>
+  <p>Expand</p>
+  <MiniButton icon={<ArrowLeftIcon/>} variant="expand" secondaryIcon={<ArrowRightIcon/>}/>
 </div>
 </div>
   )
