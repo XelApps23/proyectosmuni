@@ -6,7 +6,7 @@ interface InputProps extends ComponentProps<'input'> {
   icon?: ReactNode,
   secondaryIcon?: ReactNode,
   text?: string,
-  typeInput: 'radio' | 'password' | 'text' | 'email',
+  typeInput: 'password' | 'text' | 'email',
   variant: 'normal' | 'search',
   whitIcon: boolean
 }

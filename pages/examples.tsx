@@ -1,19 +1,23 @@
 import MenuIcon from "@/components/icons/MenuIcon";
 import Button from "@/components/main/Button";
 import CardFolder from "@/components/main/CardFolder";
-import SearchIcon from "@/components/icons/SearchIcon";
-import CancelIcon from "@/components/icons/CancelIcon";
-import ArrowRightIcon from "@/components/icons/ArrowRightIcon";
-import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import MiniButton from "@/components/main/MiniButton";
-import Folder from "@/public/Folder.svg"
-import Next from "@/public/next.svg"
+import Folder from "@/public/Folder.svg";
+import Next from "@/public/next.svg";
 import Image from "next/image";
 import Input from "@/components/main/Input";
 import { useState } from "react";
 import VisibilityIcon from "@/components/icons/VisibilityIcon";
 import InvisibilityIcon from "@/components/icons/InvisibilityIcon";
 import SearchFocusIcon from "@/components/icons/SearchFocusIcon";
+import SearchIcon from "@/components/icons/SearchIcon";
+import CancelIcon from "@/components/icons/CancelIcon";
+import ArrowRightIcon from "@/components/icons/ArrowRightIcon";
+import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
+import RadioButtonDefaultIcon from "@/components/icons/RadioButtonDefaultIcon";
+import RadioButtonHoveringIcon from "@/components/icons/RadioButtonHoveringIcon";
+import RadioButtonSelectIcon from "@/components/icons/RadioButtonSelectIcon";
+
 export default function Home() {
 
   const [inputValue, setInputValue] = useState('');
@@ -21,9 +25,6 @@ export default function Home() {
     setInputValue(event.target.value);
   };
   return (
-
-
-
 
 <div >
 <div className="p-5">
@@ -78,10 +79,15 @@ export default function Home() {
   <Input variant='normal' typeInput="password" whitIcon={true} icon={<VisibilityIcon/>} secondaryIcon={<InvisibilityIcon/>} value={inputValue} onChange={handleInputChange}/>
   <p>Search</p>
   <Input variant='search' typeInput="text" text='Buscar notificaciones' whitIcon={true} icon={<SearchFocusIcon/>} secondaryIcon={<SearchIcon/>} value={inputValue} onChange={handleInputChange}/>
+  <br/>
   <p>Cancel</p>
   <MiniButton icon={<CancelIcon/>} variant="cancel"/>
+  <br/>
   <p>Expand</p>
-  <MiniButton icon={<ArrowLeftIcon/>} variant="expand" secondaryIcon={<ArrowRightIcon/>}/>
+  <MiniButton icon={<ArrowLeftIcon/>} variant="expand" secondaryIcon={<ArrowRightIcon/>} tertiaryIcon={<ArrowRightIcon/>}/>
+  <br/>
+  <p>Radio Button</p>
+  <MiniButton icon={<RadioButtonSelectIcon/>} secondaryIcon={<RadioButtonHoveringIcon/>} tertiaryIcon={<RadioButtonDefaultIcon/>} variant='radio'/>
 </div>
 </div>
   )
