@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React from 'react';
+import React from 'react'
 
 const LayoutInicio: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const LayoutInicio: React.FC = () => {
         <p style={{ fontSize: '1em' }}>Form de Registro</p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LayoutInicio;
+export default LayoutInicio

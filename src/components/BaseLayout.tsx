@@ -11,7 +11,7 @@ interface Props {
   children: ReactNode | ReactNode[]
 }
 
-export default function BaseLayout({ children }: Props) {
+export default function BaseLayout ({ children }: Props) {
   const router = useRouter()
   const dispatch = useDispatch()
 

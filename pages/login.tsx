@@ -1,13 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
-import React from 'react'
 import Login from './login-form'
 
-const LayoutInicio: React.FC = () => {
+const LayoutInicio = () => {
   return (
     <div className="flex h-screen">
-      <div className="w-1/2 bg-[#1F76C2] flex items-center justify-center">
+      <div className="w-1/2 bg-blue1 flex items-center justify-center">
         <div
-          className="flex flex-col justify-center items-center space-y-4 font-nunito-sans font-light"
+          className="flex flex-col justify-center md:block items-center space-y-4 font-nunito-sans font-light"
           style={{ color: 'white' }}
         >
           <p className="text-center text-[2.734vw]">
@@ -18,7 +16,7 @@ const LayoutInicio: React.FC = () => {
           </p>
           <p className="text-center text-[2.734vw]">con XelApps</p>
           <img
-            className="max-w-[100%] h-auto"
+            className="max-w-full h-auto"
             src="/login-images/login.png"
             alt="Imagen Login"
           />

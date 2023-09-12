@@ -1,7 +1,7 @@
-import BaseLayout from "@/src/components/BaseLayout";
+import BaseLayout from '@/src/components/BaseLayout'
 
 const Paperbin = () => {
-  return <BaseLayout>Paperbin Page</BaseLayout>;
-};
+  return <BaseLayout>Paperbin Page</BaseLayout>
+}
 
-export default Paperbin;
+export default Paperbin

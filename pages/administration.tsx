@@ -1,8 +1,7 @@
-import BaseLayout from "@/src/components/BaseLayout";
+import BaseLayout from '@/src/components/BaseLayout'
 
 const Administracion = () => {
-  return <BaseLayout>Administracion  Page</BaseLayout>;
-};
+  return <BaseLayout>Administracion  Page</BaseLayout>
+}
 
-export default Administracion 
-
+export default Administracion

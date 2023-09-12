@@ -1,9 +1,9 @@
 // Card.tsx - //
-import { RiSearch2Line } from "react-icons/ri";
-import React from "react";
-import { CiViewTable } from "react-icons/ci";
-import TableIcon from "../../public/img/Table.png";
-import Image from "next/image";
+import { RiSearch2Line } from 'react-icons/ri'
+import React from 'react'
+import { CiViewTable } from 'react-icons/ci'
+import TableIcon from '../../public/img/Table.png'
+import Image from 'next/image'
 
 interface CardProps {
   title: string;
@@ -15,16 +15,12 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl }) => {
   return (
     <div>
 
-
       <div className=" border-2 border-gray-400 px-10 flex justify-center flex-col rounded-lg py-2">
         <div className="mx-auto my-auto max-w-screen-lg">
           <img src={imageUrl} alt={title} className="w-52" />
         </div>
 
-
-
         <div className="space-x-3 text-center flex justify-center">
-
 
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -45,12 +41,9 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl }) => {
         </div>
       </div>
 
-
-
     </div>
 
+  )
+}
 
-  );
-};
-
-export default Card;
+export default Card

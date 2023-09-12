@@ -1,7 +1,7 @@
-import BaseLayout from "@/src/components/BaseLayout";
+import BaseLayout from '@/src/components/BaseLayout'
 
 const ChageTheme = () => {
-  return <BaseLayout>ChageTheme  Page</BaseLayout>;
-};
+  return <BaseLayout>ChageTheme  Page</BaseLayout>
+}
 
-export default ChageTheme ;
+export default ChageTheme

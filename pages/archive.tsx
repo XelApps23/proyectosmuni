@@ -1,7 +1,7 @@
-import BaseLayout from "@/src/components/BaseLayout";
+import BaseLayout from '@/src/components/BaseLayout'
 
 const Archive = () => {
-  return <BaseLayout>Archive Page</BaseLayout>;
-};
+  return <BaseLayout>Archive Page</BaseLayout>
+}
 
-export default Archive;
+export default Archive

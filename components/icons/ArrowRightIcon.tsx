@@ -8,4 +8,4 @@ const ArrowRightIcon = () => {
   )
 }
 
-export default  ArrowRightIcon
+export default ArrowRightIcon
