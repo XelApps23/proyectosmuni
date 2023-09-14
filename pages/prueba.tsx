@@ -2,7 +2,7 @@ import usePrueba from "@/hooks/usePrueba";
 import { useEffect } from "react";
 
 const Prueba = () => {
-  const { getPrueba, getPruebas, deletePrueba, documentos, loading } =
+  const { getPrueba, getPruebas, deletePrueba, createPrueba, updatePrueba, pruebas, loading } =
     usePrueba();
   useEffect(() => {
     //deletePrueba("gyIiB96UcLnSjFyA6z1U");
@@ -11,8 +11,8 @@ const Prueba = () => {
   }, []);
 
   useEffect(() => {
-    console.log(documentos);
-  }, [documentos]);
+    console.log(pruebas['id']);
+  }, [pruebas]);
 
   useEffect(() => {
     if (loading) {
@@ -23,6 +23,8 @@ const Prueba = () => {
   return (
     <div>
       <h1>Página</h1>
+      <button onClick={()=>createPrueba({ age: 12, name: "rene",date: new Date(2023, 0, 25, 8, 15, 30)} )}>crear</button>
+      <button onClick={()=>updatePrueba("CdqEfAMOWhVhrOzVDsux", { age: 23, name: "rene"})}>update</button>
     </div>
   );
 };

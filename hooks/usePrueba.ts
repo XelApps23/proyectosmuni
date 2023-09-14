@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { collection, deleteDoc, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/services/Firebase";
+import { PruebaInput, PruebaList, PruebaUpdate } from "./types/Prueba";
+
 
 const usePrueba = () => {
-  const [documentos, setDocumentos] = useState([]);
+  const [pruebas, setPruebas] = useState<PruebaList>({});
   const [loading, setLoading] = useState(false);
 
   // Obtiene todos los documentos
@@ -14,7 +16,7 @@ const usePrueba = () => {
     querySnapshot.forEach((doc) => {
       datos = { ...datos, [doc.id]: { ...doc.data(), id: doc.id } };
     });
-    setDocumentos(datos);
+    setPruebas(datos);
     setLoading(false);
   };
 
@@ -27,7 +29,7 @@ const usePrueba = () => {
     dato = {
       [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id },
     };
-    setDocumentos(dato);
+    setPruebas(dato);
     setLoading(false);
   };
 
@@ -39,7 +41,30 @@ const usePrueba = () => {
     setLoading(false);
   };
 
-  return { getPruebas, getPrueba, deletePrueba, documentos, loading };
+
+  // Crear un documento
+  const createPrueba = async ({name, age, date}: PruebaInput) =>{
+    setLoading(true);
+    const docRef = await addDoc(collection(db, "pruebas"), {
+      name: name,
+      age: Number(age),
+      crated_at: date
+    });
+    setLoading(false);
+  };
+
+  // Actualizar un documento
+  const updatePrueba = async(docId: string, { name, age, date }: PruebaUpdate) =>{
+    setLoading(true);
+    const pruebaDocRef = doc(db, 'pruebas', docId);
+    await updateDoc(pruebaDocRef, {
+      name: name,
+      age: Number(age),
+    });
+    setLoading(false);
+  };
+
+  return { getPruebas, getPrueba, deletePrueba, createPrueba, updatePrueba, pruebas, loading };
 };
 
 export default usePrueba;
