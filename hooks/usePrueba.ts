@@ -43,18 +43,18 @@ const usePrueba = () => {
 
 
   // Crear un documento
-  const createPrueba = async ({name, age, date}: PruebaInput) =>{
+  const createPrueba = async ({name, age, create_at}: PruebaInput) =>{
     setLoading(true);
     const docRef = await addDoc(collection(db, "pruebas"), {
       name: name,
       age: Number(age),
-      crated_at: date
+      crated_at: create_at
     });
     setLoading(false);
   };
 
   // Actualizar un documento
-  const updatePrueba = async(docId: string, { name, age, date }: PruebaUpdate) =>{
+  const updatePrueba = async(docId: string, { name, age, update_at }: PruebaUpdate) =>{
     setLoading(true);
     const pruebaDocRef = doc(db, 'pruebas', docId);
     await updateDoc(pruebaDocRef, {

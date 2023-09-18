@@ -1,8 +1,10 @@
+import { Timestamp } from 'firebase/firestore'
+
 type Prueba = {
     id: string,
     name: string,
     age: string | number,
-    create_at: Date,
+    create_at: Timestamp,
 }
 
 interface PruebaList {
@@ -12,13 +14,13 @@ interface PruebaList {
 type PruebaInput = {
     name: string,
     age: string|number,
-    date: Date,
+    create_at: Timestamp,
   };
 
 type PruebaUpdate =  Partial<{
     name: string,
     age: string|number,
-    date: Date,
+    update_at: Timestamp,
 }>;
 
 

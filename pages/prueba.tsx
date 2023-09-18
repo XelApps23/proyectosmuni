@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore'
 import usePrueba from "@/hooks/usePrueba";
 import { useEffect } from "react";
 
@@ -23,7 +24,7 @@ const Prueba = () => {
   return (
     <div>
       <h1>Página</h1>
-      <button onClick={()=>createPrueba({ age: 12, name: "rene",date: new Date(2023, 0, 25, 8, 15, 30)} )}>crear</button>
+      <button onClick={()=>createPrueba({ age: 23, name: "galan",create_at: Timestamp.fromDate(new Date())} )}>crear</button>
       <button onClick={()=>updatePrueba("CdqEfAMOWhVhrOzVDsux", { age: 23, name: "rene"})}>update</button>
     </div>
   );
