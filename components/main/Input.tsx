@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { ReactNode, use, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 interface InputProps extends ComponentProps<'input'> {
   icon?: ReactNode,
