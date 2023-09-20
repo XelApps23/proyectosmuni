@@ -1,12 +1,8 @@
-import { app } from '@/services/Firebase'
-import { getAuth } from 'firebase/auth'
-import folder from '../public/img/Folder.png'
 import BaseLayout from '@/src/components/BaseLayout'
-import Image from 'next/image'
-import Card from '../src/components/Card'
 import React from 'react'
 import { TbChartInfographic } from 'react-icons/tb'
 import { LuGanttChart } from 'react-icons/lu'
+import TaskList from './taskList'
 // import Sidebar from "@/components/Sidebar";
 
 const Tabs = ({ color }: any) => {
@@ -31,7 +27,6 @@ const Tabs = ({ color }: any) => {
                   onClick={(e) => {
                     e.preventDefault()
                     setOpenTab(1)
-
                   }}
                   data-toggle="tab"
                   href="#link1"
@@ -105,13 +100,13 @@ const Tabs = ({ color }: any) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6 "
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
                 </svg>
               </button>
@@ -120,13 +115,13 @@ const Tabs = ({ color }: any) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
                 </svg>
                 Invitar
@@ -140,7 +135,7 @@ const Tabs = ({ color }: any) => {
               <div className="tab-content tab-space">
                 <div className={openTab === 1 ? 'block' : 'hidden'} id="/mainTable">
                   <div className=" w-full">
-                    Main table page
+                    <TaskList/>
                   </div>
                 </div>
                 <div className={openTab === 2 ? 'block' : 'hidden'} id="/graphic">
@@ -169,4 +164,3 @@ const Home = () => {
 }
 
 export default Home
-
