@@ -47,7 +47,7 @@ export default function taskList () {
     {
       id: 5,
       task: 'Tarea 6',
-      date: '27 de Feberero',
+      date: '27 de Febrero',
       status: 'No Iniciado'
     },
     {
@@ -173,7 +173,7 @@ export default function taskList () {
     setControls(newControls)
   }
   return (
-    <div className='bg-white1 p-[2%]'>
+    <div className='bg-white1 p-[2%]' lang="es-GT">
       <TaskListHeader/>
       <div className='flex'>
         <div className='w-[1%]'>
@@ -195,15 +195,17 @@ export default function taskList () {
         <tbody >
           {tasks.map((task) => (
             <tr key={task.id}>
-              <td className="border-solid border-gray3 border-2">
-                  <div className='flex'>
-                    <div className='w-[85%] grid grid-cols-2 group'>
+               <td className="border-solid border-gray3 border-2">
+                  <div className='flex hover:border-solid hover:border-blue2 hover:border-2
+                active:border-solid active:border-blue2 active:border-2
+                focus:border-solid focus:border-blue2 focus:border-2'>
+                    <div className='w-[90%] grid grid-cols-2 group'>
                         <p>{task.task}</p>
                         <div className='self-end group'>
                         <div className='invisible group-hover:visible'>
-                            <Link className='flex text-gray3' href='/task'>
+                            <Link className='flex text-gray3 text-sm' href='/task'>
                               Abrir
-                              <div className='w-5 h-5'> <ArrowFitIcon/> </div>
+                              <div className='w-5 h-4'> <ArrowFitIcon/> </div>
                             </Link>
                             <div className='flex relative -bottom'>
                             <div className='absolute grid place-items-center'>
@@ -214,11 +216,11 @@ export default function taskList () {
                         </div>
                         </div>
                     </div>
-                    <div className='w-[15%] border-l-solid border-l-gray3 border-l-2' onMouseOut={() => { changeStatusChat(task.id, false) }} onMouseOver={() => { changeStatusChat(task.id, true) }}>
+                    <div className='w-[12%] border-l-solid border-l-gray3 border-l-2' onMouseOut={() => { changeStatusChat(task.id, false) }} onMouseOver={() => { changeStatusChat(task.id, true) }}>
                       {
                         controls[task.id].chat
                           ? <div>
-                              <button className='w-7 h-7 grid align-center justify-center'>
+                              <button className='h-6 grid align-center justify-center'>
                                 <ChatHoverIcon/>
                               </button>
                               <div className='relative -bottom'>
@@ -229,7 +231,7 @@ export default function taskList () {
                               </div>
                             </div>
                           : <div className='grid place-items-center'>
-                              <button className='w-7 h-7 p-0'>
+                              <button className='h-7 p-0'>
                                 <ChatIcon/>
                               </button>
                             </div>
@@ -238,18 +240,22 @@ export default function taskList () {
                   </div>
               </td>
               <td className="border-solid border-gray3 border-2 group">
+                <div className='border-solid border-2 border-transparent hover:border-blue2 hover:border-2
+                active:border-solid active:border-blue2 active:border-2
+                focus:border-solid focus:border-blue2 focus:border-2'>
                 <button onClick={() => { changeClickResponsible(task.id) }}>
                   <div className='grid'>
-                    <div className='w-[10%] place-self-center'>
+                    <div className='w-[8%] place-self-center'>
                       <ResponsibleIcon/>
                     </div>
-                  </div>
                   <div className='relative'>
-                    <div className='invisible group-hover:visible mx-2 my-2 absolute -bottom-2 left-0 h-4 w-4'>
+                    <div className='invisible group-hover:visible mx-1 my-1 absolute -bottom-2 left-0 h-4 w-4'>
                         <AddIcon/>
                     </div>
                   </div>
+                  </div>
                 </button>
+                </div>
                 {
                 controls[task.id].isClickResponsible &&
                 <div className='relative -bottom'>
@@ -276,9 +282,13 @@ export default function taskList () {
                 </div>
               }
               </td>
-              <td className="border-solid border-gray3 border-2 text-center">{task.date}</td>
+              <td className="border-solid border-gray3 border-2 text-center">
+                <input type="date" className='w-[100%] rounded-none'></input>
+              </td>
               <td className={ controls[task.id].bgStatus } id = { 'Status' + controls[task.id].id}>
-                <div>
+                <div className='hover:border-solid hover:border-blue2 hover:border-2
+                active:border-solid active:border-blue2 active:border-2
+                focus:border-solid focus:border-blue2 focus:border-2'>
                   <button className='w-[100%]' onClick={() => changeOpenStatus(task.id)}>
                     <p className='text-white1' id = { 'TextStatus' + controls[task.id].id }>{controls[task.id].stateStatus}</p>
                     {
@@ -311,9 +321,12 @@ export default function taskList () {
                   </button>
                 </div>
               </td>
-              <td className={ controls[task.id].bgPriority } id = { 'Priority' + controls[task.id].id}>
+              <td className={ `${controls[task.id].bgPriority}` } id = { 'Priority' + controls[task.id].id}>
                 <div>
-                  <button className='w-[100%]' onClick={() => changeOpenPriority(task.id)}>
+                  <button className='w-[100%] group
+                hover:border-solid hover:border-blue2 hover:border-2
+                active:border-solid active:border-blue2 active:border-2
+                focus:border-solid focus:border-blue2 focus:border-2' onClick={() => changeOpenPriority(task.id)}>
                     <p className='text-white1' id = { 'Text' + controls[task.id].id }>{controls[task.id].statePriority}</p>
                     {
                     controls[task.id].isOpenPriority &&
@@ -346,7 +359,10 @@ export default function taskList () {
                 </div>
               </td>
               <td className="border-solid border-gray3 border-2 group">
-                <div className='invisible group-hover:visible grid'>
+                <div className='w-[100%] h-[100%] invisible group-hover:visible grid
+                hover:border-solid hover:border-blue2 hover:border-2
+                active:border-solid active:border-blue2 active:border-2
+                focus:border-solid focus:border-blue2 focus:border-2'>
                   <button className='w-[10%] place-self-center'>
                     <DocumentAddIcon/>
                   </button>
