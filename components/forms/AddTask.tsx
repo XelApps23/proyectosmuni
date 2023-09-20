@@ -16,9 +16,9 @@ const schema = yup.object().shape({
     .required('Es necesario ingresar una fecha de inicio'),
   endDate: yup
     .date()
-    .min(new Date(), 'La fecha esperada de finalización debe ser mayor a la fecha actual')
-    .typeError('Es necesario ingresar una fecha esperada de finalización')
-    .required('Es necesario ingresar una fecha esperada de finalización')
+    .min(new Date(), 'La fecha de finalización debe ser mayor a la fecha actual')
+    .typeError('Es necesario ingresar una fecha de finalización')
+    .required('Es necesario ingresar una fecha de finalización')
 })
 
 type FormValues = {
