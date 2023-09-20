@@ -64,12 +64,14 @@ const ExampleForm = () => {
           name="firstName"
           label="Nombre"
           error={errors.firstName}
+          size="md"
         />
         <Input
           control={control}
           name="lastName"
           label="Apellido"
           error={errors.lastName}
+          size="md"
         />
         <Input
           control={control}
@@ -77,6 +79,7 @@ const ExampleForm = () => {
           type="email"
           label="Correo"
           error={errors.email}
+          size="md"
         />
         <Input
           control={control}
@@ -84,6 +87,7 @@ const ExampleForm = () => {
           type="number"
           label="Edad"
           error={errors.age}
+          size="md"
         />
         <Input
           control={control}
@@ -91,6 +95,7 @@ const ExampleForm = () => {
           type="password"
           label="Contraseña"
           error={errors.password}
+          size="md"
         />
         <Input
           control={control}
@@ -98,6 +103,7 @@ const ExampleForm = () => {
           type="date"
           label="Fecha de inicio"
           error={errors.initDate}
+          size="md"
         />
         <Button type="submit" text="Enviar" variant="primary" />
       </form>

@@ -1,8 +1,8 @@
-import type { ComponentProps, HTMLInputTypeAttribute } from 'react'
+import type { HTMLInputTypeAttribute } from 'react'
 import { ReactNode, useState } from 'react'
 import { Controller, FieldError } from 'react-hook-form'
 
-interface InputProps extends ComponentProps<'input'> {
+interface InputProps {
   icon?: ReactNode
   secondaryIcon?: ReactNode
   text?: string
@@ -12,7 +12,8 @@ interface InputProps extends ComponentProps<'input'> {
   error?: FieldError
   name: string
   defaultValue?: string
-  label: string
+  label: string,
+  size: 'sm' | 'md' | 'lg' | 'xl'
 }
 
 const variantsInput = {
@@ -29,6 +30,21 @@ const variantsInput = {
   }
 }
 
+const sizeInput = {
+  sm: {
+    input: 'w-[40%] sm:w-[35%] md:w-[35%] lg:w-[25%] xl:w-[15%] 2xl:w-[15%]'
+  },
+  md: {
+    input: 'w-[65%]  sm:w-[60%] md:w-[70%] lg:w-[50%] xl:w-[45%] 2xl:w-[40%]'
+  },
+  lg: {
+    input: 'w-[90%]  sm:w-[95%] md:w-[90%] lg:w-[90%] xl:w-[90%] 2xl:w-[80%]'
+  },
+  xl: {
+    input: 'w-[100%] sm:w-[100%] md:w-[100%] lg:w-[100%] xl:w-[100%] 2xl:w-[100%]'
+  }
+}
+
 const Input = ({
   control,
   variant = 'normal',
@@ -39,7 +55,8 @@ const Input = ({
   secondaryIcon,
   label,
   error,
-  text
+  text,
+  size
 }: InputProps) => {
   const [state, setState] = useState(false)
   const [show, setShow] = useState(false)
@@ -51,8 +68,8 @@ const Input = ({
   }
   return (
     <>
-      <div className="relative w-min h-min">
-        <h1>
+      <div>
+        <h1 className='text-sm text-black2'>
           {label}
         </h1>
         {type === 'password'
@@ -66,7 +83,7 @@ const Input = ({
                 <input
                   defaultValue={defaultValue}
                   type={show ? 'text' : 'password'}
-                  className={`rounded-lg ${variantsInput[variant].input}`}
+                  className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
                   placeholder={text}
                   {...field}
                 />
@@ -84,20 +101,22 @@ const Input = ({
             )
           : (
           <div>
+            {
             <Controller
-              control={control}
-              defaultValue={defaultValue || ''}
-              name={name}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type={type}
-                  className={`rounded-lg ${variantsInput[variant].input}`}
-                  placeholder={text}
-                  {...field}
-                />
-              )}
+                control={control}
+                defaultValue={defaultValue || ''}
+                name={name}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type={type}
+                    className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
+                    placeholder={text}
+                    {...field}
+                  />
+                )}
             />
+            }
             {icon && (
               <div
                 className={variantsInput[variant].icon}
@@ -113,8 +132,8 @@ const Input = ({
             )}
           </div>
             )}
-            <p>
-              Errores: {error && error.message}
+            <p className={`text-errorDefault text-xs ${sizeInput[size].input}`}>
+              {error && error.message}
             </p>
       </div>
     </>
