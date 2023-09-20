@@ -52,8 +52,8 @@ export default function LoginPage () {
   }
 
   return (
-    <div className={styles.container}>
-      <p className={styles.bv}>Bienvenido de vuelta</p>
+    <div className="flex flex-col justify-center items-center p-12 gap-6 rounded-lg bg-white1 shadow-lg">
+      <p className="text-black1 text-[40px] font-normal font-['Nunito Sans']">Bienvenido de vuelta</p>
       <p className={styles.pis}>Para comenzar, inicia sesión</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <p className={styles.txt}>Correo electrónico</p>
