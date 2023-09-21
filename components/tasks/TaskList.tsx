@@ -336,9 +336,8 @@ const TaskList = () => {
                                 <p className='text-gray1'>Personas sugeridas</p>
                                 <Input
                                   variant="search"
-                                  typeInput="text"
+                                  type="text"
                                   text="Buscar nombres"
-                                  whitIcon={true}
                                   icon={<SearchFocusIcon/>}
                                   secondaryIcon={<SearchIcon/>}
                                 />

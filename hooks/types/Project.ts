@@ -1,48 +1,24 @@
 import { Timestamp } from 'firebase/firestore'
 
 type Project = {
-    id: string,
-    idState: string,
-    idTask: string,
-    idDocument: string,
-    name: string,
-    description: string,
-    initialDate: Timestamp,
-    done: boolean,
-    endDate: Timestamp,
-    createAt: Timestamp,
-    createUp: Timestamp,
+  id: string
+  name: string
+  description: string
+  initialDate: Timestamp
+  endDate: Timestamp
+  expectedDate: Timestamp
+  idState: string
+  idDocument: string
+  done: boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 interface ProjectList {
-    [key: string]: Project;
+  [key: string]: Project
 }
 
-type ProjectInput = {
-    idState: string,
-    idTask: string,
-    idDocument: string,
-    name: string,
-    description: string,
-    initialDate: Timestamp,
-    done: boolean,
-    endDate: Timestamp,
-    createAt: Timestamp,
-    createUp: Timestamp,
-};
+interface ProjectInput extends Omit<Project, 'id'> {}
+type ProjectUpdate = Partial<ProjectInput>
 
-type ProjectUpdate = Partial<{
-    idState: string,
-    idTask: string,
-    idDocument: string,
-    name: string,
-    description: string,
-    initialDate: Timestamp,
-    done: boolean,
-    endDate: Timestamp,
-    createAt: Timestamp,
-    createUp: Timestamp,
-}>;
-
-
-export type { ProjectList, Project, ProjectInput, ProjectUpdate };
+export type { ProjectList, Project, ProjectInput, ProjectUpdate }

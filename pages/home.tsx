@@ -1,64 +1,39 @@
-import { app } from '@/services/Firebase'
-import { getAuth } from 'firebase/auth'
-import folder from '../public/img/Folder.png'
 import BaseLayout from '@/src/components/BaseLayout'
-import Image from 'next/image'
 import Card from '../src/components/Card'
-// import Sidebar from "@/components/Sidebar";
-
-interface CardData {
-  title: string;
-  description: string;
-  imageUrl: string;
-}
-
-const cardData: CardData[] = [
-  {
-    title: 'Tarjeta 1',
-    description: 'Descripción de la tarjeta 1',
-    imageUrl: '/img/Folder.png' // Ajusta la ruta a tu imagen
-  },
-  {
-    title: 'Tarjeta 2',
-    description: 'Descripción de la tarjeta 2',
-    imageUrl: '/img/Folder.png'
-  },
-  {
-    title: 'Tarjeta 3',
-    description: 'Descripción de la tarjeta 3',
-    imageUrl: '/img/Folder.png'
-  },
-  {
-    title: 'Tarjeta 4',
-    description: 'Descripción de la tarjeta 4',
-    imageUrl: '/img/Folder.png'
-  },
-  {
-    title: 'Tarjeta 4',
-    description: 'Descripción de la tarjeta 4',
-    imageUrl: '/img/Folder.png'
-  }
-
-]
+import Button from '@/components/main/Button'
+import useProjects from '@/hooks/useProjects'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 const Home = () => {
+  const { getProjects, projects } = useProjects()
+  const router = useRouter()
+
+  useEffect(() => {
+    getProjects()
+  }, [])
+
   return (
     <BaseLayout>
       <div className="p-10 w-full">
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-white p-9">
-            {cardData.map((card, index) => (
-              <Card
-                key={index}
-                title={card.title}
-                description={card.description}
-                imageUrl={card.imageUrl}
-              />
-            ))}
+        <div className="mt-12 flex justify-between items-center px-12">
+          <h1 className="text-xl">Proyectos Recientes</h1>
+          <div>
+            <Button variant="primary" text="Nuevo proyecto" onClick={() => router.push('/projects/new-project')}/>
+          </div>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-white p-9">
+          {Object.keys(projects).map((key, index) => (
+            <Card
+              projectId={key}
+              key={index}
+              title={projects[key].name}
+              imageUrl={'/img/Folder.png'}
+            />
+          ))}
+        </div>
       </div>
-
     </BaseLayout>
   )
 }
