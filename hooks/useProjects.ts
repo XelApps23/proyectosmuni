@@ -9,7 +9,14 @@ import {
   updateDoc
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
-import { ProjectInput, ProjectList, ProjectUpdate } from './types/Project'
+import { ProjectList, ProjectUpdate } from './types/Project'
+
+type ProjectInput = {
+  name: string
+  description: string
+  initialDate: Date
+  expectedDate: Date
+}
 
 const table = 'projects'
 
@@ -51,23 +58,23 @@ const useProjects = () => {
     name,
     description,
     initialDate,
-    endDate,
     expectedDate
   }: ProjectInput) => {
     setLoading(true)
     const docRef = await addDoc(collection(db, table), {
-      name,
-      description,
-      initialDate,
-      endDate,
-      expectedDate,
-      idState: '',
+      name: name || null,
+      description: description || null,
+      initialDate: initialDate || null,
+      endDate: null,
+      expectedDate: expectedDate || null,
+      idState: null,
       done: false,
       createdAt: new Date(),
       updateAt: new Date()
     })
     console.log(docRef)
     setLoading(false)
+    return docRef.id
   }
 
   // Actualizar un documento

@@ -12,6 +12,7 @@ interface InputProps {
   error?: FieldError
   name: string
   defaultValue?: string
+  placeholder?: boolean
   label: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
 }
@@ -54,9 +55,9 @@ const Input = ({
   name,
   defaultValue,
   secondaryIcon,
+  placeholder = true,
   label,
   error,
-  text,
   size = 'xl'
 }: InputProps) => {
   const [state, setState] = useState(false)
@@ -72,7 +73,7 @@ const Input = ({
   return (
     <>
       <div>
-        <h1 className="text-lg text-black2">{label}</h1>
+        <h1 className="text-lg text-black2 mb-2">{label}</h1>
         {type === 'password'
           ? (
           <div>
@@ -85,7 +86,7 @@ const Input = ({
                   defaultValue={defaultValue}
                   type={show ? 'text' : 'password'}
                   className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
-                  placeholder={text}
+                  placeholder={placeholder ? label : ''}
                   {...field}
                 />
               )}
@@ -112,7 +113,7 @@ const Input = ({
                     {...field}
                     type={type}
                     className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
-                    placeholder={text}
+                    placeholder={placeholder ? label : ''}
                     {...field}
                   />
                 )}

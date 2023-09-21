@@ -1,6 +1,9 @@
 import * as yup from 'yup'
 import Input from '@/components/main/Input'
 import PlantillaForm from '../main/PlantillaForm'
+import useProjects from '@/hooks/useProjects'
+import useTasks from '@/hooks/useTasks'
+import { useRouter } from 'next/router'
 
 const schema = yup.object().shape({
   name: yup.string().required('Es necesario ingresar un nombre'),
@@ -16,14 +19,6 @@ const schema = yup.object().shape({
       'La fecha esperada de finalización debe ser mayor a la fecha actual'
     )
     .typeError('Es necesario ingresar una fecha esperada de finalización')
-    .required('Es necesario ingresar una fecha esperada de finalización'),
-  endDate: yup
-    .date()
-    .min(
-      new Date(),
-      'La fecha esperada de finalización debe ser mayor a la fecha actual'
-    )
-    .typeError('Es necesario ingresar una fecha esperada de finalización')
     .required('Es necesario ingresar una fecha esperada de finalización')
 })
 
@@ -32,13 +27,22 @@ type FormValues = {
   description: string
   initialDate: Date
   expectedDate: Date
-  endDate: Date
 }
 
 const NewProject = () => {
-  const onSubmit = (data: FormValues) => {
-    console.log(data)
-    alert(JSON.stringify(data))
+  const { createProject } = useProjects()
+  const { createDefaultProjectTasks } = useTasks()
+  const router = useRouter()
+
+  const onSubmit = async (data: FormValues) => {
+    const projectId = await createProject({
+      expectedDate: data.expectedDate,
+      name: data.name,
+      description: data.description,
+      initialDate: data.initialDate
+    })
+    await createDefaultProjectTasks(projectId)
+    router.push(`/projects/${projectId}`)
   }
   return (
     <div className="w-[500px]">
@@ -64,22 +68,20 @@ const NewProject = () => {
               label="Descripción"
               error={errors.description}
             />
-            <div className="w-full flex justify-between">
-              <Input
-                control={control}
-                name="initialDate"
-                type="date"
-                label="Fecha de inicio"
-                error={errors.initialDate}
-              />
-              <Input
-                control={control}
-                name="expectedDate"
-                type="date"
-                label="Fecha esperada de finalización"
-                error={errors.expectedDate}
-              />
-            </div>
+            <Input
+              control={control}
+              name="initialDate"
+              type="date"
+              label="Fecha de inicio"
+              error={errors.initialDate}
+            />
+            <Input
+              control={control}
+              name="expectedDate"
+              type="date"
+              label="Fecha esperada de finalización"
+              error={errors.expectedDate}
+            />
           </>
         )}
       </PlantillaForm>
