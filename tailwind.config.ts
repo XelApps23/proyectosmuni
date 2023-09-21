@@ -38,8 +38,9 @@ const config: Config = {
       prioridadCritica: '#333333',
       estadoListo: '#00C875',
       estadoEnCurso: '#FDAB3D',
-      estadoNoIniciado: '#E2445C',
-      estadoDetenido: '#C4C4C4'
+      estadoDetenido: '#E2445C',
+      estadoNoIniciado: '#C4C4C4',
+      transparent: 'transparent'
     }
   },
   plugins: []
