@@ -52,7 +52,7 @@ const Button = ({
     >
       <div
         className={
-          'flex w-full items-center ' + (onlyText && ' justify-center ')
+          'flex w-full items-center ' + (onlyText && ' justify-center ') + (onlyIcon && ' justify-center ')
         }
       >
         {icon && (
