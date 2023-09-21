@@ -15,7 +15,7 @@ import { imageConfigDefault } from 'next/dist/shared/lib/image-config'
 const sidebarItems = [
   {
     name: 'Inicio',
-    href: '/',
+    href: '/home',
     icon: AiOutlineHome
   },
   {

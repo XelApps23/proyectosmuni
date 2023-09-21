@@ -5,13 +5,14 @@ interface MiniButtonProps extends ComponentProps<'button'> {
   icon: ReactNode
   secondaryIcon?: ReactNode
   tertiaryIcon?: ReactNode
-  variant: 'expand' | 'cancel' | 'radio'
+  variant: 'expand' | 'cancel' | 'radio' | 'arrow'
 }
 
 const variantsMiniButton = {
   expand: 'border rounded-sm',
   cancel: 'border-none',
-  radio: 'border-none'
+  radio: 'border-none',
+  arrow: 'border-none'
 }
 
 const MiniButton = ({
@@ -27,15 +28,15 @@ const MiniButton = ({
   }
   return (
         <>
-          <div className={`h-6 w-5 ${variantsMiniButton[variant]}`} onMouseOut={() => { setStateHover(false) }} onMouseOver={() => { setStateHover(true) }}>
+          <div className={`h-5 w-5 ${variantsMiniButton[variant]}`} onMouseOut={() => { setStateHover(false) }} onMouseOver={() => { setStateHover(true) }}>
             <button className='h-5 w-5' onClick={handleClick}>
               {
                 secondaryIcon
                   ? <div> {
                   state
-                    ? <div>{icon}</div>
+                    ? <div className='w-4 h-4'>{icon}</div>
                     : <div>
-                    {stateHover ? <div>{secondaryIcon}</div> : <div>{tertiaryIcon}</div>}
+                    {stateHover ? <div className='w-4 h-4'>{secondaryIcon}</div> : <div className='w-4 h-4'>{tertiaryIcon}</div>}
                   </div>
                   }
                  </div>

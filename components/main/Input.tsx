@@ -1,6 +1,5 @@
 import type { HTMLInputTypeAttribute } from 'react'
 import { ReactNode, useState } from 'react'
-import { Controller, FieldError } from 'react-hook-form'
 
 interface InputProps {
   icon?: ReactNode
@@ -24,8 +23,7 @@ const variantsInput = {
     icon: 'absolute inset-y-0 right-0.5 -translate-x-2 translate-y-1 h-5 w-5 p-0 place-items-center'
   },
   search: {
-    input:
-      'bg-white border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2]',
+    input: 'bg-white border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2]',
     icon: 'absolute inset-y-0 right-0.5 -translate-x-2 translate-y-1 h-5 w-5 p-0 place-items-center'
   }
 }
@@ -46,12 +44,10 @@ const sizeInput = {
 }
 
 const Input = ({
-  control,
-  variant = 'normal',
-  type = 'text',
+  variant,
+  typeInput,
   icon,
-  name,
-  defaultValue,
+  whitIcon,
   secondaryIcon,
   label,
   error,
@@ -62,7 +58,7 @@ const Input = ({
   const [show, setShow] = useState(false)
   const handleClick = () => {
     setState(!state)
-    if (type === 'password') {
+    if (typeInput === 'password') {
       setShow(!show)
     }
   }
@@ -129,7 +125,7 @@ const Input = ({
               >
                 {state ? <div>{icon}</div> : <div>{secondaryIcon}</div>}
               </div>
-            )}
+            }
           </div>
             )}
             <p className={`text-errorDefault text-xs ${sizeInput[size].input}`}>
