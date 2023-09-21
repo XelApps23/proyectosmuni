@@ -1,4 +1,4 @@
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
+import { DefaultValues, FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Button from '../main/Button'
@@ -11,13 +11,15 @@ type PlantillaFormProps<T extends FieldValues> = {
    schema: yup.Schema<T>
   children: (control: any, errors: any) => ReactNode
   onSubmit: SubmitHandler<T>
+  defaultValues?: DefaultValues<T>
 }
 
 const PlantillaForm = <T extends object>({
   title,
   schema,
   children,
-  onSubmit
+  onSubmit,
+  defaultValues
 }: PlantillaFormProps<T>) => {
   const {
     control,
@@ -25,6 +27,7 @@ const PlantillaForm = <T extends object>({
     formState: { errors }
   } = useForm<T>({
     mode: 'onChange',
+    defaultValues,
     // @ts-ignore
     resolver: yupResolver(schema)
   })
