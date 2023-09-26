@@ -60,7 +60,7 @@ export default function BaseLayout ({ children }: Props) {
             </form>
           </div>
           <div>
-            <div className="layout">
+            <div className="flex h-screen relative">
               <Sidebar />
               {children}
             </div>
