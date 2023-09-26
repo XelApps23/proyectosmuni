@@ -1,21 +1,17 @@
-import { useState } from 'react'
-import Link from 'next/link'
 import { AiOutlineHome } from 'react-icons/ai'
 import { BiUser } from 'react-icons/bi'
 import { BsArchive, BsTrash, BsBoxArrowRight } from 'react-icons/bs'
 import { FiSettings, FiSun } from 'react-icons/fi'
 import { GrGroup, GrAdd } from 'react-icons/gr'
-import { RiSearch2Line } from 'react-icons/ri'
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
-// import { useContext, useState } from "react";
-import { SidebarContext } from '@/src/context/SidebarContext'
+import { MdKeyboardArrowLeft } from 'react-icons/md'
 import { useRouter } from 'next/router'
-import { imageConfigDefault } from 'next/dist/shared/lib/image-config'
+import { useState } from 'react'
+import Link from 'next/link'
 
 const sidebarItems = [
   {
     name: 'Inicio',
-    href: '/',
+    href: '/home',
     icon: AiOutlineHome
   },
   {
@@ -62,7 +58,6 @@ const sidebarItems = [
 
 export default function Sidebar () {
   const router = useRouter()
-  // const { isCollapsed } = useContext(SidebarContext);
   const [isCollapsedSidebar, setIsCollapsedSidebar] = useState <boolean>(false)
   const toogleSidebarCollapseHandler = () => {
     setIsCollapsedSidebar((prev) => !prev)

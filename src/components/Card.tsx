@@ -1,27 +1,22 @@
-// Card.tsx - //
-import { RiSearch2Line } from 'react-icons/ri'
-import React from 'react'
-import { CiViewTable } from 'react-icons/ci'
-import TableIcon from '../../public/img/Table.png'
-import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { FC } from 'react'
 
 interface CardProps {
-  title: string;
-  description: string;
-  imageUrl: string;
+  title: string
+  imageUrl: string
+  projectId: string
 }
 
-const Card: React.FC<CardProps> = ({ title, description, imageUrl }) => {
+const Card: FC<CardProps> = ({ title, imageUrl, projectId }) => {
+  const router = useRouter()
   return (
-    <div>
-
+    <div onClick={() => router.push(`projects/${projectId}`)} className="cursor-pointer">
       <div className=" border-2 border-gray-400 px-10 flex justify-center flex-col rounded-lg py-2">
         <div className="mx-auto my-auto max-w-screen-lg">
           <img src={imageUrl} alt={title} className="w-52" />
         </div>
 
         <div className="space-x-3 text-center flex justify-center">
-
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -37,12 +32,10 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl }) => {
             />
           </svg>
 
-          <p className="text-gray-700 text-base">{description}</p>
+          <p className="text-gray-700 text-base">{title}</p>
         </div>
       </div>
-
     </div>
-
   )
 }
 

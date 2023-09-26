@@ -7,7 +7,7 @@ type ButtonProps = {
   onlyIcon?: boolean
   onlyText?: boolean
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
-  variant: 'menu' | 'primary' | 'login' | 'cancelar'
+  variant?: 'menu' | 'primary' | 'login' | 'cancelar'
 }
 
 const buttonVariants = {

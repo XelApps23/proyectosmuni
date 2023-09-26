@@ -1,8 +1,8 @@
-import type { ComponentProps, HTMLInputTypeAttribute } from 'react'
+import type { HTMLInputTypeAttribute } from 'react'
 import { ReactNode, useState } from 'react'
 import { Controller, FieldError } from 'react-hook-form'
 
-interface InputProps extends ComponentProps<'input'> {
+interface InputProps {
   icon?: ReactNode
   secondaryIcon?: ReactNode
   text?: string
@@ -12,12 +12,14 @@ interface InputProps extends ComponentProps<'input'> {
   error?: FieldError
   name: string
   defaultValue?: string
+  placeholder?: boolean
   label: string
+  size?: 'sm' | 'md' | 'lg' | 'xl'
 }
 
 const variantsInput = {
   normal: {
-    input: `bg-white border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2] 
+    input: `bg-white w-full border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2] 
     invalid:border-[#E2445C] invalid:text-black focus:invalid:border-[#E2445C] focus:invalid:ring-1 
     focus:invalid:ring-[#E2445C]`,
     icon: 'absolute inset-y-0 right-0.5 -translate-x-2 translate-y-1 h-5 w-5 p-0 place-items-center'
@@ -29,6 +31,22 @@ const variantsInput = {
   }
 }
 
+const sizeInput = {
+  sm: {
+    input: ''
+  },
+  md: {
+    input: ''
+  },
+  lg: {
+    input: ''
+  },
+  xl: {
+    input:
+      'p-2'
+  }
+}
+
 const Input = ({
   control,
   variant = 'normal',
@@ -37,24 +55,25 @@ const Input = ({
   name,
   defaultValue,
   secondaryIcon,
+  placeholder = true,
   label,
   error,
-  text
+  size = 'xl'
 }: InputProps) => {
   const [state, setState] = useState(false)
   const [show, setShow] = useState(false)
+
   const handleClick = () => {
     setState(!state)
     if (type === 'password') {
       setShow(!show)
     }
   }
+
   return (
     <>
-      <div className="relative w-min h-min">
-        <h1>
-          {label}
-        </h1>
+      <div>
+        <h1 className="text-lg text-black2 mb-2">{label}</h1>
         {type === 'password'
           ? (
           <div>
@@ -66,8 +85,8 @@ const Input = ({
                 <input
                   defaultValue={defaultValue}
                   type={show ? 'text' : 'password'}
-                  className={`rounded-lg ${variantsInput[variant].input}`}
-                  placeholder={text}
+                  className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
+                  placeholder={placeholder ? label : ''}
                   {...field}
                 />
               )}
@@ -84,20 +103,22 @@ const Input = ({
             )
           : (
           <div>
-            <Controller
-              control={control}
-              defaultValue={defaultValue || ''}
-              name={name}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type={type}
-                  className={`rounded-lg ${variantsInput[variant].input}`}
-                  placeholder={text}
-                  {...field}
-                />
-              )}
-            />
+            {
+              <Controller
+                control={control}
+                defaultValue={defaultValue || ''}
+                name={name}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type={type}
+                    className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
+                    placeholder={placeholder ? label : ''}
+                    {...field}
+                  />
+                )}
+              />
+            }
             {icon && (
               <div
                 className={variantsInput[variant].icon}
@@ -113,9 +134,9 @@ const Input = ({
             )}
           </div>
             )}
-            <p>
-              Errores: {error && error.message}
-            </p>
+        <p className={`text-errorDefault text-xs ${sizeInput[size].input}`}>
+          {error && error.message}
+        </p>
       </div>
     </>
   )

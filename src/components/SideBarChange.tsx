@@ -63,7 +63,9 @@ const sidebarItems = [
 
 export default function Sidebar2 () {
   const router = useRouter()
-  const [isCollapsedSidebar, setIsCollapsedSidebar] = useState <boolean>(false)
+  const ancho = screen.width
+  const [isCollapsedSidebar, setIsCollapsedSidebar] = useState <boolean>(ancho < 768)
+
   const toogleSidebarCollapseHandler = () => {
     setIsCollapsedSidebar((prev) => !prev)
   }
@@ -75,7 +77,7 @@ export default function Sidebar2 () {
 
   return (
 
-    <div className="sidebar__wrapper">
+    <div className="relative h-full">
       <div className={`bg-blue1 h-24 flex justify-center items-center ${isCollapsedSidebar ? 'hidden' : 'block'}`}>
         <img className="rounded-full  w-32 h-32 mt-20" src="https://htmlstream.com/preview/unify-v2.6/assets/img-temp/400x450/img5.jpg" />
       </div>

@@ -18,11 +18,8 @@ export const loginSlice = createSlice({
       state.username = username
       state.id = id
     },
-    logoutRedux: (state, action) => {
-      const {
-        logged
-      } = action.payload
-      state.logged = logged
+    logoutRedux: (state) => {
+      state.logged = false
     }
   }
 })
