@@ -1,4 +1,4 @@
-import TaskHeader from './taskHeader'
+import TaskHeader from './TaskHeader'
 
 const Task = () => {
   return (
