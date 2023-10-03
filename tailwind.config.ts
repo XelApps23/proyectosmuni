@@ -13,6 +13,9 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
+      },
+      fontFamily: {
+        nunito: ['Nunito Sans', 'sans-serif']
       }
     },
 
@@ -40,7 +43,8 @@ const config: Config = {
       estadoEnCurso: '#FDAB3D',
       estadoDetenido: '#E2445C',
       estadoNoIniciado: '#C4C4C4',
-      transparent: 'transparent'
+      transparent: 'transparent',
+      cell: '#eceff8'
     }
   },
   plugins: []
