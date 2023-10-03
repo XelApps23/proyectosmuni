@@ -3,7 +3,12 @@ import ArrowDownIcon from '@/components/icons/ArrowDownIcon'
 import MiniButton from '@/components/main/MiniButton'
 import ArrowIcon from '@/components/icons/ArrowIcon'
 import Table from './Table'
-const TaskList = () => {
+
+type Props = {
+  projectId: string
+}
+
+const TaskList = ({ projectId }: Props) => {
   const phases = [
     {
       id: 1,
@@ -23,7 +28,7 @@ const TaskList = () => {
     },
     {
       id: 5,
-      nombre: 'FASE DE EJECUCIóN DEL PROYECTO ANTICIPO'
+      nombre: 'FASE DE EJECUCIÓN DEL PROYECTO ANTICIPO'
     },
     {
       id: 6,
@@ -49,6 +54,7 @@ const TaskList = () => {
     { id: 7, isClickPhase: false }
   ])
   const changeClickPhase = (id: number) => {
+
     const newControls = controlPhase.map(control => {
       if (control.id === id) {
         return {
@@ -67,17 +73,17 @@ const TaskList = () => {
         phases.map((phase) => (
           <div key={phase.id}>
             <div className='flex' onClick={() => changeClickPhase(phase.id - 1)}>
-                <MiniButton
-                  icon={<ArrowDownIcon />}
-                  variant="arrow"
-                  secondaryIcon={<ArrowIcon />}
-                  tertiaryIcon={<ArrowIcon />}
-                />
+              <MiniButton
+                icon={<ArrowDownIcon />}
+                variant="arrow"
+                secondaryIcon={<ArrowIcon />}
+                tertiaryIcon={<ArrowIcon />}
+              />
               {phase.nombre}
             </div>
             {
               controlPhase[phase.id - 1].isClickPhase &&
-              <Table idPhase = {phase.id} />
+              <Table idPhase={phase.id} projectId={projectId}/>
             }
           </div>
         ))
