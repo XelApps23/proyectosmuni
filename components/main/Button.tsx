@@ -52,21 +52,21 @@ const Button = ({
     >
       <div
         className={
-          'flex w-full items-center ' + (onlyText && ' justify-center ') + (onlyIcon && ' justify-center ')
+          'flex w-full items-center ' + (onlyText ? ' justify-center ' : ' ') + (onlyIcon ? ' justify-center ' : ' ')
         }
       >
         {icon && (
           <div
             className={
-              (onlyText && 'hidden ') +
+              (onlyText ? 'hidden ' : ' ') +
               buttonVariants[variant].icon +
-              (!onlyText && !onlyIcon && ' mr-2.5')
+              ((!onlyText && !onlyIcon) ? ' mr-2.5' : ' ')
             }
           >
             {icon}
           </div>
         )}
-        <p className={(onlyIcon && 'hidden ') + buttonVariants[variant].text}>
+        <p className={(onlyIcon ? 'hidden ' : ' ') + buttonVariants[variant].text}>
           {text}
         </p>
       </div>

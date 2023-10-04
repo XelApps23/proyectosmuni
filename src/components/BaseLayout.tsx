@@ -5,8 +5,7 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { auth } from '@/services/Firebase'
 import { loginRedux } from '@/store/login'
-import Tabs from '@/components/main/Tabs'
-
+import SearchIcon from '@/components/icons/SearchIcon'
 interface Props {
   children: ReactNode | ReactNode[]
 }
@@ -41,34 +40,21 @@ export default function BaseLayout ({ children }: Props) {
   }, [])
 
   return (
-    <div>
+    <div className="h-screen">
       {logged && (
-        <>
-          <div>
-            <div >
-              {/* <div className="w-96 h-5 pl-5 pr-6 py-3 bg-white rounded-lg border border-slate-300 justify-start items-center gap-40 inline-flex">
-                <div className="text-stone-400 text-xs font-normal p-6 ">
-                  Buscar.proyecto
-                </div>
-                <div className="p-9 justify-start items-center gap-2.5 flex ml-15">
-                  <RiSearch2Line className="absolute top-1/2 -translate-y-1/2 text-gray-300 " />
-                  <div className="w-4 h-4 relative" />
-                </div>
-              </div> */}
-            </div>
-            <form>
-              <div className="w-full sm:relative sm:flex justify-center items-center sm:p-4 lg:p-2 xl:p-0 "></div>
-            </form>
-          </div>
-          <div>
-            <div className="flex sm:h-screen">
+            <div className="flex h-full ">
               <Sidebar />
-       
+            <div className='w-full h-full bg-fondo'>
+            <div className=' w-full h-12 flex justify-center items-center'>
+              <div className='mx-5 w-4 h-4'><SearchIcon/></div>
+                  <p className='mx-5 px-4 border border-blue2 rounded'>Buscador</p>
+              </div>
+              <div className=' overflow-auto w-full pl-6 pr-8'>
+                              {/* Aqui se debe agregar la barra de busqueda */}
               {children}
+              </div>
             </div>
-           
-          </div>
-        </>
+            </div>
       )}
     </div>
   )
