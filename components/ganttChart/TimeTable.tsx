@@ -191,7 +191,8 @@ export default function TimeTable ({
           gridColumn: '1/-1',
           display: 'grid',
           gridTemplateColumns: `repeat(${numMonths}, 1fr)`,
-          paddingLeft: '0.5px'
+          paddingLeft: '0.5px',
+          borderRadius: '2px'
         }}
       >
         {taskRows}
