@@ -45,7 +45,7 @@ const NewProject = () => {
     router.push(`/projects/${projectId}`)
   }
   return (
-    <div className="w-[500px]">
+    <div>
       <PlantillaForm
         schema={schema}
         title="Nuevo Proyecto"

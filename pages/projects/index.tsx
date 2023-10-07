@@ -1,11 +1,9 @@
-import BaseLayout from '@/src/components/BaseLayout'
-import Button from '@/components/main/Button'
 import useProjects from '@/hooks/useProjects'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import CardFolder from '@/components/main/CardFolder'
-import PlusIcon from '@/components/icons/PlusIcon'
 import PageHeader from '@/components/main/PageHeader'
+import Card from '@/components/main/Card'
 
 const Home = () => {
   const { getProjects, projects } = useProjects()
@@ -16,9 +14,9 @@ const Home = () => {
   }, [])
 
   return (
-    <>
-      <PageHeader title="Proyectos" />
-      <h2 className="text-xl">Proyectos Recientes</h2>
+    <Card>
+      <PageHeader actionText="Nuevo Proyecto" actionButton={() => router.push('projects/new-project')} title="Proyectos" />
+      <h2 className="text-xl mb-4" >Proyectos Recientes</h2>
 
       {/* <div className="flex justify-between items-center w-full ">
         <div className="w-40">
@@ -40,7 +38,7 @@ const Home = () => {
           />
         ))}
       </div>
-    </>
+    </Card>
   )
 }
 

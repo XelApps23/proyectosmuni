@@ -41,13 +41,13 @@ export default function Default({ children }: Props) {
   }, [])
 
   return (
-    <div className="bg-fondo">
+    <div className="bg-fondo h-screen">
       {logged && (
         <>
           <Sidebar />
           <Header />
-          <div className="ml-48 mt-12 bg-fondo p-4">
-            <div className="bg-white1 p-4">{children}</div>
+          <div className="ml-48 bg-fondo p-4 pt-14">
+            {children}
           </div>
         </>
       )}

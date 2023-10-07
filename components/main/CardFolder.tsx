@@ -17,9 +17,9 @@ const CardFolder = ({ title, projectId, progress }: CardFolderProps) => {
     <button
       onClick={Navegar}
       type="button"
-      className="border-fondo hover:border-gray1 transition-all hover:bg-cell border-[1px] rounded-lg w-full flex flex-col items-center p-4 border-"
+      className="border-fondo hover:border-gray1 transition-all hover:bg-cell border-2 rounded-lg w-full flex flex-col items-center p-4 border-"
     >
-      <Image src={Folder} alt="Folder" className="xl:w-32 sm:w-24 w-10 mb-4" />
+      <Image src={Folder} alt="Folder" className="xl:w-32 sm:w-24 w-20 mb-4" />
       <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-full mb-2">
         <span className="text-base">
           {title} dsa dsa dsa das as das dsa das dsa dasd

@@ -75,6 +75,7 @@ const Sidebar = () => {
                 icon={Icon}
                 onlyIcon={false}
                 variant="menu"
+                fullWidth
                 onClick={() => router.push(href)}
               />
             </div>
