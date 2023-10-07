@@ -1,9 +1,10 @@
 import BaseLayout from '@/src/components/BaseLayout'
-import Card from '../src/components/Card'
 import Button from '@/components/main/Button'
 import useProjects from '@/hooks/useProjects'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import CardFolder from '@/components/main/CardFolder'
+import PlusIcon from '@/components/icons/PlusIcon'
 
 const Home = () => {
   const { getProjects, projects } = useProjects()
@@ -15,22 +16,22 @@ const Home = () => {
 
   return (
     <BaseLayout>
-      <div className="p-10 w-full">
-        <div className="mt-12 flex justify-between items-center px-12">
+      <div className="grid p-10 w-full bg-white1 rounded-lg gap-8">
+        <div className="flex justify-between items-center w-full ">
           <h1 className="text-xl">Proyectos Recientes</h1>
-          <div>
-            <Button variant="primary" text="Nuevo proyecto" onClick={() => router.push('/projects/new-project')}/>
+          <div className='w-40'>
+            <Button variant="primary" text="Nuevo proyecto" icon={<PlusIcon/>} onClick={() => router.push('/projects/new-project')}/>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-white p-9">
+        <div className="flex flex-wrap justify-start gap-y-8 gap-x-3.5 bg-white w-full">
           {Object.keys(projects).map((key, index) => (
-            <Card
-              projectId={key}
-              key={index}
-              title={projects[key].name}
-              imageUrl={'/img/Folder.png'}
-            />
+         <CardFolder
+          projectId={key}
+          key={key}
+          title={projects[key].name}
+          porcentaje={22}
+          />
           ))}
         </div>
       </div>
