@@ -12,7 +12,7 @@ type ButtonProps = {
 
 const buttonVariants = {
   menu: {
-    button: 'w-full flex px-1 py-1.5 rounded hover:bg-fondo focus:bg-skyBlue ',
+    button: 'w-full flex px-2 py-2.5 mb-2 rounded hover:bg-fondo focus:bg-skyBlue ',
     icon: 'w-5 h-5 ',
     text: 'text-sm text-black2'
   },

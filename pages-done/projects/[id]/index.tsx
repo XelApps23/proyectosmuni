@@ -1,6 +1,6 @@
 import Tabs from '@/components/main/Tabs'
 import TaskList from '@/components/tasks/TaskList'
-import GanttChart from '@/pages/ganttChart'
+import GanttChart from '@/pages-done/ganttChart'
 import BaseLayout from '@/src/components/BaseLayout'
 import { useRouter } from 'next/router'
 
