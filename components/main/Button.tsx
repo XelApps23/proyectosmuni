@@ -2,18 +2,23 @@ import { ButtonHTMLAttributes, ReactNode } from 'react'
 
 type ButtonProps = {
   onClick?: () => void
-  text: string
+  text?: string
   icon?: ReactNode
   onlyIcon?: boolean
   onlyText?: boolean
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
-  variant?: 'menu' | 'primary' | 'login' | 'cancelar'
+  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon'
   fullWidth?: boolean
 }
 
 const buttonVariants = {
   menu: {
     button: 'flex px-2 py-2.5 mb-2 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
+    icon: 'w-5 h-5 ',
+    text: 'text-sm text-black2'
+  },
+  icon: {
+    button: 'flex p-1 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
     icon: 'w-5 h-5 ',
     text: 'text-sm text-black2'
   },

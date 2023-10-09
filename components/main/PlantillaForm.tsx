@@ -10,6 +10,11 @@ import Button from '../main/Button'
 import { ReactNode, useEffect } from 'react'
 import CancelIcon from '@/components/icons/CancelIcon'
 import MiniButton from './MiniButton'
+import Card from './Card'
+import Divider from './Divider'
+import ArrowLeftIcon from '../icons/ArrowLeftIcon'
+import { useRouter } from 'next/router'
+import ArrowRightIcon from '../icons/ArrowRightIcon'
 
 type PlantillaFormProps<T extends FieldValues> = {
   title: string
@@ -26,6 +31,8 @@ const PlantillaForm = <T extends object>({
   onSubmit,
   defaultValues
 }: PlantillaFormProps<T>) => {
+  const router = useRouter()
+
   const {
     control,
     handleSubmit,
@@ -42,27 +49,31 @@ const PlantillaForm = <T extends object>({
   }, [errors])
 
   return (
-    <div className="p-10 grid gap-4 w-full bg-white1 rounded-xl">
-      <div className="flex justify-end w-full ">
-        <MiniButton icon={<CancelIcon />} variant="cancel" />
+    <Card>
+      <div className="flex items-center">
+        <Button
+          onlyIcon
+          variant="icon"
+          icon={<ArrowLeftIcon />}
+          onClick={() => router.push('/projects')}
+        />
+        <h2 className="text-2xl ml-4">{title}</h2>
       </div>
-      <h1 className="text-4xl">{title}</h1>
+      <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid gap-5">
+        <div className="grid gap-2">
           {children(control, errors)}
           <div className="flex justify-end w-full">
-            <div className="w-36">
-              <Button
-                type="submit"
-                text="Enviar"
-                variant="primary"
-                onlyText={true}
-              />
-            </div>
+            <Button
+              icon={<ArrowRightIcon color="white" />}
+              type="submit"
+              text="Aceptar"
+              variant="primary"
+            />
           </div>
         </div>
       </form>
-    </div>
+    </Card>
   )
 }
 

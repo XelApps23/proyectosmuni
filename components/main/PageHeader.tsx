@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from './Button'
 import PlusIcon from '../icons/PlusIcon'
+import Divider from './Divider'
 
 type Props = {
   title: string
@@ -26,7 +27,7 @@ const PageHeader = ({ title, actionButton, actionText }: Props) => {
             )
           }
       </div>
-      <div className="w-full h-0.5 bg-fondo my-4" />
+      <Divider />
     </>
   )
 }

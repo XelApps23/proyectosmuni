@@ -9,59 +9,74 @@ import TrashIcon from '@/components/icons/TrashIcon'
 import UserIcon from '@/components/icons/UserIcon'
 import Button from '../main/Button'
 import { useRouter } from 'next/router'
+import ProyectoIcon from '../icons/ProyectoIcon'
+
+// const sidebarItems = [
+//   {
+//     name: 'Inicio',
+//     href: '/',
+//     icon: <HomeIcon />
+//   },
+//   {
+//     name: 'Perfil',
+//     href: '/profile',
+//     icon: <UserIcon />
+//   },
+//   {
+//     name: 'Papelera',
+//     href: '/paperbin',
+//     icon: <TrashIcon />
+//   },
+//   {
+//     name: 'Archivo',
+//     href: '/archive',
+//     icon: <ArchiveIcon />
+//   },
+//   {
+//     name: 'Administracion',
+//     href: '/administration',
+//     icon: <SettingIcon />
+//   },
+//   {
+//     name: 'Equipos',
+//     href: '/workTeams',
+//     icon: <GroupUserIcon />
+//   },
+//   {
+//     name: 'Invitar Miembros',
+//     href: '/inviteMembers',
+//     icon: <PlusIcon />
+//   },
+//   {
+//     name: 'Cambiar Tema',
+//     href: '/changeTheme',
+//     icon: <ChangeThemeIcon />
+//   },
+//   {
+//     name: 'Cerrar Sesión',
+//     href: '/signOff',
+//     icon: <SignOutIcon />
+//   }
+// ]
 
 const sidebarItems = [
   {
     name: 'Inicio',
-    href: '/',
+    href: '/home',
     icon: <HomeIcon />
   },
   {
-    name: 'Perfil',
-    href: '/profile',
-    icon: <UserIcon />
-  },
-  {
-    name: 'Papelera',
-    href: '/paperbin',
-    icon: <TrashIcon />
-  },
-  {
-    name: 'Archivo',
-    href: '/archive',
-    icon: <ArchiveIcon />
-  },
-  {
-    name: 'Administracion',
-    href: '/administration',
-    icon: <SettingIcon />
-  },
-  {
-    name: 'Equipos',
-    href: '/workTeams',
-    icon: <GroupUserIcon />
-  },
-  {
-    name: 'Invitar Miembros',
-    href: '/inviteMembers',
-    icon: <PlusIcon />
-  },
-  {
-    name: 'Cambiar Tema',
-    href: '/changeTheme',
-    icon: <ChangeThemeIcon />
-  },
-  {
-    name: 'Cerrar Sesión',
-    href: '/signOff',
-    icon: <SignOutIcon />
+    name: 'Proyectos',
+    href: '/projects',
+    icon: <ProyectoIcon />
   }
 ]
 
 const Sidebar = () => {
   const router = useRouter()
+  console.log(router.basePath)
   return (
-    <div className="absolute z-20 top-0 bg-white1 h-screen w-48 transition-all">
+    <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all">
       <div className="sm:h-36 h-24 relative">
         <div className="bg-blue1 h-1/2" />
         <div className="absolute bg-black1 w-20 h-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
@@ -76,7 +91,7 @@ const Sidebar = () => {
                 onlyIcon={false}
                 variant="menu"
                 fullWidth
-                onClick={() => router.push(href)}
+                onClick={() => router.pathname !== href && router.push(href)}
               />
             </div>
           )
