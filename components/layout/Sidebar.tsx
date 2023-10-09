@@ -69,12 +69,27 @@ const sidebarItems = [
     name: 'Proyectos',
     href: '/projects',
     icon: <ProyectoIcon />
+  },
+  {
+    name: 'Usuarios',
+    href: '/users',
+    icon: <UserIcon />
+  },
+  {
+    name: 'Roles',
+    href: '/roles',
+    icon: <UserIcon />
+  },
+  {
+    name: 'Cerrar Sesión',
+    href: '/logout',
+    icon: <SignOutIcon />
   }
 ]
 
 const Sidebar = () => {
   const router = useRouter()
-  console.log(router.basePath)
+  console.log(router.pathname)
   return (
     <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all">
       <div className="sm:h-36 h-24 relative">
@@ -91,7 +106,11 @@ const Sidebar = () => {
                 onlyIcon={false}
                 variant="menu"
                 fullWidth
-                onClick={() => router.pathname !== href && router.push(href)}
+                onClick={() =>
+                  router.push({
+                    pathname: href
+                  })
+                }
               />
             </div>
           )

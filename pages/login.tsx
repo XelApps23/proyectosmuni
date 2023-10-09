@@ -1,4 +1,6 @@
+import { ReactElement } from 'react'
 import Login from './login-form'
+import LoginLayout from '@/layout/Login'
 
 const LayoutInicio = () => {
   return (
@@ -29,4 +31,11 @@ const LayoutInicio = () => {
   )
 }
 
+LayoutInicio.layout = function layout (page: ReactElement) {
+  return (
+    <LoginLayout>
+      {page}
+    </LoginLayout>
+  )
+}
 export default LayoutInicio

@@ -15,18 +15,19 @@ interface InputProps {
   placeholder?: boolean
   label: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  added?: string
 }
 
 const variantsInput = {
   normal: {
-    input: `bg-white w-full border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2] 
+    input: `bg-white2 w-full border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2] 
     invalid:border-[#E2445C] invalid:text-black focus:invalid:border-[#E2445C] focus:invalid:ring-1 
     focus:invalid:ring-[#E2445C]`,
     icon: 'absolute inset-y-0 right-0.5 -translate-x-2 translate-y-1 h-5 w-5 p-0 place-items-center'
   },
   search: {
     input:
-      'bg-white border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2]',
+      'bg-white2 border-2 border-[#C3C6D4] focus:outline-none focus:border-[#1F76C2] focus:ring-1 focus:ring-[#1F76C2]',
     icon: 'absolute inset-y-0 right-0.5 -translate-x-2 translate-y-1 h-5 w-5 p-0 place-items-center'
   }
 }
@@ -58,7 +59,8 @@ const Input = ({
   placeholder = true,
   label,
   error,
-  size = 'xl'
+  size = 'xl',
+  added
 }: InputProps) => {
   const [state, setState] = useState(false)
   const [show, setShow] = useState(false)
@@ -110,7 +112,6 @@ const Input = ({
                 name={name}
                 render={({ field }) => (
                   <input
-                    {...field}
                     type={type}
                     className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
                     placeholder={placeholder ? label : ''}

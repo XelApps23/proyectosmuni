@@ -28,7 +28,7 @@ const CardFolder = ({ title, projectId, progress }: CardFolderProps) => {
       <div className="w-full flex">
         <div className="bg-fondo rounded-full h-4 w-full">
           <div
-            className={'bg-estadoListo rounded-full h-4 ' + `w-[${progress}%]`}
+            className={'bg-estadoListo rounded-full h-4 ' + ` w-[${progress}%]`}
           />
         </div>
         <p className="text-sm ml-4 text-gray2 w-9 mb-2">{progress}%</p>

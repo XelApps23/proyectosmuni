@@ -1,8 +1,12 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
-const LoginLayout = () => {
+type Props = {
+  children: ReactNode
+}
+
+const LoginLayout = ({ children }: Props) => {
   return (
-    <div>LoginLayout</div>
+    <div>{children}</div>
   )
 }
 

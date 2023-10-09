@@ -15,26 +15,19 @@ const Home = () => {
 
   return (
     <Card>
-      <PageHeader actionText="Nuevo Proyecto" actionButton={() => router.push('projects/new-project')} title="Proyectos" />
-      <h2 className="text-xl mb-4" >Proyectos Recientes</h2>
-
-      {/* <div className="flex justify-between items-center w-full ">
-        <div className="w-40">
-          <Button
-            variant="primary"
-            text="Nuevo proyecto"
-            icon={<PlusIcon />}
-            onClick={() => router.push('/projects/new-project')}
-          />
-        </div>
-      </div> */}
+      <PageHeader
+        actionText="Nuevo Proyecto"
+        actionButton={() => router.push('projects/new-project')}
+        title="Proyectos"
+      />
+      <h2 className="text-xl mb-4">Proyectos Recientes</h2>
       <div className="grid lg:grid-cols-3 xl:grid-cols-4 gap-4 grid-cols-2 justify-start bg-white w-full">
         {Object.keys(projects).map((key, index) => (
           <CardFolder
             projectId={key}
             key={key}
             title={projects[key].name}
-            progress={projects[key].progress || 22}
+            progress={22}
           />
         ))}
       </div>
