@@ -10,6 +10,7 @@ import TaskList from '@/components/tasks/TaskList'
 import useProjects from '@/hooks/useProjects'
 import useUsers from '@/hooks/useUsers'
 import GanttChart from '@/pages-done/ganttChart'
+import Graphic from '@/pages-done/graphic'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 

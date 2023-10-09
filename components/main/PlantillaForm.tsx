@@ -10,11 +10,6 @@ import Button from '../main/Button'
 import { ReactNode, useEffect } from 'react'
 import CancelIcon from '@/components/icons/CancelIcon'
 import MiniButton from './MiniButton'
-import Card from './Card'
-import Divider from './Divider'
-import ArrowLeftIcon from '../icons/ArrowLeftIcon'
-import { useRouter } from 'next/router'
-import ArrowRightIcon from '../icons/ArrowRightIcon'
 
 type PlantillaFormProps<T extends FieldValues> = {
   title: string
