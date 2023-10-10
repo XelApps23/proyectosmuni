@@ -1,38 +1,21 @@
 import { Timestamp } from 'firebase/firestore'
 
 type User = {
-    id: string,
-    idRole: string,
-    name: string,
-    email: string,
-    password: string,
-    createAt: Timestamp, 
-    updateAt: Timestamp, 
+  id: string
+  firstname: string
+  lastname: string
+  email: string
+  phone: string
+  role: string
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 interface UserList {
-    [key: string]: User;
+  [key: string]: User
 }
 
-type UserInput = {
-    idUser: string,
-    idRole: string,
-    name: string,
-    email: string,
-    password: string,
-    createAt: Timestamp, 
-    updateAt: Timestamp, 
-  };
+interface UserInput extends Omit<User, 'id'> {}
+type UserUpdate = Partial<UserInput>
 
-type UserUpdate =  Partial<{
-    idUser: string,
-    idRole: string,
-    name: string,
-    email: string,
-    password: string,
-    createAt: Timestamp, 
-    updateAt: Timestamp, 
-}>;
-
-
-export type {UserList, User, UserInput, UserUpdate};
+export type { UserList, User, UserInput, UserUpdate }

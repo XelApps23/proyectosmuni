@@ -34,8 +34,7 @@ const Notification = ({ notification }: Props) => {
         </div>
         {notification.message && (
           <div className="my-2">
-            <span>{notification.emiter}</span> <span>{notification.type}</span>{' '}
-            <span>{notification.object || 'test'}</span>
+            <span>{notification.mention}</span>
           </div>
         )}
         <div className="flex justify-between">

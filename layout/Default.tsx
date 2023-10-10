@@ -19,6 +19,7 @@ export default function Default({ children }: Props) {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      console.log(user)
       if (user === null) {
         dispatch(
           loginRedux({

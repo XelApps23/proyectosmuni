@@ -1,72 +1,51 @@
 import * as yup from 'yup'
 import Input from '@/components/main/Input'
 import PlantillaForm from '../main/PlantillaForm'
-import useProjects from '@/hooks/useProjects'
-import useTasks from '@/hooks/useTasks'
 import { useRouter } from 'next/router'
 import Select from '../main/Select'
+import useUsers from '@/hooks/useUsers'
 
-const schema = yup.object().shape({
-  name: yup.string().required('Es necesario ingresar un nombre'),
-  description: yup.string().required('Es necesario ingresar una descripción'),
-  initialDate: yup
-    .date()
-    .typeError('Es necesario ingresar una fecha de inicio')
-    .required('Es necesario ingresar una fecha de inicio'),
-  expectedDate: yup
-    .date()
-    .min(
-      new Date(),
-      'La fecha esperada de finalización debe ser mayor a la fecha actual'
-    )
-    .typeError('Es necesario ingresar una fecha esperada de finalización')
-    .required('Es necesario ingresar una fecha esperada de finalización')
-})
+const schema = yup.object().shape({})
 
 type FormValues = {
-  name: string
-  description: string
-  initialDate: Date
-  expectedDate: Date
+  firstname: string
+  lastname: string
+  email: string
+  password: string
+  phone: string
+  role: string
 }
 
 const NewProject = () => {
-  const { createProject } = useProjects()
-  const { createDefaultProjectTasks } = useTasks()
+  const { createUser } = useUsers()
   const router = useRouter()
 
   const onSubmit = async (data: FormValues) => {
-    const projectId = await createProject({
-      expectedDate: data.expectedDate,
-      name: data.name,
-      description: data.description,
-      initialDate: data.initialDate
+    const response = await createUser({
+      email: data.email,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      password: data.password,
+      phone: data.phone,
+      role: data.role
     })
-    await createDefaultProjectTasks(projectId)
-    router.push(`/projects/${projectId}`)
+    router.push('/users/')
   }
   return (
     <div className="md:w-1/2 w-full">
-      <PlantillaForm
-        schema={schema}
-        title="Nuevo Usuario"
-        onSubmit={onSubmit}
-        defaultValues={{
-          initialDate: new Date()
-        }}
-      >
+      <PlantillaForm schema={schema} title="Nuevo Usuario" onSubmit={onSubmit}>
         {(control, errors) => (
           <>
             <Input
               control={control}
-              name="name"
-              label="Nombre"
+              name="firstname"
+              label="Nombre(s)"
               error={errors.firstname}
             />
             <Input
               control={control}
-              name="name"
-              label="Apellidos"
+              name="lastname"
+              label="Apellido(s)"
               error={errors.lastname}
             />
             <Input
