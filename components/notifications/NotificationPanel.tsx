@@ -3,7 +3,7 @@ import Notification from './Notification'
 
 const tabs = ['Reciente', 'Todos', 'No Leído', 'Asignaciones']
 
-const NotificationPanel = ({}) => {
+const NotificationPanel = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
@@ -11,22 +11,20 @@ const NotificationPanel = ({}) => {
       <div className="border-b border-fondo mt-4">
         <ul className="flex flex-wrap text-sm text-center text-gray1">
           {tabs.map((tab, index) => (
-            <>
-              <li className="mr-2" key={tab}>
-                <a
-                  onClick={() => setActiveTab(index)}
-                  href="#"
-                  className={
-                    (activeTab === index
-                      ? 'border-blue2 border-b-2'
-                      : ' border-fondo border-b') +
-                    ' flex items-center justify-center p-2   rounded-t-lg group'
-                  }
-                >
-                  <span>{tab}.</span>
-                </a>
-              </li>
-            </>
+            <li className="mr-2" key={tab}>
+              <a
+                onClick={() => setActiveTab(index)}
+                href="#"
+                className={
+                  (activeTab === index
+                    ? 'border-blue2 border-b-2'
+                    : ' border-fondo border-b') +
+                  ' flex items-center justify-center p-2   rounded-t-lg group'
+                }
+              >
+                <span>{tab}.</span>
+              </a>
+            </li>
           ))}
         </ul>
       </div>
@@ -36,7 +34,7 @@ const NotificationPanel = ({}) => {
             emiter: 'Donald Daniel Abac Lopez',
             type: 'added',
             read: false,
-            object: 'Tarea 1',
+            object: 'Tarea 1'
           },
           {
             emiter: 'Donald Daniel Abac Lopez',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import SearchIcon from '../icons/SearchIcon'
 import useUsers from '@/hooks/useUsers'
 import CancelIcon from '../icons/CancelIcon'
@@ -50,6 +50,9 @@ const UserSelector = ({
   const [text, setText] = useState('')
   const [localIds, setLocalIds] = useState<any[]>([])
   const [openDialog, setOpenDialog] = useState(false)
+  const [firstFetch, setFirstFetch] = useState(false)
+  const wrapperRef = useRef(null)
+  useOutsideAlerter(wrapperRef)
 
   const { getUsers, users } = useUsers()
 
@@ -61,29 +64,45 @@ const UserSelector = ({
     console.log(users)
   }, [users])
 
+  function useOutsideAlerter(ref: any) {
+    useEffect(() => {
+      function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setOpenDialog(false)
+        }
+      }
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }, [ref])
+  }
+
   const handleChange = (e: any) => {
     setText(e.target.value)
   }
 
   const triggerDialog = () => {
-    setOpenDialog(!openDialog)
-    getUsers()
+    setOpenDialog(true)
+    if (!firstFetch) {
+      getUsers({ perPage: 3 })
+      setFirstFetch(true)
+    }
   }
 
   const handleAddUser = (id: string) => {
     setIds((prev: any) => [...prev, id])
     setLocalIds((prev: any) => [...prev, id])
-    console.log(id)
   }
 
-  const handleRemoveId = (id: string) => {
-    setIds((prev: any) => prev.filter((id: string) => id !== id))
-    setLocalIds((prev: any) => prev.filter((id: string) => id !== id))
+  const handleRemoveId = (removeId: string) => {
+    setIds((prev: any) => prev.filter((id: string) => id !== removeId))
+    setLocalIds((prev: any) => prev.filter((id: string) => id !== removeId))
   }
 
   return (
     <>
-      <div>
+      <div ref={wrapperRef}>
         <div className="p-1 bg-blue1">
           {localIds.map((id) => (
             <div
@@ -119,7 +138,7 @@ const UserSelector = ({
           </div>
           {openDialog && (
             <>
-              <div className="absolute bg-white1 top-12 h-40 w-full rounded-lg drop-shadow-xl p-4">
+              <div className="absolute bg-white1 top-12 max-h-52 overflow-y-auto w-full rounded-lg drop-shadow-xl p-4">
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)

@@ -5,16 +5,15 @@ import {
   doc,
   getDoc,
   getDocs,
-  addDoc,
-  updateDoc,
   query,
+  setDoc,
   where,
-  setDoc
+  limit,
+  startAfter
 } from 'firebase/firestore'
-import { auxApp, db } from '@/services/Firebase'
 import { UserList } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auxAuth } from '@/services/Firebase'
+import { auxAuth, db } from '@/services/Firebase'
 
 type UserFormInput = {
   firstname?: string
@@ -30,13 +29,27 @@ const table = 'users'
 const useUsers = () => {
   const [users, setUsers] = useState<UserList>({})
   const [loading, setLoading] = useState(false)
+  const [last, setLast] = useState<any>(null)
 
-  const getUsers = async () => {
+  const getUsers = async ({ perPage = 10 }) => {
     setLoading(true)
-    let datos = {}
-    const querySnapshot = await getDocs(collection(db, table))
+    let datos: any = { ...users }
+    let preparedQuery
+
+    if (last === null) {
+      preparedQuery = query(collection(db, table), where('status', '==', 'active'), limit(perPage))
+    } else {
+      preparedQuery = query(collection(db, table), where('status', '==', 'active'), limit(perPage), startAfter(last))
+    }
+
+    const querySnapshot = await getDocs(preparedQuery)
+    setLast(querySnapshot.docs[querySnapshot.docs.length - 1])
+
     querySnapshot.forEach((doc) => {
-      datos = { ...datos, [doc.id]: { ...doc.data(), id: doc.id } }
+      const userData = { ...doc.data(), id: doc.id }
+      if (!datos[doc.id]) {
+        datos = { ...datos, [doc.id]: userData }
+      }
     })
     setUsers(datos)
     setLoading(false)
@@ -51,7 +64,9 @@ const useUsers = () => {
     dato = {
       [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
     }
-    setUsers(dato)
+    if (!users[idRef]) {
+      setUsers((prevUsers) => ({ ...prevUsers, ...dato }))
+    }
     setLoading(false)
   }
 
@@ -71,7 +86,11 @@ const useUsers = () => {
     role
   }: UserFormInput) => {
     setLoading(true)
-    const { user } = await createUserWithEmailAndPassword(auxAuth, email, password)
+    const { user } = await createUserWithEmailAndPassword(
+      auxAuth,
+      email,
+      password
+    )
     if (user.uid) {
       await setDoc(doc(db, table, user.uid), {
         firstname: firstname || null,
