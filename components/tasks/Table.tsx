@@ -8,6 +8,9 @@ import AddIcon from '@/components/icons/AddIcon'
 import PeopleSuggested from '@/components/main/PeopleSuggested'
 import Link from 'next/link'
 import useTasks from '@/hooks/useTasks'
+import useFile from '@/hooks/useFile'
+import WordIcon from '../icons/WordIcon'
+import ExcelIcon from '../icons/ExcelIcon'
 
 type Props = {
   idPhase: number,
@@ -15,6 +18,7 @@ type Props = {
 }
 const Table = ({ idPhase, projectId }: Props) => {
   const { getTaskFiltered, tasks, loading } = useTasks()
+  const { uploadFile, progress, downloadURL } = useFile()
   useEffect(() => {
     getTaskFiltered(projectId, idPhase)
   }, [])
@@ -28,12 +32,23 @@ const Table = ({ idPhase, projectId }: Props) => {
     bgPriority: string;
     isOpenStatus: boolean;
     stateStatus: string;
-    bgStatus: string
+    bgStatus: string;
+    isWord: boolean;
+    isExcel: boolean;
   }[]>([])
 
   const [reload, setReload] = useState(false)
+  const [files, setFiles] = useState<any>([])
 
   let cont = 0
+
+  useEffect(() => {
+    console.log(progress)
+  }, [progress])
+
+  useEffect(() => {
+    console.log(downloadURL)
+  }, [downloadURL])
 
   useEffect(() => {
     if (!reload) {
@@ -47,11 +62,18 @@ const Table = ({ idPhase, projectId }: Props) => {
           bgPriority: 'bg-prioridadBaja',
           isOpenStatus: false,
           stateStatus: 'No Iniciado',
-          bgStatus: 'bg-estadoNoIniciado'
+          bgStatus: 'bg-estadoNoIniciado',
+          isWord: false,
+          isExcel: false,
         }
+        const newFileList: File[] = []
+        const fileAux = files
         const aux = controls
+        fileAux.push(newFileList)
         aux.push(newControl)
+        setFiles(fileAux)
         setControls(aux)
+        console.log(files)
         console.log('Controles: ', controls)
         cont++
         if (Object.keys(tasks).length == controls.length) {
@@ -162,6 +184,64 @@ const Table = ({ idPhase, projectId }: Props) => {
     }
     setControls(newControls)
   }
+
+  const handleFile = (id: number, e: any) => {
+    let auxFiles = files
+    let newWord = controls[id].isWord
+    let newExcel = controls[id].isExcel
+    let name = ''
+    for (let i = 0; i < e.target.files.length; i++) {
+      auxFiles[id].push(e.target.files[i])
+      name = e.target.files[i].name
+      if (name.includes('docx')) {
+        newWord = true
+      }
+      if (name.includes('xlsx')) {
+        newExcel = true
+      }
+    }
+    setFiles(auxFiles)
+
+    const newControls = controls.map(control => {
+      if (control.id === id) {
+        return {
+          ...control,
+          isWord: newWord,
+          isExcel: newExcel
+        }
+      } else {
+        return control
+      }
+    })
+    setControls(newControls)
+  }
+
+  const handleUpload = async (id: number) => {
+    if (files[id].length != 0) {
+      let auxFiles = files
+      for (let i = 0; i < auxFiles[id].length; i++) {
+        await uploadFile(auxFiles[id][i])
+      }
+      auxFiles[id] = []
+      const newControls = controls.map(control => {
+        if (control.id === id) {
+          return {
+            ...control,
+            isWord: false,
+            isExcel: false
+          }
+        } else {
+          return control
+        }
+      })
+      setControls(newControls)
+      console.log(auxFiles)
+    }
+    else {
+      console.log('No se ha seleccionado un archivo')
+    }
+  }
+
   if (loading) return <>Cargando...</>
   return (
     <>
@@ -347,13 +427,37 @@ const Table = ({ idPhase, projectId }: Props) => {
                       </div>
                     </td>
                     <td className="border-t-solid border-t-gray3 border-t-2 group">
-                      <div className='w-[100%] h-[100%] invisible group-hover:visible grid
-                      hover:border-solid hover:border-blue2 hover:border-2
-                      active:border-solid active:border-blue2 active:border-2
-                      focus:border-solid focus:border-blue2 focus:border-2'>
-                        <button className='w-[16%] place-self-center'>
-                          <DocumentAddIcon />
-                        </button>
+                      <div className='w-[100%] h-[100%] grid justify-items-center grid-cols-4'>
+                        <label title='Click para seleccionar archivos' className='w-[100%]
+                          hover:border-solid hover:border-blue2 hover:border-2
+                          active:border-solid active:border-blue2 active:border-2
+                          focus:border-solid focus:border-blue2 focus:border-2'>
+                          <div className='w-[60%] col-span-1'>
+                            <input
+                              type="file"
+                              hidden
+                              multiple
+                              accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                              onChange={(e) => handleFile(i, e)}>
+                            </input>
+                            <DocumentAddIcon />
+                          </div>
+                        </label>
+                        <button onClick={() => handleUpload(i)} className='w-[100%] col-span-2 hover:border-solid hover:border-blue2 hover:border-2
+                        active:border-solid active:border-blue2 active:border-2
+                        focus:border-solid focus:border-blue2 focus:border-2'>Guardar</button>
+                        {(controls[i].isWord || controls[i].isExcel) &&
+                          <label title={`${files[i].map((loadedFiles: { name: string }) => (loadedFiles.name) + '\n')}`} className=' flex items-top
+                          hover:border-solid hover:border-blue2 hover:border-2
+                          active:border-solid active:border-blue2 active:border-2
+                          focus:border-solid focus:border-blue2 focus:border-2'>
+                            <div className='w-[100%] col-span-1 grid justify-items-center grid-cols-2'>
+                              {controls[i].isWord &&
+                                <WordIcon />}
+                              {controls[i].isExcel &&
+                                <ExcelIcon />}
+                            </div>
+                          </label>}
                       </div>
                     </td>
                   </tr>
