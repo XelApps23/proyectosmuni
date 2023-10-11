@@ -55,9 +55,9 @@ const PlantillaForm = <T extends object>({
           onlyIcon
           variant="icon"
           icon={<ArrowLeftIcon />}
-          onClick={() => router.push('/projects')}
+          onClick={() => router.back()}
         />
-        <h2 className="text-2xl ml-4">{title}</h2>
+        <h2 className="text-xl ml-4">{title}</h2>
       </div>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)}>

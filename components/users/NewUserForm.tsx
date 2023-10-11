@@ -4,8 +4,25 @@ import PlantillaForm from '../main/PlantillaForm'
 import { useRouter } from 'next/router'
 import Select from '../main/Select'
 import useUsers from '@/hooks/useUsers'
+import useRoles from '@/hooks/useRoles'
+import { useEffect } from 'react'
 
-const schema = yup.object().shape({})
+const schema = yup.object().shape({
+  firstname: yup.string().required('Debe de ingresar un nombre'),
+  email: yup
+    .string()
+    .email('Debe de ingresar un correo válido')
+    .required('Debe de ingresar un correo'),
+  password: yup
+    .string()
+    .min(6, 'Debe de llevar 6 o más caracteres')
+    .required('Debe de ingresar una contraseña'),
+  passwordRepeat: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Las contraseñas deben de coincidir'),
+  phone: yup.string().required('Debe de ingresar un número telefónico'),
+  role: yup.string().required('Debe de ingresar un rol')
+})
 
 type FormValues = {
   firstname: string
@@ -16,9 +33,14 @@ type FormValues = {
   role: string
 }
 
-const NewProject = () => {
+const NewUserForm = () => {
   const { createUser } = useUsers()
+  const { roles, getRoles } = useRoles()
   const router = useRouter()
+
+  useEffect(() => {
+    getRoles({ perPage: 1000 })
+  }, [])
 
   const onSubmit = async (data: FormValues) => {
     const response = await createUser({
@@ -57,7 +79,15 @@ const NewProject = () => {
             <Input
               control={control}
               name="password"
+              type="password"
               label="Contraseña"
+              error={errors.password}
+            />
+            <Input
+              control={control}
+              name="password-repeat"
+              type="password"
+              label="Repertir contraseña"
               error={errors.password}
             />
             <Input
@@ -68,7 +98,9 @@ const NewProject = () => {
               added="phone"
             />
             <Select control={control} label="Rol" name="role">
-              <option value="test">Test</option>
+              {Object.keys(roles).map((key) => (
+                <option key={key} value={key}>{roles[key].name}</option>
+              ))}
             </Select>
           </>
         )}
@@ -77,4 +109,4 @@ const NewProject = () => {
   )
 }
 
-export default NewProject
+export default NewUserForm

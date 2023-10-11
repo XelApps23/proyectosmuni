@@ -1,4 +1,3 @@
-import { type } from 'os'
 import { ReactNode, useState } from 'react'
 
 type Tab = {
@@ -9,10 +8,16 @@ type Tab = {
 
 type Props = {
   tabs: Tab[]
+  changedTab?: (tab: number) => void
 }
 
-const Tabs = ({ tabs }: Props) => {
+const Tabs = ({ tabs, changedTab }: Props) => {
   const [activeTab, setActiveTab] = useState(0)
+
+  const handleTab = (index: number) => {
+    setActiveTab(index)
+    changedTab && changedTab(index)
+  }
 
   return (
     <>
@@ -21,9 +26,8 @@ const Tabs = ({ tabs }: Props) => {
           {tabs.map((tab, index) => (
             <>
               <li className="mr-2" key={tab.name}>
-                <a
-                  onClick={() => setActiveTab(index)}
-                  href="#"
+                <button
+                  onClick={() => handleTab(index)}
                   className={
                     (activeTab === index
                       ? 'border-blue2 border-b-2'
@@ -33,7 +37,7 @@ const Tabs = ({ tabs }: Props) => {
                 >
                   <div className="w-4 h-4 mr-4">{tab.icon}</div>
                   <span>{tab.name}.</span>
-                </a>
+                </button>
               </li>
             </>
           ))}

@@ -23,7 +23,7 @@ const buttonVariants = {
     text: 'text-sm text-black2'
   },
   primary: {
-    button: 'flex px-2.5 py-2.5 rounded-lg bg-blue2 hover:bg-prioridadBaja',
+    button: 'flex px-2.5 py-2 rounded-lg bg-blue2 hover:bg-prioridadBaja',
     icon: 'w-4 h-4 ',
     text: 'text-base text-white1 '
   },

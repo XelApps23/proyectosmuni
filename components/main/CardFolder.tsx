@@ -22,13 +22,14 @@ const CardFolder = ({ title, projectId, progress }: CardFolderProps) => {
       <Image src={Folder} alt="Folder" className="xl:w-32 sm:w-24 w-20 mb-4" />
       <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-full mb-2">
         <span className="text-base">
-          {title} dsa dsa dsa das as das dsa das dsa dasd
+          {title}
         </span>
       </div>
       <div className="w-full flex">
         <div className="bg-fondo rounded-full h-4 w-full">
           <div
-            className={'bg-estadoListo rounded-full h-4 ' + ` w-[${progress}%]`}
+            style={{ width: `${progress}%` }}
+            className={'bg-estadoListo rounded-full h-4 '}
           />
         </div>
         <p className="text-sm ml-4 text-gray2 w-9 mb-2">{progress}%</p>

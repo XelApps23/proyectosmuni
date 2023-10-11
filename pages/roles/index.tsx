@@ -1,10 +1,18 @@
 import Card from '@/components/main/Card'
 import PageHeader from '@/components/main/PageHeader'
 import Table from '@/components/main/Table'
+import useRoles from '@/hooks/useRoles'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const index = () => {
   const router = useRouter()
+
+  const { roles, getRoles } = useRoles()
+
+  useEffect(() => {
+    getRoles({})
+  }, [])
 
   return (
     <Card>
@@ -14,24 +22,10 @@ const index = () => {
         actionText="Crear rol"
       />
       <Table
-        headers={['Nombre', 'Descripción', 'Acciones']}
-        cells={[
-          {
-            name: 'Administrador',
-            description: 'Tiene acceso a todo',
-            actions: 'Editar | Eliminar'
-          },
-          {
-            name: 'Supervisor',
-            description: 'Tiene acceso a todo',
-            actions: 'Editar | Eliminar'
-          },
-          {
-            name: 'Cliente',
-            description: 'Tiene acceso a todo',
-            actions: 'Editar | Eliminar'
-          }
-        ]}
+        headers={['Nombre', 'Acciones']}
+        cells={Object.keys(roles).map((key) => ({
+          name: roles[key].name
+        }))}
       />
     </Card>
   )

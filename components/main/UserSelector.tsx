@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import SearchIcon from '../icons/SearchIcon'
 import useUsers from '@/hooks/useUsers'
 import CancelIcon from '../icons/CancelIcon'
-import Button from './Button'
 
 const variantsInput = {
   normal: {
@@ -38,6 +37,7 @@ type Props = {
   placeholder?: boolean
   label: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  setIds: any
 }
 
 const UserSelector = ({
@@ -64,9 +64,9 @@ const UserSelector = ({
     console.log(users)
   }, [users])
 
-  function useOutsideAlerter(ref: any) {
+  function useOutsideAlerter (ref: any) {
     useEffect(() => {
-      function handleClickOutside(event: any) {
+      function handleClickOutside (event: any) {
         if (ref.current && !ref.current.contains(event.target)) {
           setOpenDialog(false)
         }
