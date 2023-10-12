@@ -103,7 +103,7 @@ const UserSelector = ({
   return (
     <>
       <div ref={wrapperRef}>
-        <div className="p-1 bg-blue1">
+        <div className="p-1">
           {localIds.map((id) => (
             <div
               key={id}

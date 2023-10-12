@@ -6,7 +6,8 @@ import {
   getDoc,
   getDocs,
   addDoc,
-  updateDoc
+  updateDoc,
+  increment
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
 import { ProjectList, ProjectUpdate } from './types/Project'
@@ -69,12 +70,25 @@ const useProjects = () => {
       expectedDate: expectedDate || null,
       idState: null,
       done: false,
+      totalTasks: 107,
+      doneTasks: 0,
+      startedTasks: 0,
+      stoppedTasks: 0,
+      notStartedTasks: 107,
       createdAt: new Date(),
       updateAt: new Date()
     })
     console.log(docRef)
     setLoading(false)
     return docRef.id
+  }
+
+  const updateIncrementalField = async (docId: string, field: string, type: '++' | '--') => {
+    setLoading(true)
+    const pruebaDocRef = doc(db, 'projects', docId)
+    await updateDoc(pruebaDocRef, {
+      [field]: type === '++' ? increment(1) : increment(-1)
+    })
   }
 
   // Actualizar un documento
@@ -93,6 +107,7 @@ const useProjects = () => {
     deteleProject,
     createProject,
     updateProject,
+    updateIncrementalField,
     projects,
     loading
   }

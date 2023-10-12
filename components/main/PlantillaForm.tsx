@@ -8,8 +8,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Button from '../main/Button'
 import { ReactNode, useEffect } from 'react'
-import CancelIcon from '@/components/icons/CancelIcon'
-import MiniButton from './MiniButton'
+import { useRouter } from 'next/router'
+import Card from './Card'
+import ArrowLeftIcon from '../icons/ArrowLeftIcon'
+import Divider from './Divider'
+import ArrowRightIcon from '../icons/ArrowRightIcon'
 
 type PlantillaFormProps<T extends FieldValues> = {
   title: string
