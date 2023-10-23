@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import TaskListTable from './TaskListTable'
 import useTasks from '@/hooks/useTasks'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
+import NewTaskList from './NewTaskList'
 
 type Props = {
   projectId: string
@@ -46,26 +47,47 @@ const TaskListController = ({ projectId }: Props) => {
 
   return (
     <div className="mt-2">
+      <div className="flex flex-col mb-4">
+        <div className="-m-1.5 overflow-x-auto">
+          <div className="p-1.5 min-w-full inline-block">
+            <div className="border border-gray2 rounded-lg overflow-hidden">
+              <table className="min-w-full divide-y divide-gray2">
+                <thead>
+                  <tr>
+                    <th
+                      align="left"
+                      className="py-2 px-6 font-normal text-black2 bg-fondo"
+                    >
+                      Fase y tarea
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
       {Object.keys(phasesList).map((key: string) => (
         <div key={key}>
           <button
-            className="flex items-center p-2 rounded-lg hover:bg-fondo transition-colors mb-1"
+            className="flex items-start justify-between rounded-lg hover:bg-fondo bg-white border-fondo border w-full p-4 h-20 transition-colors mb-1"
             onClick={() => handleFetchTasks(Number(key))}
           >
+            <span className="text-base">{phasesList[Number(key)]}</span>
             <div
               className={
-                'w-5 h-5 mr-2' +
+                'w-5 h-5 mr-2 ' +
                 ` ${
-                  openPhases.includes(Number(key)) ? 'rotate-90' : 'rotate-0'
+                  openPhases.includes(Number(key)) ? 'rotate-90' : 'rotate-180'
                 } transition-transform`
               }
             >
               <ArrowRightIcon />
             </div>
-            <span className="text-base">{phasesList[Number(key)]}</span>
           </button>
+
           {openPhases.includes(Number(key)) && (
-            <TaskListTable
+            <NewTaskList
               idPhase={Number(key)}
               tasks={Object.keys(tasks)
                 .map((key) => tasks[key])

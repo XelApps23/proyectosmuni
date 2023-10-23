@@ -5,6 +5,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { Provider } from 'react-redux'
+import { ChakraProvider } from '@chakra-ui/react'
 
 type Page = NextPage & {
   layout?: (page: ReactElement) => ReactNode
@@ -19,6 +20,8 @@ export default function App ({ Component, pageProps }: Layout) {
     Component.layout ?? ((page) => <Default>{page}</Default>)
 
   return (
-    <Provider store={store}>{layout(<Component {...pageProps} />)}</Provider>
+    <ChakraProvider>
+      <Provider store={store}>{layout(<Component {...pageProps} />)}</Provider>
+    </ChakraProvider>
   )
 }
