@@ -81,10 +81,7 @@ const NewUserForm = () => {
               name="password"
               type="password"
               label="Contraseña"
-              error={errors.password}
             />
-            <Input
-              control={control}
               name="password-repeat"
               type="password"
               label="Repertir contraseña"
