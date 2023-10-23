@@ -12,6 +12,7 @@ import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import useUsers from '@/hooks/useUsers'
 import GanttChart from '@/pages-done/ganttChart'
+import Graphic from '@/pages-done/graphic'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
