@@ -26,7 +26,7 @@ const Notification = ({ notification }: Props) => {
         ' w-full rounded-lg mb-4 flex p-4'
       }
     >
-      <img className="min-h-[60px] min-w-[60px] bg-black1"></img>
+      <img className="min-h-[60px] min-w-[60px] bg-aprobadoHoverig md:bg-black1"></img>
       <div className="text-sm ml-4 flex flex-col justify-between w-full">
         <div>
           <span>{notification.emiter}</span> <span>{notification.type}</span>{' '}

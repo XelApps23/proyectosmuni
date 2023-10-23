@@ -47,7 +47,7 @@ export default function Default({ children }: Props) {
         <>
           <Sidebar />
           <Header />
-          <div className="ml-48 bg-fondo p-4 pt-14 min-h-full">
+          <div className="md:ml-48 ml-0 bg-fondo p-4 pt-14 min-h-full">
             {children}
           </div>
         </>

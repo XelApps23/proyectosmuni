@@ -85,7 +85,7 @@ const Sidebar = () => {
   const router = useRouter()
   console.log(router.pathname)
   return (
-    <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all">
+    <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all md:block hidden">
       <div className="sm:h-36 h-24 relative">
         <div className="bg-blue1 h-1/2" />
         <div className="absolute bg-black1 w-20 h-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
