@@ -15,10 +15,10 @@ const Home = () => {
   return (
     <Card>
       <PageHeader title="Inicio Rápido"></PageHeader>
-      <div className="grid grid-cols-2">
+      <div className="grid md:grid-cols-2">
         <div>
           <div className="text-xl mb-4">Proyectos Recientes</div>
-          <div className="grid lg:grid-cols-2 xl:grid-cols-2 gap-4 grid-cols-2 justify-start bg-white pr-8">
+          <div className="grid lg:grid-cols-2 xl:grid-cols-2 gap-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 justify-start bg-white pr-8">
             {Object.keys(projects).map((key, index) => (
               <CardFolder
                 projectId={key}
@@ -29,7 +29,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div>
+        <div className='hidden md:block'>
           <span className="text-xl">Notificaciones</span>
           <NotificationPanel />
         </div>
