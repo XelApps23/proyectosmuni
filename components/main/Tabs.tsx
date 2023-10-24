@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 
 type Tab = {
@@ -21,7 +22,7 @@ const Tabs = ({ tabs, changedTab }: Props) => {
 
   return (
     <>
-      <div className="border-b border-fondo mt-4">
+      <div className="border-b border-fondo mt-2 mb-4">
         <ul className="flex flex-wrap text-sm text-center text-gray1">
           {tabs.map((tab, index) => (
             <>
@@ -43,7 +44,17 @@ const Tabs = ({ tabs, changedTab }: Props) => {
           ))}
         </ul>
       </div>
-      <div>{tabs[activeTab]?.component}</div>
+      <AnimatePresence mode="wait">
+        {(
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {tabs[activeTab]?.component}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

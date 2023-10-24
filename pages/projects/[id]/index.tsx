@@ -1,10 +1,14 @@
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
+import PlusIcon from '@/components/icons/PlusIcon'
 import UserIcon from '@/components/icons/UserIcon'
+import Button from '@/components/main/Button'
 import Card from '@/components/main/Card'
+import Modal from '@/components/main/Modal'
 import Table from '@/components/main/Table'
 import Tabs from '@/components/main/Tabs'
+import UserSelector from '@/components/main/UserSelector'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
 import TaskListTable from '@/components/tasks/TaskListTable'
@@ -13,12 +17,15 @@ import useTasks from '@/hooks/useTasks'
 import useUsers from '@/hooks/useUsers'
 import GanttChart from '@/pages-done/ganttChart'
 import Graphic from '@/pages-done/graphic'
+import { useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 const ProjectIndex = () => {
   const [currentTab, setCurrentTab] = useState<number>(0)
   const [fetchedTasks, setFetchedTasks] = useState<boolean>(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [ids, setIds] = useState<string[]>([])
 
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
@@ -30,16 +37,47 @@ const ProjectIndex = () => {
     getUsers({})
   }, [])
 
+  const handleInvite = () => {
+    console.log()
+  }
+
   return (
     <Card>
+      <Modal
+        title="Agregar colaborador"
+        isOpen={isOpen}
+        onClose={onClose}
+        actions={
+          <>
+            <Button onClick={() => handleInvite()} variant="primary" text="Confirmar"></Button>
+          </>
+        }
+      >
+        <UserSelector label="Agregar colaborador" setIds={setIds} />
+      </Modal>
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{projects[query.id as string]?.name}</div>
+        <div>
+          <Button
+            onClick={onOpen}
+            variant="primary"
+            icon={<PlusIcon color="white" />}
+            text="Agregar colaborador"
+          />
+        </div>
       </div>
       <Tabs
         changedTab={(tab: number) => setCurrentTab(tab)}
         tabs={[
           {
-            component: <ProjectSummary project={(projects[query.id as string] !== undefined) && projects[query.id as string]} />,
+            component: (
+              <ProjectSummary
+                project={
+                  projects[query.id as string] !== undefined &&
+                  projects[query.id as string]
+                }
+              />
+            ),
             name: 'Resumen',
             icon: <HomeIcon />
           },

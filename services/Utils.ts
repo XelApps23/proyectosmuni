@@ -1,3 +1,7 @@
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+import { Timestamp } from 'firebase/firestore'
+
 export const getPhase = (phase: number) => {
   switch (phase) {
     case 1:
@@ -18,5 +22,13 @@ export const getPhase = (phase: number) => {
       return 'Liquidación del proyecto'
     default:
       return 'No definido'
+  }
+}
+
+export const formatDate = (date: Timestamp, mode: 'PPPP' | 'dd-MM-yyyy' | 'PPPPp') => {
+  if (date) {
+    return format(date.toDate(), mode, { locale: es })
+  } else {
+    return ''
   }
 }
