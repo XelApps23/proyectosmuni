@@ -5,7 +5,8 @@ import {
   ModalContent,
   ModalBody,
   ModalFooter,
-  ModalCloseButton
+  ModalCloseButton,
+  ThemingProps
 } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
@@ -15,11 +16,12 @@ type Props = {
   title: string
   children: ReactNode
   actions?: ReactNode
+  size?: ThemingProps<'Modal'>['size']
 }
 
-const Modal = ({ isOpen, onClose, title, children, actions }: Props) => {
+const Modal = ({ isOpen, onClose, title, children, actions, size = 'md' }: Props) => {
   return (
-    <CkModal isOpen={isOpen} onClose={onClose}>
+    <CkModal isOpen={isOpen} onClose={onClose} size={size}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>

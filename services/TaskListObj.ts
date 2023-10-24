@@ -9,7 +9,7 @@ const TaskListObj: TaskListObjType = [
     index: 1,
     phase: 1,
     description:
-      'Solicitud esctrita del Presidente del COCODE requiriendo al COMUDE el proyecto priorizado'
+      'Solicitud escrita del Presidente del COCODE requiriendo al COMUDE el proyecto priorizado'
   },
   {
     index: 2,

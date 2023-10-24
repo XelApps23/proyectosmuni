@@ -5,9 +5,9 @@ type Task = {
   name: string
   index: number
   description: string
-  initialDate: Timestamp
-  endDate: Timestamp
-  expectedDate: Timestamp
+  initialDate: Timestamp | null
+  endDate: Timestamp | null
+  expectedDate: Timestamp | null
   projectId: string
   priority: string
   status: string

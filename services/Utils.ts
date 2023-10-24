@@ -1,3 +1,6 @@
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+
 export const getPhase = (phase: number) => {
   switch (phase) {
     case 1:
@@ -18,5 +21,13 @@ export const getPhase = (phase: number) => {
       return 'Liquidación del proyecto'
     default:
       return 'No definido'
+  }
+}
+
+export const formatDate = (date: any, mode: 'PPPP' | 'dd-MM-yyyy') => {
+  if (date) {
+    return format(date.toDate(), mode, { locale: es })
+  } else {
+    return ''
   }
 }

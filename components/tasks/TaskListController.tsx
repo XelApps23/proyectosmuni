@@ -3,6 +3,7 @@ import TaskListTable from './TaskListTable'
 import useTasks from '@/hooks/useTasks'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
 import NewTaskList from './NewTaskList'
+import { AnimatePresence } from 'framer-motion'
 
 type Props = {
   projectId: string
@@ -60,6 +61,18 @@ const TaskListController = ({ projectId }: Props) => {
                     >
                       Fase y tarea
                     </th>
+                    <th
+                      align="left"
+                      className="py-2 px-6 font-normal text-black2 bg-fondo w-1/2"
+                    >
+                      Descripción
+                    </th>
+                    <th
+                      align="left"
+                      className="py-2 px-6 font-normal text-black2 bg-fondo"
+                    >
+                      Estado
+                    </th>
                   </tr>
                 </thead>
               </table>
@@ -86,19 +99,19 @@ const TaskListController = ({ projectId }: Props) => {
             </div>
           </button>
 
-          {openPhases.includes(Number(key)) && (
-            <NewTaskList
-              idPhase={Number(key)}
-              tasks={Object.keys(tasks)
-                .map((key) => tasks[key])
-                .filter((task) => task.phase === Number(key))
-                .reduce((cur, task) => {
-                  return Object.assign(cur, { [task.id]: task })
-                }, {})}
-              loading={loading}
-              projectId={projectId}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            {openPhases.includes(Number(key)) && (
+              <NewTaskList
+                tasks={Object.keys(tasks)
+                  .map((key) => tasks[key])
+                  .filter((task) => task.phase === Number(key))
+                  .reduce((cur, task) => {
+                    return Object.assign(cur, { [task.id]: task })
+                  }, {})}
+                loading={false}
+              />
+            )}
+          </AnimatePresence>
         </div>
       ))}
     </div>
