@@ -10,6 +10,11 @@ type Project = {
   idState: string
   idDocument: string
   done: boolean
+  doneTasks: number
+  totalTasks: number
+  startedTasks: number
+  stoppedTasks: number
+  notStartedTasks: number
   createdAt: Timestamp
   updatedAt: Timestamp
 }

@@ -1,41 +1,40 @@
-import BaseLayout from '@/src/components/BaseLayout'
-import Button from '@/components/main/Button'
+import Card from '@/components/main/Card'
+import CardFolder from '@/components/main/CardFolder'
+import PageHeader from '@/components/main/PageHeader'
+import NotificationPanel from '@/components/notifications/NotificationPanel'
 import useProjects from '@/hooks/useProjects'
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
-import CardFolder from '@/components/main/CardFolder'
-import PlusIcon from '@/components/icons/PlusIcon'
 
 const Home = () => {
-  const { getProjects, projects } = useProjects()
-  const router = useRouter()
+  const { projects, getProjects } = useProjects()
 
   useEffect(() => {
     getProjects()
   }, [])
 
   return (
-    <BaseLayout>
-      <div className="grid p-10 w-full bg-white1 rounded-lg gap-8">
-        <div className="flex justify-between items-center w-full ">
-          <h1 className="text-xl">Proyectos Recientes</h1>
-          <div className='w-40'>
-            <Button variant="primary" text="Nuevo proyecto" icon={<PlusIcon/>} onClick={() => router.push('/projects/new-project')}/>
+    <Card>
+      <PageHeader title="Inicio Rápido"></PageHeader>
+      <div className="grid grid-cols-2">
+        <div>
+          <div className="text-xl mb-4">Proyectos Recientes</div>
+          <div className="grid lg:grid-cols-2 xl:grid-cols-2 gap-4 grid-cols-2 justify-start bg-white pr-8">
+            {Object.keys(projects).map((key, index) => (
+              <CardFolder
+                projectId={key}
+                key={key}
+                title={projects[key].name}
+                progress={projects[key].progress || 22}
+              />
+            ))}
           </div>
         </div>
-
-        <div className="flex flex-wrap justify-start gap-y-8 gap-x-3.5 bg-white w-full">
-          {Object.keys(projects).map((key, index) => (
-         <CardFolder
-          projectId={key}
-          key={key}
-          title={projects[key].name}
-          porcentaje={22}
-          />
-          ))}
+        <div>
+          <span className="text-xl">Notificaciones</span>
+          <NotificationPanel />
         </div>
       </div>
-    </BaseLayout>
+    </Card>
   )
 }
 

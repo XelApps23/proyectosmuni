@@ -1,33 +1,20 @@
 import { Timestamp } from 'firebase/firestore'
 
 type Role = {
-    id: string,
-    name: string,
-    description: string,
-    permissions: Object,
-    createAt: Timestamp, 
-    updateAt: Timestamp, 
+    id: string
+    name: string
+    description: string
+    permissions: Object
+    status: string
+    createAt: Timestamp
+    updateAt: Timestamp
 }
 
 interface RoleList {
-    [key: string]: Role;
+  [key: string]: Role
 }
 
-type RoleInput = {
-    name: string,
-    description: string,
-    permissions: Object,
-    createAt: Timestamp, 
-    updateAt: Timestamp,
-  };
+interface RoleInput extends Omit<Role, 'id'> {}
+type RoleUpdate = Partial<RoleInput>
 
-type RoleUpdate =  Partial<{
-    name: string,
-    description: string,
-    permissions: Object,
-    createAt: Timestamp, 
-    updateAt: Timestamp,
-}>;
-
-
-export type {RoleList, Role, RoleInput, RoleUpdate};
+export type { RoleList, Role, RoleInput, RoleUpdate }

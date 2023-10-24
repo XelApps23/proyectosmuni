@@ -45,7 +45,7 @@ const NewProject = () => {
     router.push(`/projects/${projectId}`)
   }
   return (
-    <div className="w-[500px]">
+    <div className="w-1/2">
       <PlantillaForm
         schema={schema}
         title="Nuevo Proyecto"
@@ -59,7 +59,7 @@ const NewProject = () => {
             <Input
               control={control}
               name="name"
-              label="Nombre del Proyecto"
+              label="Nombre del proyecto"
               error={errors.name}
             />
             <Input

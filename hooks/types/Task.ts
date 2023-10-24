@@ -3,11 +3,18 @@ import { Timestamp } from 'firebase/firestore'
 type Task = {
   id: string
   name: string
+  index: number
   description: string
-  endDate: Timestamp
   initialDate: Timestamp
-  idUser: string
-  done: boolean
+  endDate: Timestamp
+  expectedDate: Timestamp
+  projectId: string
+  priority: string
+  status: string
+  phase: number
+  files: string[]
+  updated: string[]
+  assignedUsers: string[]
   createdAt: Timestamp
   updatedAt: Timestamp
 }
