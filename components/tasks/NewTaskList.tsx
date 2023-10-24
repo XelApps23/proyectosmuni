@@ -13,6 +13,9 @@ import MenuIcon from '../icons/MenuIcon'
 import ArchiveIcon from '../icons/ArchiveIcon'
 import ChatIcon from '../icons/ChatIcon'
 import EditIcon from '../icons/EditIcon'
+import useFile from '@/hooks/useFile'
+import { useDispatch, useSelector } from 'react-redux'
+import useUpdates from '@/hooks/useUpdates'
 
 type Props = {
   tasks: TaskList
@@ -28,10 +31,36 @@ const styles = {
 const NewTaskList = ({ tasks, loading }: Props) => {
   const [currentTask, setCurrentTask] = useState<string>('')
   const { onClose, isOpen, onOpen } = useDisclosure()
+  const [file, setFile] = useState(null)
+  const { uploadFile, progress, downloadURL, getFilesOfTask, files } = useFile()
+  const { getUpdatesOfTask, updates, createUpdate } = useUpdates()
+
+  const { id } = useSelector((state) => state.login)
 
   const handleModal = (key: string) => {
     onOpen()
     setCurrentTask(key)
+  }
+
+  const enviarArchivo = () => {
+    if (file) {
+      uploadFile(file, id, currentTask)
+    } else {
+      console.log('No se ha seleccionado un archivo')
+    }
+  }
+
+  const getFile = (e) => {
+    setFile(e.target.files[0])
+  }
+
+  const handleChangeTab = (tab: number) => {
+    if (tab === 1) {
+      getUpdatesOfTask(currentTask)
+    }
+    if (tab === 2) {
+      getFilesOfTask(currentTask)
+    }
   }
 
   return (
@@ -86,6 +115,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
         onClose={onClose}
       >
         <Tabs
+          changedTab={(tab) => handleChangeTab(tab)}
           tabs={[
             {
               icon: <MenuIcon />,
@@ -97,7 +127,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>Estado</h2>
                     <p className="col-span-2 flex">
-                    <div className="w-20">
+                      <div className="w-20">
                         <Bubble type={tasks[currentTask]?.status} />
                       </div>
                       <div className="ml-4 w-6 h-6">
@@ -151,12 +181,49 @@ const NewTaskList = ({ tasks, loading }: Props) => {
             {
               name: 'Actualizaciones',
               icon: <ChatIcon />,
-              component: <>Hello</>
+              component: (
+                <>
+                  <button
+                    onClick={() =>
+                      createUpdate({
+                        userId: id,
+                        taskId: currentTask,
+                        description: 'Descripción'
+                      })
+                    }
+                  >
+                    Enviar
+                  </button>
+                  <div>
+                    {Object.keys(updates)
+                      .map((key) => updates[key])
+                      .filter((update) => update.taskId === currentTask)
+                      .map((update, index) => (
+                        <p key={update.id}>{formatDate(update.createdAt, 'PPPPp')}</p>
+                      ))}
+                  </div>
+                </>
+              )
             },
             {
               name: 'Archivos',
               icon: <ArchiveIcon />,
-              component: <>Hello</>
+              component: (
+                <>
+                  {Object.keys(files)
+                    .map((key) => files[key])
+                    .filter((file) => file.taskId === currentTask)
+                    .map((file, index) => (
+                      <p key={file.id}>{file.url}</p>
+                    ))}
+                  <input
+                    type="file"
+                    onChange={getFile}
+                    accept="application/pdf"
+                  ></input>
+                  <button onClick={enviarArchivo}>Enviar</button>
+                </>
+              )
             }
           ]}
         ></Tabs>
