@@ -1,31 +1,33 @@
-import { useState, useEffect } from 'react'
-import { client } from '../../utils/fetchWrapper'
-
 // components
+import { useState, useEffect } from 'react'
 import Grid from '../../components/ganttChart/Grid'
 import Tasks from '../../components/ganttChart/Tasks'
 import TimeTable from '../../components/ganttChart/TimeTable'
+import client from '../../utils/fetchWrapper'
 
 export default function GanttChart () {
   const [tasks, setTasks] = useState(null)
   const [taskDurations, setTaskDurations] = useState(null)
   const [timeRange] = useState({
-    fromSelectMonth: 0,
+    fromSelectMonth: 9,
     fromSelectYear: '2023',
-    toSelectMonth: 1,
+    toSelectMonth: 11,
     toSelectYear: '2023'
   })
 
   useEffect(() => {
-    client('data.json').then(
-      (data) => {
-        setTasks(data?.tasks)
-        setTaskDurations(data?.taskDurations)
-      },
-      (error) => {
-        console.error('Error: ', error)
+    const fetchData = async () => {
+      try {
+        const jsonResponse = await client()
+        const { tasks, taskDurations } = JSON.parse(jsonResponse)
+        setTasks(tasks)
+        setTaskDurations(taskDurations)
+      } catch (error) {
+        console.error('Error al obtener los datos:', error)
       }
-    )
+    }
+
+    fetchData()
   }, [])
 
   return (
@@ -46,11 +48,11 @@ export default function GanttChart () {
       <style jsx>{`
         #gantt-container {
           --color-text: #272a2e;
-          --color-primary-dark: #1F76C2;
-          --color-primary-light: #CCE5FF;
+          --color-primary-dark: #0195e4;
+          --color-primary-light: #9ddcff;
           --color-secondary: #0073ea;
           --color-tertiary: #f7f7f7;
-          --color-orange: #D83A52;
+          --color-orange: #ef5350;
           --color-outline: #e9eaeb;
           --border-radius: 5px;
           --cell-height: 40px;
