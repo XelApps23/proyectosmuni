@@ -97,10 +97,11 @@ const useRoles = () => {
   }
 
   const updateRole = async (docId: string) => {}
-    
+
   return {
     roles,
     getRoles,
+    getRole,
     updateRole,
     deleteRole,
     createRole,

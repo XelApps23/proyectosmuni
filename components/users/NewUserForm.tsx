@@ -6,6 +6,8 @@ import Select from '../main/Select'
 import useUsers from '@/hooks/useUsers'
 import useRoles from '@/hooks/useRoles'
 import { useEffect } from 'react'
+import { User } from '@/hooks/types/User'
+import VisibilityIcon from '../icons/VisibilityIcon'
 
 const schema = yup.object().shape({
   firstname: yup.string().required('Debe de ingresar un nombre'),
@@ -33,7 +35,12 @@ type FormValues = {
   role: string
 }
 
-const NewUserForm = () => {
+type Props = {
+  edit?: boolean
+  defaultUser?: User
+}
+
+const NewUserForm = ({ edit = false, defaultUser }: Props) => {
   const { createUser } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
@@ -43,7 +50,7 @@ const NewUserForm = () => {
   }, [])
 
   const onSubmit = async (data: FormValues) => {
-    const response = await createUser({
+    await createUser({
       email: data.email,
       firstname: data.firstname,
       lastname: data.lastname,
@@ -55,7 +62,20 @@ const NewUserForm = () => {
   }
   return (
     <div className="md:w-1/2 w-full">
-      <PlantillaForm schema={schema} title="Nuevo Usuario" onSubmit={onSubmit}>
+      <PlantillaForm
+        schema={schema}
+        title="Nuevo Usuario"
+        onSubmit={onSubmit}
+        defaultValues={
+          edit && {
+            email: defaultUser?.email,
+            firstname: defaultUser?.firstname,
+            lastname: defaultUser?.lastname,
+            phone: defaultUser?.phone,
+            role: defaultUser?.role
+          }
+        }
+      >
         {(control, errors) => (
           <>
             <Input
@@ -81,11 +101,14 @@ const NewUserForm = () => {
               name="password"
               type="password"
               label="Contraseña"
+              error={errors.password}
             />
-              name="password-repeat"
+            <Input
+              control={control}
+              name="passwordRepeat"
               type="password"
               label="Repertir contraseña"
-              error={errors.password}
+              error={errors.passwordRepeat}
             />
             <Input
               control={control}
@@ -96,7 +119,9 @@ const NewUserForm = () => {
             />
             <Select control={control} label="Rol" name="role">
               {Object.keys(roles).map((key) => (
-                <option key={key} value={key}>{roles[key].name}</option>
+                <option key={key} value={key}>
+                  {roles[key].name}
+                </option>
               ))}
             </Select>
           </>

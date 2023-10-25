@@ -9,11 +9,13 @@ import {
   setDoc,
   where,
   limit,
-  startAfter
+  startAfter,
+  updateDoc
 } from 'firebase/firestore'
 import { UserList } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auxAuth, db } from '@/services/Firebase'
+import { auth, auxAuth, db } from '@/services/Firebase'
+import useRoles from './useRoles'
 
 type UserFormInput = {
   firstname?: string
@@ -24,31 +26,50 @@ type UserFormInput = {
   role: string
 }
 
+type GetUsersParams = {
+  perPage?: number
+  withRole?: boolean
+}
+
 const table = 'users'
 
 const useUsers = () => {
   const [users, setUsers] = useState<UserList>({})
   const [loading, setLoading] = useState(false)
   const [last, setLast] = useState<any>(null)
+  const { roles, getRole } = useRoles()
 
-  const getUsers = async ({ perPage = 10 }) => {
+  const getUsers = async ({ perPage = 10, withRole = false }: GetUsersParams) => {
     setLoading(true)
     let datos: any = { ...users }
     let preparedQuery
 
     if (last === null) {
-      preparedQuery = query(collection(db, table), where('status', '==', 'active'), limit(perPage))
+      preparedQuery = query(
+        collection(db, table),
+        where('status', '==', 'active'),
+        limit(perPage)
+      )
     } else {
-      preparedQuery = query(collection(db, table), where('status', '==', 'active'), limit(perPage), startAfter(last))
+      preparedQuery = query(
+        collection(db, table),
+        where('status', '==', 'active'),
+        limit(perPage),
+        startAfter(last)
+      )
     }
 
     const querySnapshot = await getDocs(preparedQuery)
     setLast(querySnapshot.docs[querySnapshot.docs.length - 1])
 
     querySnapshot.forEach((doc) => {
-      const userData = { ...doc.data(), id: doc.id }
+      const data = doc.data()
+      const userData = { ...data, id: doc.id }
       if (!datos[doc.id]) {
         datos = { ...datos, [doc.id]: userData }
+        if (withRole) {
+          getRole(data.role)
+        }
       }
     })
     setUsers(datos)
@@ -72,8 +93,10 @@ const useUsers = () => {
 
   const deleteUser = async (id: string) => {
     setLoading(true)
-    await getUser(id)
-    await deleteDoc(doc(db, table, id))
+    await updateDoc(doc(db, table, id), {
+      status: 'deleted',
+      updatedAt: new Date()
+    })
     setLoading(false)
   }
 
@@ -112,10 +135,12 @@ const useUsers = () => {
   return {
     users,
     getUsers,
+    getUser,
     updateUser,
     deleteUser,
     createUser,
-    loading
+    loading,
+    roles
   }
 }
 

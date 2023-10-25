@@ -1,7 +1,7 @@
 type Props = {
   headers: string[]
   cells: {
-    [key: string]: string
+    [key: string]: string | JSX.Element
   }[]
 }
 
