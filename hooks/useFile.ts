@@ -1,7 +1,21 @@
 import { useState } from 'react'
-import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
+import {
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+  deleteObject
+} from 'firebase/storage'
 import { db, storage } from '../services/Firebase'
-import { addDoc, collection, getDocs, orderBy, query, where } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  where
+} from 'firebase/firestore'
 import { FileList } from './types/File'
 
 const table = 'files'
@@ -34,10 +48,32 @@ const useFile = () => {
     setLoading(false)
   }
 
+  const deleteFile = async (idRef: string, urlRef: string) => {
+    setLoading(true)
+    let datos = {}
+    Object.keys(files)
+      .map((key) => files[key])
+      .filter((file) => file.id != idRef)
+      .map((file) => {
+        datos = { ...datos, [file.id]: file }
+      })
+    setFiles(datos)
+    const storageRef = ref(storage, urlRef)
+    await deleteObject(storageRef)
+      .then(() => {
+        console.log('Imagen borrada exitosamente')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    await deleteDoc(doc(db, table, idRef))
+    setLoading(false)
+  }
+
   const uploadFile = async (file: File, userId: string, taskId: string) => {
     const storageRef = ref(storage, `/${file.name}`)
     const uploadTask = uploadBytesResumable(storageRef, file)
-
+    let datos = files
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -65,6 +101,7 @@ const useFile = () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
           setDownloadURL(url)
           const docRef = await addDoc(collection(db, table), {
+            name: file.name,
             url,
             extension: file.type,
             userId,
@@ -73,6 +110,7 @@ const useFile = () => {
             updateAt: new Date()
           })
           console.log(docRef)
+          getFilesOfTask(taskId)
           setLoading(false)
         })
       }
@@ -80,7 +118,15 @@ const useFile = () => {
     setLoading(false)
   }
 
-  return { uploadFile, loading, progress, downloadURL, getFilesOfTask, files }
+  return {
+    uploadFile,
+    loading,
+    progress,
+    downloadURL,
+    getFilesOfTask,
+    files,
+    deleteFile
+  }
 }
 
 export default useFile
