@@ -23,14 +23,12 @@ import { useEffect, useState } from 'react'
 
 const ProjectIndex = () => {
   const [currentTab, setCurrentTab] = useState<number>(0)
-  const [fetchedTasks, setFetchedTasks] = useState<boolean>(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [ids, setIds] = useState<string[]>([])
 
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
   const { users, getUsers } = useUsers()
-  const { getTaskFiltered, tasks, loading } = useTasks()
 
   useEffect(() => {
     getProject(query.id as string)

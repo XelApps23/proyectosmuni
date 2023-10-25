@@ -7,13 +7,18 @@ type ButtonProps = {
   onlyIcon?: boolean
   onlyText?: boolean
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
-  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon'
+  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'simple'
   fullWidth?: boolean
 }
 
 const buttonVariants = {
   menu: {
     button: 'flex px-2 py-2.5 mb-2 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
+    icon: 'w-5 h-5 ',
+    text: 'text-sm text-black2'
+  },
+  simple: {
+    button: 'hover:bg-fondo transition-colors py-2 px-2.5 rounded-lg mx-2 ',
     icon: 'w-5 h-5 ',
     text: 'text-sm text-black2'
   },
@@ -28,12 +33,12 @@ const buttonVariants = {
     text: 'text-base text-white1 '
   },
   login: {
-    button: `flex text-white1 px-2.5 py-2.5 rounded-[50px] bg-blue2
+    button: `flex text-white1 px-2.5 py-2 rounded-[50px] bg-blue2
     hover:outline hover:bg-white1 hover:text-blue2`,
     text: 'text-base '
   },
   cancelar: {
-    button: `flex text-white1  px-2.5 py-2.5 rounded-[50px] bg-errorDefault
+    button: `flex text-white1  px-2.5 py-2 rounded-lg bg-errorDefault
     hover:bg-white1  hover:outline hover:text-errorHoverig `,
     text: 'text-base '
   }

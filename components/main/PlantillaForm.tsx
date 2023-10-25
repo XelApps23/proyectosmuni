@@ -42,10 +42,6 @@ const PlantillaForm = <T extends object>({
     resolver: yupResolver(schema)
   })
 
-  useEffect(() => {
-    console.log(errors)
-  }, [errors])
-
   return (
     <Card>
       <div className="flex items-center">
@@ -61,7 +57,7 @@ const PlantillaForm = <T extends object>({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           {children(control, errors)}
-          <div className="flex justify-end w-full">
+          <div className="flex justify-end w-full mt-4">
             <Button
               icon={<ArrowRightIcon color="white" />}
               type="submit"

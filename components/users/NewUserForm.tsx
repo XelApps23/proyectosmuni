@@ -6,6 +6,8 @@ import Select from '../main/Select'
 import useUsers from '@/hooks/useUsers'
 import useRoles from '@/hooks/useRoles'
 import { useEffect } from 'react'
+import { User } from '@/hooks/types/User'
+import VisibilityIcon from '../icons/VisibilityIcon'
 
 const schema = yup.object().shape({
   firstname: yup.string().required('Debe de ingresar un nombre'),
@@ -33,29 +35,58 @@ type FormValues = {
   role: string
 }
 
-const NewUserForm = () => {
-  const { createUser } = useUsers()
+type Props = {
+  edit?: boolean
+  defaultUser?: User
+}
+
+const NewUserForm = ({ edit = false, defaultUser }: Props) => {
+  const { createUser, updateUser } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
 
   useEffect(() => {
     getRoles({ perPage: 1000 })
+    console.log(defaultUser)
   }, [])
 
   const onSubmit = async (data: FormValues) => {
-    const response = await createUser({
-      email: data.email,
-      firstname: data.firstname,
-      lastname: data.lastname,
-      password: data.password,
-      phone: data.phone,
-      role: data.role
-    })
-    router.push('/users/')
+    if (!edit) {
+      await createUser({
+        email: data.email,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        password: data.password,
+        phone: data.phone,
+        role: data.role
+      })
+      router.push('/users/')
+    } else if (defaultUser) {
+      await updateUser(defaultUser.id, {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        phone: data.phone,
+        role: data.role
+      })
+      router.push('/users/')
+    }
   }
   return (
     <div className="md:w-1/2 w-full">
-      <PlantillaForm schema={schema} title="Nuevo Usuario" onSubmit={onSubmit}>
+      <PlantillaForm
+        schema={edit ? schema.omit(['password', 'passwordRepeat', 'email']) : schema}
+        title={edit ? 'Editar usuario' : 'Nuevo usuario'}
+        onSubmit={onSubmit}
+        defaultValues={
+          edit && {
+            email: defaultUser?.email,
+            firstname: defaultUser?.firstname,
+            lastname: defaultUser?.lastname,
+            phone: defaultUser?.phone,
+            role: defaultUser?.role
+          }
+        }
+      >
         {(control, errors) => (
           <>
             <Input
@@ -75,28 +106,38 @@ const NewUserForm = () => {
               name="email"
               label="Correo electrónico"
               error={errors.email}
+              disabled={edit}
             />
-            <Input
-              control={control}
-              name="password"
-              type="password"
-              label="Contraseña"
-            />
-              name="password-repeat"
-              type="password"
-              label="Repertir contraseña"
-              error={errors.password}
-            />
+            {!edit && (
+              <Input
+                control={control}
+                name="password"
+                type="password"
+                label="Contraseña"
+                error={errors.password}
+              />
+            )}
+            {!edit && (
+              <Input
+                control={control}
+                name="passwordRepeat"
+                type="password"
+                label="Repertir contraseña"
+                error={errors.passwordRepeat}
+              />
+            )}
             <Input
               control={control}
               name="phone"
               label="Número telefónico"
-              error={errors.password}
+              error={errors.phone}
               added="phone"
             />
             <Select control={control} label="Rol" name="role">
               {Object.keys(roles).map((key) => (
-                <option key={key} value={key}>{roles[key].name}</option>
+                <option key={key} value={key}>
+                  {roles[key].name}
+                </option>
               ))}
             </Select>
           </>
