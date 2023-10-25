@@ -22,8 +22,8 @@ const LayoutInicio = () => {
         </div>
       </div>
       <div className="w-full md:w-1/2 flex items-center justify-center bg-white2">
-        <div className="w-100">
-          <Login></Login>
+        <div className="m-5 md:mr-0">
+          <Login ></Login>
         </div>
       </div>
     </div>

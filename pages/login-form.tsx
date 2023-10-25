@@ -53,18 +53,20 @@ export default function LoginPage () {
   return (
     <div className="flex flex-col justify-center p-12 gap-6 rounded-lg bg-white1 shadow-lg md: w-full">
       <div className="flex flex-col justify-center items-center gap-2">
-        <p className="text-black1 text-4xl font-normal font-['Nunito Sans']">Bienvenido de vuelta</p>
-        <p className="text-gray1 text-3xl font-normal py-3">Para comenzar, inicia sesión</p>
+        <div className="text-center">
+          <p className="text-black1 text-2xl font-normal font-['Nunito Sans'] items-center md:text-4xl mb-2">Bienvenido de vuelta</p>
+          <p className="text-gray1 text-lg font-normal py-3 md:text-3xl">Para comenzar, inicia sesión</p>
+        </div>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-          <p className="text-black1 text-sm md:text-xs mt-1 mb-2">Correo electrónico</p>
-          <input type="email" {...register('email')} className="bg-white h-9 w-full border-2 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault" />
+          <p className="text-black1 text-xs md:text-sm mt-1 mb-2">Correo electrónico</p>
+          <input type="email" {...register('email')} className="bg-white h-9 w-full border-2 p-1 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault" />
 
-          <p className="text-black1 text-sm md:text-xs mt-1 mb-2">Contraseña</p>
+          <p className="text-black1 text-xs md:text-sm mt-1 mb-2">Contraseña</p>
           <input
-            type="password" {...register('password')} className="bg-white h-9 w-full border-2 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault"
+            type="password" {...register('password')} className="bg-white h-9 w-full border-2 p-1 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault"
           />
-          <p className="text-blue1 text-sm md:text-s mt-2 mb-6">¿Olvidaste tu contraseña?</p>
+          <p className="text-blue1 text-xs md:text-sm mt-2 mb-6">¿Olvidaste tu contraseña?</p>
         <Button text="Iniciar sesión" variant="login" onlyText={true} onClick={handleSubmit(onSubmit)} />
         {error && error}
       </form>
