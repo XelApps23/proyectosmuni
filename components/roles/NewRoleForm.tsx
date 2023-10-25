@@ -2,13 +2,11 @@ import * as yup from 'yup'
 import Input from '@/components/main/Input'
 import PlantillaForm from '../main/PlantillaForm'
 import { useRouter } from 'next/router'
-import Select from '../main/Select'
-import useUsers from '@/hooks/useUsers'
 import useRoles from '@/hooks/useRoles'
-import CheckIcon from '../icons/CheckIcon'
 import Divider from '../main/Divider'
 import Checkbox from '../main/Checkbox'
 import { useEffect, useState } from 'react'
+import { Role } from '@/hooks/types/Role'
 
 const schema = yup.object().shape({
   name: yup.string().required('Debe de ingresar un nombre')
@@ -18,22 +16,31 @@ type FormValues = {
   name: string
 }
 
-const NewProject = () => {
-  const [permissions, setPermissions] = useState<string[]>([])
+type Props = {
+  edit?: boolean
+  defaultRole?: Role
+}
 
-  const { createRole, loading } = useRoles()
+const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
+  const [permissions, setPermissions] = useState<string[]>(edit ? defaultRole?.permissions ?? [] : [])
+
+  const { createRole, loading, updateRole } = useRoles()
   const router = useRouter()
 
-  useEffect(() => {
-    console.log(permissions)
-  }, [permissions])
-
   const onSubmit = async (data: FormValues) => {
-    const response = await createRole({
-      name: data.name,
-      permissions
-    })
-    router.push('/roles/')
+    if (!edit) {
+      const response = await createRole({
+        name: data.name,
+        permissions
+      })
+      router.push('/roles/')
+    } else if (defaultRole) {
+      const response = await updateRole(defaultRole.id, {
+        name: data.name,
+        permissions
+      })
+      router.push('/roles/')
+    }
   }
 
   const add = (value: string, checked: boolean) => {
@@ -51,6 +58,9 @@ const NewProject = () => {
         loading={loading}
         title="Nuevo Rol"
         onSubmit={onSubmit}
+        defaultValues={edit && {
+          name: defaultRole?.name
+        }}
       >
         {(control, errors) => (
           <>
@@ -67,62 +77,74 @@ const NewProject = () => {
               <Checkbox
                 label="Crear proyectos"
                 value="projects/create"
+                checked={permissions.includes('projects/create')}
                 controller={add}
               />
               <Checkbox
                 label="Ver todos los proyectos"
                 value="projects/view-all"
                 controller={add}
+                checked={permissions.includes('projects/view-all')}
               />
               <Checkbox
                 label="Ver proyectos asignados"
                 value="projects/view-assign"
                 controller={add}
+                checked={permissions.includes('projects/view-assign')}
               />
               <Checkbox
                 label="Crear nuevas tareas"
                 value="projects/task-create"
                 controller={add}
+                checked={permissions.includes('projects/task-create')}
               />
               <Checkbox
                 label="Ver todas las tareas"
                 value="projects/task-view-all"
                 controller={add}
+                checked={permissions.includes('projects/task-view-all')}
               />
               <Checkbox
                 label="Ver tareas asignadas"
                 value="projects/task-view-assign"
                 controller={add}
+                checked={permissions.includes('projects/task-view-assign')}
               />
               <Checkbox
                 label="Crear actualizaciones en tareas"
-                value="projects/task-"
+                value="projects/task-update"
                 controller={add}
+                checked={permissions.includes('projects/task-update')}
               />
               <Checkbox
                 label="Modificar todas tareas"
                 value="projects/task-update-all"
                 controller={add}
+                checked={permissions.includes('projects/task-update-all')}
               />
               <Checkbox
                 label="Modificar tareas asignadas"
                 value="projects/task-update-assign"
                 controller={add}
+                checked={permissions.includes('projects/task-update-assign')}
               />
               <Checkbox
                 label="Eliminar tareas"
                 value="projects/task-delete"
                 controller={add}
+                checked={permissions.includes('projects/task-delete')}
               />
               <Checkbox
                 label="Invitar participantes al proyecto"
                 value="projects/invite"
                 controller={add}
+                checked={permissions.includes('projects/invite')}
               />
               <Checkbox
                 label="Asignar tareas"
                 value="projects/task-assign"
                 controller={add}
+                checked={permissions.includes('projects/task-assign')}
               />
             </div>
             <Divider />
@@ -132,16 +154,19 @@ const NewProject = () => {
                 label="Crear usuarios"
                 value="users/create"
                 controller={add}
+                checked={permissions.includes('users/create')}
               />
               <Checkbox
                 label="Ver usuarios"
                 value="users/view-all"
                 controller={add}
+                checked={permissions.includes('users/view-all')}
               />
               <Checkbox
                 label="Editar usuarios"
                 value="users/update"
                 controller={add}
+                checked={permissions.includes('users/update')}
               />
             </div>
           </>
@@ -151,4 +176,4 @@ const NewProject = () => {
   )
 }
 
-export default NewProject
+export default NewRoleForm

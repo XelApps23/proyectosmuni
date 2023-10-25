@@ -4,10 +4,10 @@ type Role = {
     id: string
     name: string
     description: string
-    permissions: Object
+    permissions: string[]
     status: string
-    createAt: Timestamp
-    updateAt: Timestamp
+    createdAt: Timestamp
+    updatedAt: Timestamp
 }
 
 interface RoleList {

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   collection,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -12,9 +11,9 @@ import {
   startAfter,
   updateDoc
 } from 'firebase/firestore'
-import { UserList } from './types/User'
+import { UserList, UserUpdate } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth, auxAuth, db } from '@/services/Firebase'
+import { auxAuth, db } from '@/services/Firebase'
 import useRoles from './useRoles'
 
 type UserFormInput = {
@@ -130,7 +129,17 @@ const useUsers = () => {
     setLoading(false)
   }
 
-  const updateUser = async (docId: string) => {}
+  const updateUser = async (id: string, { firstname, lastname, phone, role }: UserUpdate) => {
+    setLoading(true)
+    await updateDoc(doc(db, table, id), {
+      firstname: firstname || null,
+      lastname: lastname || null,
+      phone: phone || null,
+      role: role || null,
+      updatedAt: new Date()
+    })
+    setLoading(false)
+  }
 
   return {
     users,

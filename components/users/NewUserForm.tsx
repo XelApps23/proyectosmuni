@@ -41,30 +41,41 @@ type Props = {
 }
 
 const NewUserForm = ({ edit = false, defaultUser }: Props) => {
-  const { createUser } = useUsers()
+  const { createUser, updateUser } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
 
   useEffect(() => {
     getRoles({ perPage: 1000 })
+    console.log(defaultUser)
   }, [])
 
   const onSubmit = async (data: FormValues) => {
-    await createUser({
-      email: data.email,
-      firstname: data.firstname,
-      lastname: data.lastname,
-      password: data.password,
-      phone: data.phone,
-      role: data.role
-    })
-    router.push('/users/')
+    if (!edit) {
+      await createUser({
+        email: data.email,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        password: data.password,
+        phone: data.phone,
+        role: data.role
+      })
+      router.push('/users/')
+    } else if (defaultUser) {
+      await updateUser(defaultUser.id, {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        phone: data.phone,
+        role: data.role
+      })
+      router.push('/users/')
+    }
   }
   return (
     <div className="md:w-1/2 w-full">
       <PlantillaForm
-        schema={schema}
-        title="Nuevo Usuario"
+        schema={edit ? schema.omit(['password', 'passwordRepeat', 'email']) : schema}
+        title={edit ? 'Editar usuario' : 'Nuevo usuario'}
         onSubmit={onSubmit}
         defaultValues={
           edit && {
@@ -95,26 +106,31 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
               name="email"
               label="Correo electrónico"
               error={errors.email}
+              disabled={edit}
             />
-            <Input
-              control={control}
-              name="password"
-              type="password"
-              label="Contraseña"
-              error={errors.password}
-            />
-            <Input
-              control={control}
-              name="passwordRepeat"
-              type="password"
-              label="Repertir contraseña"
-              error={errors.passwordRepeat}
-            />
+            {!edit && (
+              <Input
+                control={control}
+                name="password"
+                type="password"
+                label="Contraseña"
+                error={errors.password}
+              />
+            )}
+            {!edit && (
+              <Input
+                control={control}
+                name="passwordRepeat"
+                type="password"
+                label="Repertir contraseña"
+                error={errors.passwordRepeat}
+              />
+            )}
             <Input
               control={control}
               name="phone"
               label="Número telefónico"
-              error={errors.password}
+              error={errors.phone}
               added="phone"
             />
             <Select control={control} label="Rol" name="role">

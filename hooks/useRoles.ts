@@ -9,9 +9,10 @@ import {
   where,
   limit,
   startAfter,
-  addDoc
+  addDoc,
+  updateDoc
 } from 'firebase/firestore'
-import { RoleList } from './types/Role'
+import { RoleList, RoleUpdate } from './types/Role'
 import { db } from '@/services/Firebase'
 
 type RoleFormInput = {
@@ -96,7 +97,16 @@ const useRoles = () => {
     setLoading(false)
   }
 
-  const updateRole = async (docId: string) => {}
+  const updateRole = async (id: string, { description, name, permissions }: RoleUpdate) => {
+    setLoading(true)
+    await updateDoc(doc(db, table, id), {
+      description: description || null,
+      name: name || null,
+      permissions: permissions || null,
+      updatedAt: new Date()
+    })
+    setLoading(false)
+  }
 
   return {
     roles,
