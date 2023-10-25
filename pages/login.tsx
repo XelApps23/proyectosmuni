@@ -5,27 +5,28 @@ import LoginLayout from '@/layout/Login'
 const LayoutInicio = () => {
   return (
     <div className="flex h-screen">
-      <div className="w-1/2 bg-blue1 flex items-center justify-center">
-        <div
-          className="flex flex-col justify-center md:block items-center space-y-4 font-nunito-sans font-light"
-          style={{ color: 'white' }}
-        >
+       <div className="w-full md:w-1/2 bg-blue1 hidden md:block">
+        <div className="h-full flex flex-col justify-center items-center space-y-4  font-['Nunito Sans'] text-white1">
           <p className="text-center text-[2.734vw]">
             Empieza a organizar tus proyectos
           </p>
           <p className="text-center text-[2.734vw]">
             de la mejor manera posible
           </p>
-          <p className="text-center text-[2.734vw]">con XelApps</p>
+          <p className="text-center text-[2.734vw]">
+            con XelApps
+          </p>
           <img
-            className="max-w-full h-auto"
+            className="h-100"
             src="/login-images/login.png"
             alt="Imagen Login"
           />
         </div>
       </div>
-      <div className="w-1/2 flex items-center justify-center bg-[#F3F3F3]">
-        <Login></Login>
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-white2">
+        <div className="m-5 md:mr-0">
+          <Login ></Login>
+        </div>
       </div>
     </div>
   )

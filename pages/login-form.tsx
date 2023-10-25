@@ -1,7 +1,6 @@
 // import { FormEvent } from 'react'
-
+import Button from '@/components/main/Button'
 import { useForm } from 'react-hook-form'
-import styles from '../styles/login.module.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -52,24 +51,23 @@ export default function LoginPage () {
   }
 
   return (
-    <div className={styles.container}>
-      <p className={styles.bv}>Bienvenido de vuelta</p>
-      <p className={styles.pis}>Para comenzar, inicia sesión</p>
+    <div className="flex flex-col justify-center p-12 gap-6 rounded-lg bg-white1 shadow-lg md: w-full">
+      <div className="flex flex-col justify-center items-center gap-2">
+        <div className="text-center">
+          <p className="text-black1 text-2xl font-normal font-['Nunito Sans'] items-center md:text-4xl mb-2">Bienvenido de vuelta</p>
+          <p className="text-gray1 text-lg font-normal py-3 md:text-3xl">Para comenzar, inicia sesión</p>
+        </div>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <p className={styles.txt}>Correo electrónico</p>
-        <input type="email" {...register('email')} className={styles.input} />
+          <p className="text-black1 text-xs md:text-sm mt-1 mb-2">Correo electrónico</p>
+          <input type="email" {...register('email')} className="bg-white h-9 w-full border-2 p-1 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault" />
 
-        <p className={styles.txt}>Contraseña</p>
-        <input
-          type="password"
-          className={styles.input}
-          {...register('password')}
-        />
-
-        <p className={styles.txtblue}>¿Olvidaste tu contraseña?</p>
-        <button type="submit" className={styles.btn}>
-          Iniciar sesión
-        </button>
+          <p className="text-black1 text-xs md:text-sm mt-1 mb-2">Contraseña</p>
+          <input
+            type="password" {...register('password')} className="bg-white h-9 w-full border-2 p-1 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault"
+          />
+          <p className="text-blue1 text-xs md:text-sm mt-2 mb-6">¿Olvidaste tu contraseña?</p>
+        <Button text="Iniciar sesión" variant="login" onlyText={true} onClick={handleSubmit(onSubmit)} />
         {error && error}
       </form>
     </div>
