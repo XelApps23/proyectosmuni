@@ -5,8 +5,6 @@ import { Tooltip, useDisclosure } from '@chakra-ui/react'
 import Modal from '../main/Modal'
 import Divider from '../main/Divider'
 import Bubble from '../main/Bubble'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
 import { formatDate } from '@/services/Utils'
 import Tabs from '../main/Tabs'
 import MenuIcon from '../icons/MenuIcon'
@@ -14,7 +12,9 @@ import ArchiveIcon from '../icons/ArchiveIcon'
 import ChatIcon from '../icons/ChatIcon'
 import EditIcon from '../icons/EditIcon'
 import useFile from '@/hooks/useFile'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useUsers from '@/hooks/useUsers'
+import UpdateView from './update'
 import useUpdates from '@/hooks/useUpdates'
 import { useDropzone } from 'react-dropzone'
 import DocumentAddIcon from '../icons/DocumentAddIcon'
@@ -62,7 +62,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   })
 
   const { id } = useSelector((state) => state.login)
-
+  const { getUpdatesOfTask } = useUpdates()
   const handleModal = (key: string) => {
     onOpen()
     setCurrentTask(key)
@@ -100,6 +100,9 @@ const NewTaskList = ({ tasks, loading }: Props) => {
       getUsers({ perPage: 1 })
     }
   }
+  useEffect(() => {
+    getUsers({})
+  }, [])
 
   return (
     <motion.div
@@ -220,27 +223,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
               name: 'Actualizaciones',
               icon: <ChatIcon />,
               component: (
-                <>
-                  <button
-                    onClick={() =>
-                      createUpdate({
-                        userId: id,
-                        taskId: currentTask,
-                        description: 'Descripción'
-                      })
-                    }
-                  >
-                    Enviar
-                  </button>
-                  <div>
-                    {Object.keys(updates)
-                      .map((key) => updates[key])
-                      .filter((update) => update.taskId === currentTask)
-                      .map((update, index) => (
-                        <p key={update.id}>{formatDate(update.createdAt, 'PPPPp')}</p>
-                      ))}
-                  </div>
-                </>
+                <UpdateView currentTask={currentTask} users={users}/>
               )
             },
             {
