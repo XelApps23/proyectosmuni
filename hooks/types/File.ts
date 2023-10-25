@@ -2,6 +2,7 @@ import { Timestamp } from 'firebase/firestore'
 
 type File = {
   id: string
+  name: string
   url: string
   userId: string
   taskId: string
