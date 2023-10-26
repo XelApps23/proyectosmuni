@@ -23,7 +23,7 @@ const Tabs = ({ tabs, changedTab }: Props) => {
   return (
     <>
       <div className="border-b border-fondo mt-2 mb-4">
-        <ul className="flex flex-wrap text-sm text-center text-gray1">
+        <ul className="sm:flex sm:flex-wrap text-sm text-center text-gray1">
           {tabs.map((tab, index) => (
             <>
               <li className="mr-2" key={tab.name}>
