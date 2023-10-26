@@ -23,7 +23,6 @@ import WordIcon from '../icons/WordIcon'
 import ExcelIcon from '../icons/ExcelIcon'
 import TrashIcon from '../icons/TrashIcon'
 import VisibilityIcon from '../icons/VisibilityIcon'
-import useUsers from '@/hooks/useUsers'
 
 type Props = {
   tasks: TaskList
@@ -42,27 +41,25 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   const [file, setFile] = useState([])
   const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
   const { getUsers, users } = useUsers()
-  const { getUpdatesOfTask, updates, createUpdate } = useUpdates()
   const [willUpload, setWillUpload] = useState(false)
 
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles?.length) {
-      setFile(previousFiles => [
-        ...previousFiles,
-        ...acceptedFiles
-      ])
+      setFile((previousFiles) => [...previousFiles, ...acceptedFiles])
     }
   }, [])
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop, accept: {
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
+    onDrop,
+    accept: {
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        [],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
       'aplication/pdf': []
     }
   })
 
   const { id } = useSelector((state) => state.login)
-  const { getUpdatesOfTask } = useUpdates()
   const handleModal = (key: string) => {
     onOpen()
     setCurrentTask(key)
@@ -73,7 +70,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
 
   const enviarArchivo = () => {
     if (file.length != 0) {
-      file.map(newFile => {
+      file.map((newFile) => {
         console.log(newFile)
         uploadFile(newFile, id, currentTask)
       })
@@ -92,9 +89,6 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   }
 
   const handleChangeTab = (tab: number) => {
-    if (tab === 1) {
-      getUpdatesOfTask(currentTask)
-    }
     if (tab === 2) {
       getFilesOfTask(currentTask)
       getUsers({ perPage: 1 })
@@ -222,74 +216,98 @@ const NewTaskList = ({ tasks, loading }: Props) => {
             {
               name: 'Actualizaciones',
               icon: <ChatIcon />,
-              component: (
-                <UpdateView currentTask={currentTask} users={users}/>
-              )
+              component: <UpdateView currentTask={currentTask} users={users} />
             },
             {
               name: 'Archivos',
               icon: <ArchiveIcon />,
               component: (
                 <>
-                  {willUpload ?
-                    (<>
-                      <div {...getRootProps({
-                        className: "w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer"
-                      })}>
+                  {willUpload
+                    ? (
+                    <>
+                      <div
+                        {...getRootProps({
+                          className:
+                            'w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer'
+                        })}
+                      >
                         <span className="flex justify-start space-x-2">
                           <input {...getInputProps()} />
-                          {
-                            file.length > 0 ?
-                              (<ul>
-                                {file.map(file => (
-                                  <li key={file.name}>{file.name}</li>
-                                ))}
-                              </ul>) :
-                              (<div className='flex items-center space-x-2'>
-                                <div className='w-7'>
-                                  <DocumentAddIcon />
-                                </div>
-                                {
-                                  isDragActive ?
-                                    <p>Suelte los archivos a subir aquí</p> :
-                                    <p>Puede arrastrar y soltar archivos aquí o hacer click para seleccionarlos</p>
-                                }
-                              </div>)
-                          }
+                          {file.length > 0
+                            ? (
+                            <ul>
+                              {file.map((file, index) => (
+                                <li key={index}>{file.name}</li>
+                              ))}
+                            </ul>
+                              )
+                            : (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-7">
+                                <DocumentAddIcon />
+                              </div>
+                              {isDragActive
+                                ? (
+                                <p>Suelte los archivos a subir aquí</p>
+                                  )
+                                : (
+                                <p>
+                                  Puede arrastrar y soltar archivos aquí o hacer
+                                  click para seleccionarlos
+                                </p>
+                                  )}
+                            </div>
+                              )}
                         </span>
                       </div>
                       <br />
-                      <div className='flex justify-start space-x-2'>
+                      <div className="flex justify-start space-x-2">
                         <Button
                           onClick={enviarArchivo}
                           variant="primary"
-                          text="Guardar" />
+                          text="Guardar"
+                        />
                         <Button
                           onClick={cancelUpload}
                           variant="primary"
-                          text="Cancelar" />
+                          text="Cancelar"
+                        />
                       </div>
-                    </>) : (
-                      <Button
-                        onClick={() => setWillUpload(true)}
-                        variant="primary"
-                        text="Agregar Archivo"
-                      />)}
+                    </>
+                      )
+                    : (
+                    <Button
+                      onClick={() => setWillUpload(true)}
+                      variant="primary"
+                      text="Agregar Archivo"
+                    />
+                      )}
                   {Object.keys(files)
                     .map((key) => files[key])
                     .filter((listedFile) => listedFile.taskId === currentTask)
                     .map((listedFile, index) => (
-                      <div className='flex space-x-4 border-2 border-gray-300 rounded-xl my-4 p-2'>
-                        <div className='w-[75px]'>
-                          {listedFile.extension.includes('word') ?
-                            <WordIcon /> : <ExcelIcon />}
+                      <div key={listedFile.name} className="flex space-x-4 border-2 border-gray-300 rounded-xl my-4 p-2">
+                        <div className="w-[75px]">
+                          {listedFile.extension.includes('word')
+                            ? (
+                            <WordIcon />
+                              )
+                            : (
+                            <ExcelIcon />
+                              )}
                         </div>
-                        <div className='grid grid-rows-2 items-center gap-y-[50%]'>
-                          <div className='flex justify-between'>
+                        <div className="grid grid-rows-2 items-center gap-y-[50%]">
+                          <div className="flex justify-between">
                             <p key={listedFile.id}>{listedFile.name}</p>
-                            <div className='flex w-10'>
+                            <div className="flex w-10">
                               <Button
-                                onClick={() => deleteFileFromList(listedFile.id, listedFile.url)}
+                                onClick={() =>
+                                  deleteFileFromList(
+                                    listedFile.id,
+                                    listedFile.url
+                                  )
+                                }
                                 variant="icon"
                                 icon={<TrashIcon />}
                               />
@@ -302,14 +320,15 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                               </a>
                             </div>
                           </div>
-                          <div className='flex space-x-8'>
-                            {
-                              Object.keys(users).map((key) => users[key])
-                                .filter((user) => user.id === listedFile.userId)
-                                .map((user, index) => (
-                                  <p>{user.firstname} {user.lastname}</p>
-                                ))
-                            }
+                          <div className="flex space-x-8">
+                            {Object.keys(users)
+                              .map((key) => users[key])
+                              .filter((user) => user.id === listedFile.userId)
+                              .map((user, index) => (
+                                <p key={user.id}>
+                                  {user.firstname} {user.lastname}
+                                </p>
+                              ))}
                             <p>{formatDate(listedFile.createdAt, 'PPPPp')}</p>
                           </div>
                         </div>

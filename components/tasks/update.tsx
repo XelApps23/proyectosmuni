@@ -6,8 +6,8 @@ import CommentUpdate from './commentUpdate'
 import { UserList } from '@/hooks/types/User'
 
 type Props = {
-    currentTask: string
-    users: UserList
+  currentTask: string
+  users: UserList
 }
 
 const UpdateView = ({ currentTask, users }: Props) => {
@@ -47,35 +47,34 @@ const UpdateView = ({ currentTask, users }: Props) => {
   return (
     <>
       <textarea
-      onClick={() => writeUpdate()}
-      className='rounded-md w-[100%] border-solid border-2'
-      rows={rows}
-      placeholder='Añadir un comentario'
-      value={text}
-      onChange={changeText}
-      ></textarea>
-      {
-        isWrite &&
-            <div className='flex gap-x-1 mt-1'>
-              <Button
-                onClick={() => sendUpdate(id)}
-                variant="primary"
-                text="Enviar"
-              />
-              <Button
-                onClick={cancel}
-                variant="icon"
-                text="Cancelar"
-              />
-            </div>
-      }
-      <div className='mt-2'>
+        onClick={() => writeUpdate()}
+        className="rounded-lg w-full border-solid border-2 p-2"
+        rows={rows}
+        placeholder="Añadir un comentario"
+        value={text}
+        onChange={changeText}
+      />
+      {isWrite && (
+        <div className="flex gap-x-1 mt-1 mb-8 items-center">
+          <Button
+            onClick={() => sendUpdate(id)}
+            variant="primary"
+            text="Guardar"
+          />
+          <Button onClick={cancel} variant="simple" text="Cancelar" />
+        </div>
+      )}
+      <div className="mt-2">
         {Object.keys(updates)
           .map((key) => updates[key])
           .filter((update) => update.taskId === currentTask)
           .map((update, index) => (
             <div key={update.id}>
-              <CommentUpdate update={update} users={users} currentTask={currentTask}/>
+              <CommentUpdate
+                update={update}
+                users={users}
+                currentTask={currentTask}
+              />
             </div>
           ))}
       </div>
