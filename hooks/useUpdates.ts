@@ -1,5 +1,5 @@
 import { db } from '@/services/Firebase'
-import { addDoc, collection, getDocs, orderBy, query, where } from 'firebase/firestore'
+import { addDoc, collection, getDocs, orderBy, query, where, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { useState } from 'react'
 import { UpdateList } from './types/Update'
 
@@ -53,11 +53,25 @@ const useUpdates = () => {
     setLoading(false)
   }
 
+  const deteleUpdate = async (id: string) => {
+    setLoading(true)
+    await deleteDoc(doc(db, table, id))
+    setLoading(false)
+  }
+
+  const updateUpdate = async (docId: string, newDescription: string) => {
+    setLoading(true)
+    const docRef = doc(db, table, docId)
+    await updateDoc(docRef, { description: newDescription })
+    setLoading(false)
+  }
   return {
     getUpdatesOfTask,
     loading,
     updates,
-    createUpdate
+    createUpdate,
+    deteleUpdate,
+    updateUpdate
   }
 }
 
