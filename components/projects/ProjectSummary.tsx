@@ -9,7 +9,7 @@ const ProjectSummary = ({
   project
 }: Props) => {
   return (
-    <div className="grid grid-cols-5 grid-rows-3 w-full p-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 grid-rows-3 w-full p-4 gap-4">
       <div className="flex justify-center items-center shadow-lg flex-col w-full h-48 rounded-lg">
         <span className="text-5xl text-black1 mb-4">{project.totalTasks}</span>
         <span className="text-base text-black2">Tareas</span>
