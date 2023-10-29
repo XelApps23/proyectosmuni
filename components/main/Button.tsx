@@ -95,3 +95,80 @@ const Button = ({
 }
 
 export default Button
+ 
+
+/*
+import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { Button as ChButton } from '@chakra-ui/react'
+
+type ButtonProps = {
+  onClick?: () => void
+  text?: string
+  icon?: ReactNode
+  onlyIcon?: boolean
+  onlyText?: boolean
+  type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
+  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'simple' | 'disabled'
+  fullWidth?: boolean
+  disabled?: boolean
+  loading?: boolean
+}
+
+const buttonVariants = {
+  menu: {
+    variant: 'ghost'
+  },
+  simple: {
+    button: 'hover:bg-fondo transition-colors py-2 px-2.5 rounded-lg mx-2 ',
+    icon: 'w-5 h-5 ',
+    text: 'text-sm text-black2'
+  },
+  icon: {
+    button: 'flex p-1 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
+    icon: 'w-5 h-5 ',
+    text: 'text-sm text-black2'
+  },
+  primary: {
+    button: 'flex px-2.5 py-2 rounded-lg bg-blue2 hover:bg-prioridadBaja',
+    icon: 'w-4 h-4 ',
+    text: 'text-base text-white1 '
+  },
+  login: {
+    button: `flex text-white1 px-2.5 py-2 rounded-[50px] bg-blue2
+    hover:outline hover:bg-white1 hover:text-blue2`,
+    text: 'text-base '
+  },
+  cancelar: {
+    button: `flex text-white1  px-2.5 py-2 rounded-lg bg-errorDefault
+    hover:bg-white1  hover:outline hover:text-errorHoverig `,
+    text: 'text-base '
+  },
+  disabled: {
+    button: `flex text-white1  px-2.5 py-2 rounded-lg bg-errorDefault
+    hover:bg-white1  hover:outline hover:text-errorHoverig `,
+    text: 'text-base '
+  }
+}
+
+const Button = ({
+  onClick,
+  text,
+  icon,
+  type = 'button',
+  onlyIcon = false,
+  onlyText = false,
+  fullWidth = false,
+  variant = 'menu',
+  disabled = false,
+  loading = false
+}: ButtonProps) => {
+  return (
+    <ChButton leftIcon={} className="w-full" variant={buttonVariants[variant].variant}>
+      {text}
+    </ChButton>
+  )
+}
+
+export default Button
+
+*/

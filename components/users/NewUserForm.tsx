@@ -41,7 +41,7 @@ type Props = {
 }
 
 const NewUserForm = ({ edit = false, defaultUser }: Props) => {
-  const { createUser, updateUser } = useUsers()
+  const { createUser, updateUser, loading } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
 
@@ -74,6 +74,7 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
   return (
     <div className="md:w-1/2 w-full">
       <PlantillaForm
+        loading={loading}
         schema={edit ? schema.omit(['password', 'passwordRepeat', 'email']) : schema}
         title={edit ? 'Editar usuario' : 'Nuevo usuario'}
         onSubmit={onSubmit}

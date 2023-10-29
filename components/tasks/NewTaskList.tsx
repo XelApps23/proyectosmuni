@@ -13,7 +13,6 @@ import ChatIcon from '../icons/ChatIcon'
 import EditIcon from '../icons/EditIcon'
 import useFile from '@/hooks/useFile'
 import { useSelector } from 'react-redux'
-import useUsers from '@/hooks/useUsers'
 import UpdateView from './update'
 import useUpdates from '@/hooks/useUpdates'
 import { useDropzone } from 'react-dropzone'
@@ -42,7 +41,6 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   const [file, setFile] = useState([])
   const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
   const { getUsers, users } = useUsers()
-  const { getUpdatesOfTask, updates, createUpdate } = useUpdates()
   const [willUpload, setWillUpload] = useState(false)
 
   const onDrop = useCallback(acceptedFiles => {
@@ -72,6 +70,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   }, [willUpload])
 
   const enviarArchivo = () => {
+    setLoading(true)
     if (file.length != 0) {
       file.map(newFile => {
         console.log(newFile)
@@ -81,6 +80,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
     } else {
       console.log('No se ha seleccionado un archivo')
     }
+    setLoading(false)
   }
 
   const cancelUpload = () => {

@@ -13,6 +13,7 @@ import Card from './Card'
 import ArrowLeftIcon from '../icons/ArrowLeftIcon'
 import Divider from './Divider'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
+import Loader from './Loader'
 
 type PlantillaFormProps<T extends FieldValues> = {
   title: string
@@ -20,6 +21,7 @@ type PlantillaFormProps<T extends FieldValues> = {
   children: (control: any, errors: any) => ReactNode
   onSubmit: SubmitHandler<T>
   defaultValues?: DefaultValues<T>
+  loading?: boolean
 }
 
 const PlantillaForm = <T extends object>({
@@ -27,7 +29,8 @@ const PlantillaForm = <T extends object>({
   schema,
   children,
   onSubmit,
-  defaultValues
+  defaultValues,
+  loading = false
 }: PlantillaFormProps<T>) => {
   const router = useRouter()
 
@@ -61,7 +64,7 @@ const PlantillaForm = <T extends object>({
             <Button
               icon={<ArrowRightIcon color="white" />}
               type="submit"
-              text="Aceptar"
+              text="Guardar"
               variant="primary"
             />
           </div>

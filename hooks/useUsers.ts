@@ -99,6 +99,14 @@ const useUsers = () => {
     setLoading(false)
   }
 
+  const delay = (ms: number = 1000) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      }, ms)
+    })
+  }
+
   const createUser = async ({
     email,
     firstname,
@@ -108,6 +116,7 @@ const useUsers = () => {
     role
   }: UserFormInput) => {
     setLoading(true)
+    await delay(10000)
     const { user } = await createUserWithEmailAndPassword(
       auxAuth,
       email,
