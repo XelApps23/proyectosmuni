@@ -8,6 +8,7 @@ import useRoles from '@/hooks/useRoles'
 import { useEffect } from 'react'
 import { User } from '@/hooks/types/User'
 import VisibilityIcon from '../icons/VisibilityIcon'
+import { useToast } from '@chakra-ui/react'
 
 const schema = yup.object().shape({
   firstname: yup.string().required('Debe de ingresar un nombre'),
@@ -44,6 +45,7 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
   const { createUser, updateUser, loading } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
+  const toast = useToast()
 
   useEffect(() => {
     getRoles({ perPage: 1000 })
@@ -52,7 +54,7 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
 
   const onSubmit = async (data: FormValues) => {
     if (!edit) {
-      await createUser({
+      const response = await createUser({
         email: data.email,
         firstname: data.firstname,
         lastname: data.lastname,
@@ -60,7 +62,15 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
         phone: data.phone,
         role: data.role
       })
-      router.push('/users/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/users/')
+      }
     } else if (defaultUser) {
       await updateUser(defaultUser.id, {
         firstname: data.firstname,

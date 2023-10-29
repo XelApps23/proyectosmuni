@@ -15,6 +15,7 @@ import { UserList, UserUpdate } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auxAuth, db } from '@/services/Firebase'
 import useRoles from './useRoles'
+import HookResponse from './types/HookResponse'
 
 type UserFormInput = {
   firstname?: string
@@ -38,7 +39,10 @@ const useUsers = () => {
   const [last, setLast] = useState<any>(null)
   const { roles, getRole } = useRoles()
 
-  const getUsers = async ({ perPage = 10, withRole = false }: GetUsersParams) => {
+  const getUsers = async ({
+    perPage = 10,
+    withRole = false
+  }: GetUsersParams) => {
     setLoading(true)
     let datos: any = { ...users }
     let preparedQuery
@@ -114,31 +118,46 @@ const useUsers = () => {
     phone,
     password,
     role
-  }: UserFormInput) => {
+  }: UserFormInput): Promise<HookResponse> => {
     setLoading(true)
-    await delay(10000)
-    const { user } = await createUserWithEmailAndPassword(
-      auxAuth,
-      email,
-      password
-    )
-    if (user.uid) {
-      await setDoc(doc(db, table, user.uid), {
-        firstname: firstname || null,
-        lastname: lastname || null,
-        email: email || null,
-        phone: phone || null,
-        role: role || null,
-        status: 'active',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
+    try {
+      await delay(10000)
+      const { user } = await createUserWithEmailAndPassword(
+        auxAuth,
+        email,
+        password
+      )
+      if (user.uid) {
+        await setDoc(doc(db, table, user.uid), {
+          firstname: firstname || null,
+          lastname: lastname || null,
+          email: email || null,
+          phone: phone || null,
+          role: role || null,
+          status: 'active',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+      }
+      auxAuth.signOut()
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario creado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
     }
-    auxAuth.signOut()
-    setLoading(false)
   }
 
-  const updateUser = async (id: string, { firstname, lastname, phone, role }: UserUpdate) => {
+  const updateUser = async (
+    id: string,
+    { firstname, lastname, phone, role }: UserUpdate
+  ) => {
     setLoading(true)
     await updateDoc(doc(db, table, id), {
       firstname: firstname || null,
