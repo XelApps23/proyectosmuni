@@ -4,10 +4,15 @@ import Grid from '../../components/ganttChart/Grid'
 import Tasks from '../../components/ganttChart/Tasks'
 import TimeTable from '../../components/ganttChart/TimeTable'
 import client from '../../utils/fetchWrapper'
+import useTasks from '@/hooks/useTasks'
+import { TaskList } from '@/hooks/types/Task'
 
-export default function GanttChart () {
-  const [tasks, setTasks] = useState(null)
-  const [taskDurations, setTaskDurations] = useState(null)
+type Props = {
+  tasks: TaskList
+  requestPhase: (phase: number) => void
+}
+
+export default function GanttChart({ tasks, requestPhase }: Props) {
   const [timeRange] = useState({
     fromSelectMonth: 9,
     fromSelectYear: '2023',
@@ -16,34 +21,14 @@ export default function GanttChart () {
   })
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const jsonResponse = await client()
-        const { tasks, taskDurations } = JSON.parse(jsonResponse)
-        setTasks(tasks)
-        setTaskDurations(taskDurations)
-      } catch (error) {
-        console.error('Error al obtener los datos:', error)
-      }
-    }
-
-    fetchData()
+    requestPhase(1)
   }, [])
 
   return (
     <div id="gantt-container">
       <Grid>
-        <Tasks
-          tasks={tasks}
-          setTasks={setTasks}
-          setTaskDurations={setTaskDurations}
-        />
-        <TimeTable
-          timeRange={timeRange}
-          tasks={tasks}
-          taskDurations={taskDurations}
-          setTaskDurations={setTaskDurations}
-        />
+        <Tasks tasks={tasks} />
+        <TimeTable timeRange={timeRange} tasks={tasks} />
       </Grid>
       <style jsx>{`
         #gantt-container {

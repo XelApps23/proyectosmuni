@@ -1,3 +1,4 @@
+import GanttChart from '@/components/ganttChart/GanttChart'
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
@@ -11,12 +12,9 @@ import Tabs from '@/components/main/Tabs'
 import UserSelector from '@/components/main/UserSelector'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
-import TaskListTable from '@/components/tasks/TaskListTable'
 import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import useUsers from '@/hooks/useUsers'
-import GanttChart from '@/pages-done/ganttChart'
-import Graphic from '@/pages-done/graphic'
 import { useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -24,6 +22,7 @@ import { useEffect, useState } from 'react'
 const ProjectIndex = () => {
   const [currentTab, setCurrentTab] = useState<number>(0)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { tasks, getTaskFiltered } = useTasks()
   const [ids, setIds] = useState<string[]>([])
 
   const { query } = useRouter()
@@ -39,6 +38,10 @@ const ProjectIndex = () => {
     console.log()
   }
 
+  const requestPhase = (phase: number) => {
+    getTaskFiltered(query.id as string, phase)
+  }
+
   return (
     <Card>
       <Modal
@@ -47,7 +50,11 @@ const ProjectIndex = () => {
         onClose={onClose}
         actions={
           <>
-            <Button onClick={() => handleInvite()} variant="primary" text="Confirmar"></Button>
+            <Button
+              onClick={() => handleInvite()}
+              variant="primary"
+              text="Confirmar"
+            ></Button>
           </>
         }
       >
@@ -81,13 +88,21 @@ const ProjectIndex = () => {
           },
           {
             component: projects[query.id as string] && (
-              <TaskListController projectId={projects[query.id as string].id} />
+              <TaskListController
+                tasks={tasks}
+                requestPhase={(phase) => requestPhase(phase)}
+              />
             ),
             name: 'Tareas',
             icon: <GanttIcon />
           },
           {
-            component: <GanttChart />,
+            component: (
+              <GanttChart
+                tasks={tasks}
+                requestPhase={(phase) => requestPhase(phase)}
+              />
+            ),
             name: 'Diagrama de Gantt',
             icon: <GraphicsIcon />
           },

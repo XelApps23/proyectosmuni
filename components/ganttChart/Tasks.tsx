@@ -1,4 +1,10 @@
-export default function Tasks ({ tasks, setTasks, setTaskDurations }) {
+import { TaskList } from '@/hooks/types/Task'
+
+type Props = {
+  tasks: TaskList
+}
+
+export default function Tasks ({ tasks }: Props) {
   return (
     <div id="gantt-grid-container__tasks">
       <div className="gantt-task-row"></div>
@@ -6,9 +12,9 @@ export default function Tasks ({ tasks, setTasks, setTaskDurations }) {
       <div className="gantt-task-row"></div>
 
       {tasks &&
-        tasks.map((tsk, i) => (
-          <div key={`${i}-${tsk?.id}-${tsk.name}`} className="gantt-task-row ">
-            <input data-task-id={tsk?.id} value={tsk?.name} />
+        Object.keys(tasks).map((key, i) => (
+          <div key={`${i}-${tasks[key]?.id}-${tasks[key].name}`} className="gantt-task-row ">
+            <input data-task-id={tasks[key]?.id} value={tasks[key]?.name} />
           </div>
         ))}
 

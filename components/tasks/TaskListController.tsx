@@ -4,9 +4,11 @@ import useTasks from '@/hooks/useTasks'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
 import NewTaskList from './NewTaskList'
 import { AnimatePresence } from 'framer-motion'
+import { TaskList } from '@/hooks/types/Task'
 
 type Props = {
-  projectId: string
+  tasks: TaskList
+  requestPhase: (phase: number) => void
 }
 
 type PhasesList = {
@@ -25,19 +27,11 @@ const phasesList: PhasesList = {
   9: 'Otros'
 }
 
-const TaskListController = ({ projectId }: Props) => {
-  const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
+const TaskListController = ({ tasks, requestPhase }: Props) => {
   const [openPhases, setOpenPhases] = useState<number[]>([])
-  const { getTaskFiltered, tasks, loading } = useTasks()
 
   const handleFetchTasks = (phase: number) => {
-    console.log(fetchedPhases)
-    console.log(openPhases)
-
-    if (!fetchedPhases.includes(phase)) {
-      getTaskFiltered(projectId, phase)
-      setFetchedPhases((prev) => [...prev, phase])
-    }
+    requestPhase(phase)
 
     if (!openPhases.includes(phase)) {
       setOpenPhases((prev) => [...prev, phase])

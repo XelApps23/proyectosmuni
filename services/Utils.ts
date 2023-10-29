@@ -25,7 +25,7 @@ export const getPhase = (phase: number) => {
   }
 }
 
-export const formatDate = (date: Timestamp, mode: 'PPPP' | 'dd-MM-yyyy' | 'PPPPp') => {
+export const formatDate = (date: Timestamp | null, mode: 'PPPP' | 'dd-MM-yyyy' | 'PPPPp') => {
   if (date) {
     return format(date.toDate(), mode, { locale: es })
   } else {

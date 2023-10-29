@@ -6,13 +6,15 @@ import {
   dayDiff
 } from '../../helpers/dateFunctions'
 import { months } from '../../constants'
+import { TaskList } from '@/hooks/types/Task'
+import { convertDate } from '@/utils/convertDataFirebase'
 
-export default function TimeTable ({
-  timeRange,
-  tasks,
-  taskDurations,
-  setTaskDurations
-}) {
+type Props = {
+  tasks: TaskList
+  timeRange: any
+}
+
+export default function TimeTable ({ timeRange, tasks }: Props) {
   // for dynamic css styling
   const ganttTimePeriod = {
     display: 'grid',
@@ -114,7 +116,7 @@ export default function TimeTable ({
 
   // create task rows
   if (tasks) {
-    tasks.forEach((task) => {
+    Object.keys(tasks).forEach((key) => {
       const mnth = new Date(startMonth)
       for (let i = 0; i < numMonths; i++) {
         const curYear = mnth.getFullYear()
@@ -126,29 +128,32 @@ export default function TimeTable ({
           // color weekend cells differently
           const dayOfTheWeek = getDayOfWeek(curYear, curMonth - 1, j - 1)
           // add task and date data attributes
-          const formattedDate = createFormattedDateFromStr(
-            curYear,
-            curMonth,
-            j
-          )
+          const formattedDate = createFormattedDateFromStr(curYear, curMonth, j)
 
           taskRow.push(
             <div
-              key={`${task.id}-${j}`}
+              key={`${tasks[key].id}-${j}`}
               style={{
                 ...ganttTimePeriodCell,
                 backgroundColor:
                   dayOfTheWeek === 'D' ? 'var(--color-tertiary)' : '#fff'
               }}
-              data-task={task?.id}
+              data-task={tasks[key]?.id}
               data-date={formattedDate}
             >
-              {taskDurations.map((el, i) => {
-                if (el?.task === task?.id && el?.start === formattedDate) {
+              {Object.keys(tasks).map(key => {
+                return {
+                  id: key,
+                  start: convertDate(tasks[key].initialDate),
+                  end: convertDate(tasks[key].endDate),
+                  task: key
+                }
+              }).map((el, i) => {
+                if (el?.task === key && el?.start === formattedDate) {
                   return (
                     <div
                       key={`${i}-${el?.id}`}
-                      tabIndex="0"
+                      tabIndex={0}
                       style={{
                         ...taskDuration,
                         width: `calc(${dayDiff(
@@ -166,7 +171,7 @@ export default function TimeTable ({
         }
 
         taskRows.push(
-          <div key={`${i}-${task?.id}`} style={ganttTimePeriod}>
+          <div key={`${i}-${key?.id}`} style={ganttTimePeriod}>
             {taskRow}
           </div>
         )

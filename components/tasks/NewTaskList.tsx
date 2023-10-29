@@ -23,7 +23,6 @@ import WordIcon from '../icons/WordIcon'
 import ExcelIcon from '../icons/ExcelIcon'
 import TrashIcon from '../icons/TrashIcon'
 import VisibilityIcon from '../icons/VisibilityIcon'
-import useUsers from '@/hooks/useUsers'
 
 type Props = {
   tasks: TaskList
@@ -42,7 +41,6 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   const [file, setFile] = useState([])
   const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
   const { getUsers, users } = useUsers()
-  const { getUpdatesOfTask, updates, createUpdate } = useUpdates()
   const [willUpload, setWillUpload] = useState(false)
 
   const onDrop = useCallback(acceptedFiles => {

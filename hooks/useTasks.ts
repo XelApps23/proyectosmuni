@@ -28,6 +28,7 @@ const table = 'tasks'
 const useTasks = () => {
   const [tasks, setTasks] = useState<TaskList>({})
   const [loading, setLoading] = useState(false)
+  const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
 
   const getTasks = async () => {
     setLoading(true)
@@ -55,24 +56,28 @@ const useTasks = () => {
 
   const getTaskFiltered = async (projectId: string, phase: number) => {
     setLoading(true)
+    setFetchedPhases((prev) => [...prev, phase])
     let datos: any = { ...tasks }
 
-    const q = query(
-      collection(db, 'tasks'),
-      where('projectId', '==', projectId),
-      where('phase', '==', Number(phase)),
-      orderBy('index', 'asc')
-    )
-    const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((doc) => {
-      const userData = { ...doc.data(), id: doc.id }
-      if (!datos[doc.id]) {
-        datos = { ...datos, [doc.id]: userData }
-        console.log(datos)
-      }
-    })
+    if (!fetchedPhases.includes(phase)) {
+      console.log('CONSULTA')
+      const q = query(
+        collection(db, 'tasks'),
+        where('projectId', '==', projectId),
+        where('phase', '==', Number(phase)),
+        orderBy('index', 'asc')
+      )
+      const querySnapshot = await getDocs(q)
+      querySnapshot.forEach((doc) => {
+        const userData = { ...doc.data(), id: doc.id }
+        if (!datos[doc.id]) {
+          datos = { ...datos, [doc.id]: userData }
+          console.log(datos)
+        }
+      })
 
-    setTasks(datos)
+      setTasks(datos)
+    }
     setLoading(false)
   }
 
