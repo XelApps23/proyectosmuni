@@ -1,3 +1,4 @@
+import ArchiveIcon from '@/components/icons/ArchiveIcon'
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
@@ -9,34 +10,40 @@ import Modal from '@/components/main/Modal'
 import Table from '@/components/main/Table'
 import Tabs from '@/components/main/Tabs'
 import UserSelector from '@/components/main/UserSelector'
+import FilesTable from '@/components/projects/FilesTable'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
-import TaskListTable from '@/components/tasks/TaskListTable'
+import useFile from '@/hooks/useFile'
 import useProjects from '@/hooks/useProjects'
-import useTasks from '@/hooks/useTasks'
+import useUpdates from '@/hooks/useUpdates'
 import useUsers from '@/hooks/useUsers'
 import GanttChart from '@/pages-done/ganttChart'
-import Graphic from '@/pages-done/graphic'
 import { useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 const ProjectIndex = () => {
-  const [currentTab, setCurrentTab] = useState<number>(0)
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const [ids, setIds] = useState<string[]>([])
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
   const { users, getUsers } = useUsers()
+  const { getUpdatesOfTask, updates } = useUpdates()
+  const { getFilesOfProject, getFilesOfTask, files } = useFile()
 
   useEffect(() => {
     getProject(query.id as string)
-    getUsers({})
   }, [])
 
   const handleInvite = () => {
     console.log()
+  }
+
+  const handleTabChange = (tab: number) => {
+    if (tab === 4) {
+      getFilesOfProject(query.id as string)
+    }
   }
 
   return (
@@ -47,7 +54,11 @@ const ProjectIndex = () => {
         onClose={onClose}
         actions={
           <>
-            <Button onClick={() => handleInvite()} variant="primary" text="Confirmar"></Button>
+            <Button
+              onClick={() => handleInvite()}
+              variant="primary"
+              text="Confirmar"
+            ></Button>
           </>
         }
       >
@@ -65,23 +76,25 @@ const ProjectIndex = () => {
         </div>
       </div>
       <Tabs
-        changedTab={(tab: number) => setCurrentTab(tab)}
+        changedTab={(tab: number) => handleTabChange(tab)}
         tabs={[
           {
-            component: (
-              <ProjectSummary
-                project={
-                  projects[query.id as string] !== undefined &&
-                  projects[query.id as string]
-                }
-              />
+            component: projects[query.id as string] && (
+              <ProjectSummary project={projects[query.id as string]} />
             ),
             name: 'Resumen',
             icon: <HomeIcon />
           },
           {
             component: projects[query.id as string] && (
-              <TaskListController projectId={projects[query.id as string].id} />
+              <TaskListController
+                users={users}
+                files={files}
+                updates={updates}
+                requestUpdates={(update) => getUpdatesOfTask(update)}
+                requestFiles={(task) => getFilesOfTask(task)}
+                projectId={projects[query.id as string].id}
+              />
             ),
             name: 'Tareas',
             icon: <GanttIcon />
@@ -106,6 +119,11 @@ const ProjectIndex = () => {
             ),
             name: 'Colaboradores',
             icon: <UserIcon />
+          },
+          {
+            component: <FilesTable files={files} />,
+            name: 'Archivos',
+            icon: <ArchiveIcon />
           }
         ]}
       />

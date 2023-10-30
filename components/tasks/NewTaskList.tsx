@@ -15,7 +15,6 @@ import useFile from '@/hooks/useFile'
 import { useSelector } from 'react-redux'
 import useUsers from '@/hooks/useUsers'
 import UpdateView from './update'
-import useUpdates from '@/hooks/useUpdates'
 import { useDropzone } from 'react-dropzone'
 import DocumentAddIcon from '../icons/DocumentAddIcon'
 import Button from '../main/Button'
@@ -23,10 +22,19 @@ import WordIcon from '../icons/WordIcon'
 import ExcelIcon from '../icons/ExcelIcon'
 import TrashIcon from '../icons/TrashIcon'
 import VisibilityIcon from '../icons/VisibilityIcon'
+import { FileList } from '@/hooks/types/File'
+import { UpdateList } from '@/hooks/types/Update'
+import { UserList } from '@/hooks/types/User'
 
 type Props = {
   tasks: TaskList
   loading: boolean
+  projectId: string
+  files: FileList
+  updates: UpdateList
+  users: UserList
+  requestFiles: (task: string) => void
+  requestUpdates: (task: string) => void
 }
 
 const styles = {
@@ -35,15 +43,23 @@ const styles = {
   colTitle: 'font-semibold text-sm'
 }
 
-const NewTaskList = ({ tasks, loading }: Props) => {
+const NewTaskList = ({
+  tasks,
+  loading,
+  projectId,
+  files,
+  updates,
+  users,
+  requestFiles,
+  requestUpdates
+}: Props) => {
   const [currentTask, setCurrentTask] = useState<string>('')
   const { onClose, isOpen, onOpen } = useDisclosure()
-  const [file, setFile] = useState([])
-  const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
-  const { getUsers, users } = useUsers()
+  const [file, setFile] = useState<any[]>([])
+  const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback((acceptedFiles: any) => {
     if (acceptedFiles?.length) {
       setFile((previousFiles) => [...previousFiles, ...acceptedFiles])
     }
@@ -69,10 +85,10 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   }, [willUpload])
 
   const enviarArchivo = () => {
-    if (file.length != 0) {
-      file.map((newFile) => {
+    if (file.length !== 0) {
+      file.forEach((newFile) => {
         console.log(newFile)
-        uploadFile(newFile, id, currentTask)
+        uploadFile(newFile, id, currentTask, projectId)
       })
       setWillUpload(false)
     } else {
@@ -90,13 +106,9 @@ const NewTaskList = ({ tasks, loading }: Props) => {
 
   const handleChangeTab = (tab: number) => {
     if (tab === 2) {
-      getFilesOfTask(currentTask)
-      getUsers({ perPage: 1 })
+      requestFiles(currentTask)
     }
   }
-  useEffect(() => {
-    getUsers({})
-  }, [])
 
   return (
     <motion.div
@@ -161,54 +173,58 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                   <Divider />
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>Estado</h2>
-                    <p className="col-span-2 flex">
+                    <div className="col-span-2 flex">
                       <div className="w-20">
                         <Bubble type={tasks[currentTask]?.status} />
                       </div>
                       <div className="ml-4 w-6 h-6">
                         <EditIcon color="#888888" />
                       </div>
-                    </p>
+                    </div>
                   </div>
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>Prioridad</h2>
-                    <p className="col-span-2 flex">
+                    <div className="col-span-2 flex">
                       <div className="w-20">
                         <Bubble type={tasks[currentTask]?.priority} />
                       </div>
                       <div className="ml-4 w-6 h-6">
                         <EditIcon color="#888888" />
                       </div>
-                    </p>
+                    </div>
                   </div>
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>Fecha de inicio</h2>
-                    <p className="col-span-2 flex">
-                      {formatDate(tasks[currentTask]?.initialDate, 'PPPP')}
+                    <div className="col-span-2 flex">
+                      <p>
+                        {formatDate(tasks[currentTask]?.initialDate, 'PPPP')}
+                      </p>
                       <div className="ml-4 w-6 h-6">
                         <EditIcon color="#888888" />
                       </div>
-                    </p>
+                    </div>
                   </div>
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>
                       Fecha de finalización prevista
                     </h2>
-                    <p className="col-span-2 flex">
-                      {formatDate(tasks[currentTask]?.expectedDate, 'PPPP')}
+                    <div className="col-span-2 flex">
+                      <p>
+                        {formatDate(tasks[currentTask]?.expectedDate, 'PPPP')}
+                      </p>
                       <div className="ml-4 w-6 h-6">
                         <EditIcon color="#888888" />
                       </div>
-                    </p>
+                    </div>
                   </div>
                   <div className={styles.gridContainer}>
                     <h2 className={styles.colTitle}>Fecha de finalización</h2>
-                    <p className="col-span-2 flex hover:bg-fondo">
-                      {formatDate(tasks[currentTask]?.endDate, 'PPPP')}
+                    <div className="col-span-2 flex hover:bg-fondo">
+                      <p>{formatDate(tasks[currentTask]?.endDate, 'PPPP')}</p>
                       <div className="ml-4 w-6 h-6">
                         <EditIcon color="#888888" />
                       </div>
-                    </p>
+                    </div>
                   </div>
                 </>
               )
@@ -216,15 +232,21 @@ const NewTaskList = ({ tasks, loading }: Props) => {
             {
               name: 'Actualizaciones',
               icon: <ChatIcon />,
-              component: <UpdateView currentTask={currentTask} users={users} />
+              component: (
+                <UpdateView
+                  updates={updates}
+                  requestUpdate={requestUpdates}
+                  currentTask={currentTask}
+                  users={users}
+                />
+              )
             },
             {
               name: 'Archivos',
               icon: <ArchiveIcon />,
               component: (
                 <>
-                  {willUpload
-                    ? (
+                  {willUpload ? (
                     <>
                       <div
                         {...getRootProps({
@@ -232,34 +254,30 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                             'w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer'
                         })}
                       >
-                        <span className="flex justify-start space-x-2">
+                        <div className="flex justify-start space-x-2">
                           <input {...getInputProps()} />
-                          {file.length > 0
-                            ? (
+                          {file.length > 0 ? (
                             <ul>
                               {file.map((file, index) => (
                                 <li key={index}>{file.name}</li>
                               ))}
                             </ul>
-                              )
-                            : (
+                          ) : (
                             <div className="flex items-center space-x-2">
                               <div className="w-7">
                                 <DocumentAddIcon />
                               </div>
-                              {isDragActive
-                                ? (
+                              {isDragActive ? (
                                 <p>Suelte los archivos a subir aquí</p>
-                                  )
-                                : (
+                              ) : (
                                 <p>
                                   Puede arrastrar y soltar archivos aquí o hacer
                                   click para seleccionarlos
                                 </p>
-                                  )}
-                            </div>
                               )}
-                        </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <br />
                       <div className="flex justify-start space-x-2">
@@ -275,27 +293,27 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                         />
                       </div>
                     </>
-                      )
-                    : (
+                  ) : (
                     <Button
                       onClick={() => setWillUpload(true)}
                       variant="primary"
                       text="Agregar Archivo"
                     />
-                      )}
+                  )}
                   {Object.keys(files)
                     .map((key) => files[key])
                     .filter((listedFile) => listedFile.taskId === currentTask)
                     .map((listedFile, index) => (
-                      <div key={listedFile.name} className="flex space-x-4 border-2 border-gray-300 rounded-xl my-4 p-2">
+                      <div
+                        key={listedFile.name}
+                        className="flex space-x-4 border-2 border-gray-300 rounded-xl my-4 p-2"
+                      >
                         <div className="w-[75px]">
-                          {listedFile.extension.includes('word')
-                            ? (
+                          {listedFile.extension.includes('word') ? (
                             <WordIcon />
-                              )
-                            : (
+                          ) : (
                             <ExcelIcon />
-                              )}
+                          )}
                         </div>
                         <div className="grid grid-rows-2 items-center gap-y-[50%]">
                           <div className="flex justify-between">

@@ -28,64 +28,75 @@ type UserFormInput = {
 type GetUsersParams = {
   perPage?: number
   withRole?: boolean
+  page?: number
 }
 
 const table = 'users'
 
 const useUsers = () => {
   const [users, setUsers] = useState<UserList>({})
+  const [currentPage, setCurrentPage] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const [last, setLast] = useState<any>(null)
   const { roles, getRole } = useRoles()
 
-  const getUsers = async ({ perPage = 10, withRole = false }: GetUsersParams) => {
+  const getUsers = async ({
+    perPage = 10,
+    withRole = false,
+    page = 1
+  }: GetUsersParams) => {
     setLoading(true)
-    let datos: any = { ...users }
-    let preparedQuery
+    if (currentPage !== page) {
+      setCurrentPage(page)
+      let datos: any = { ...users }
+      let preparedQuery
 
-    if (last === null) {
-      preparedQuery = query(
-        collection(db, table),
-        where('status', '==', 'active'),
-        limit(perPage)
-      )
-    } else {
-      preparedQuery = query(
-        collection(db, table),
-        where('status', '==', 'active'),
-        limit(perPage),
-        startAfter(last)
-      )
-    }
-
-    const querySnapshot = await getDocs(preparedQuery)
-    setLast(querySnapshot.docs[querySnapshot.docs.length - 1])
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data()
-      const userData = { ...data, id: doc.id }
-      if (!datos[doc.id]) {
-        datos = { ...datos, [doc.id]: userData }
-        if (withRole) {
-          getRole(data.role)
-        }
+      if (last === null) {
+        preparedQuery = query(
+          collection(db, table),
+          where('status', '==', 'active'),
+          limit(perPage)
+        )
+      } else {
+        preparedQuery = query(
+          collection(db, table),
+          where('status', '==', 'active'),
+          limit(perPage),
+          startAfter(last)
+        )
       }
-    })
-    setUsers(datos)
+
+      const querySnapshot = await getDocs(preparedQuery)
+      setLast(querySnapshot.docs[querySnapshot.docs.length - 1])
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data()
+        const userData = { ...data, id: doc.id }
+        if (!datos[doc.id]) {
+          datos = { ...datos, [doc.id]: userData }
+          if (withRole) {
+            getRole(data.role)
+          }
+        }
+      })
+      setUsers(datos)
+    }
     setLoading(false)
   }
 
   const getUser = async (idRef: string) => {
     setLoading(true)
-    let dato = {}
-    const docRef = doc(db, table, idRef)
-    console.log(docRef)
-    const querySnapshot = await getDoc(docRef)
-    dato = {
-      [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
-    }
     if (!users[idRef]) {
-      setUsers((prevUsers) => ({ ...prevUsers, ...dato }))
+      let dato = {}
+      const docRef = doc(db, table, idRef)
+      console.log(docRef)
+      const querySnapshot = await getDoc(docRef)
+      dato = {
+        [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
+      }
+      if (!users[idRef]) {
+        setUsers((prevUsers) => ({ ...prevUsers, ...dato }))
+      }
     }
     setLoading(false)
   }
@@ -129,7 +140,10 @@ const useUsers = () => {
     setLoading(false)
   }
 
-  const updateUser = async (id: string, { firstname, lastname, phone, role }: UserUpdate) => {
+  const updateUser = async (
+    id: string,
+    { firstname, lastname, phone, role }: UserUpdate
+  ) => {
     setLoading(true)
     await updateDoc(doc(db, table, id), {
       firstname: firstname || null,

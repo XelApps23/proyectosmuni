@@ -10,7 +10,8 @@ type Styles = {
   }
 }
 
-const baseStyle = 'text-white text-xs font-bold rounded-full px-2 py-1 flex justify-center '
+const baseStyle =
+  'text-white text-xs font-bold rounded-full px-2 py-1 flex justify-center '
 const styles: Styles = {
   Critica: {
     color: baseStyle + 'bg-prioridadCritica text-white1'
@@ -42,7 +43,11 @@ const styles: Styles = {
 }
 
 const Bubble = ({ type }: Props) => {
-  return <div className={styles[type].color}>{type}</div>
+  return (
+    <div className={styles[type].color}>
+      {type}
+    </div>
+  )
 }
 
 export default Bubble

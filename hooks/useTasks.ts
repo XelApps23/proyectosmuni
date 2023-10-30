@@ -12,7 +12,7 @@ import {
   orderBy
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
-import { TaskList, TaskUpdate } from './types/Task'
+import { TaskList } from './types/Task'
 import TaskListObj from '@/services/TaskListObj'
 
 type TaskInput = {
@@ -44,7 +44,6 @@ const useTasks = () => {
     setLoading(true)
     let dato = {}
     const docRef = doc(db, table, idRef)
-    console.log(docRef)
     const querySnapshot = await getDoc(docRef)
     dato = {
       [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
@@ -68,7 +67,6 @@ const useTasks = () => {
       const userData = { ...doc.data(), id: doc.id }
       if (!datos[doc.id]) {
         datos = { ...datos, [doc.id]: userData }
-        console.log(datos)
       }
     })
 
@@ -91,7 +89,7 @@ const useTasks = () => {
     index
   }: TaskInput) => {
     setLoading(true)
-    const docRef = await addDoc(collection(db, table), {
+    await addDoc(collection(db, table), {
       name: name || null,
       index: index || null,
       description: description || null,
@@ -108,7 +106,6 @@ const useTasks = () => {
       createdAt: new Date(),
       updateAt: new Date()
     })
-    console.log(docRef)
     setLoading(false)
   }
 

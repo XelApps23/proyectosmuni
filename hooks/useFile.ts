@@ -25,26 +25,59 @@ const useFile = () => {
   const [progress, setProgress] = useState(0)
   const [downloadURL, setDownloadURL] = useState('')
   const [files, setFiles] = useState<FileList>({})
+  const [fetchedProjects, setFetchedProjects] = useState<string[]>([])
+  const [fetchedTasks, setFetchedTasks] = useState<string[]>([])
 
   const getFilesOfTask = async (taskId: string) => {
     setLoading(true)
-    let datos: any = { ...files }
+    if (!fetchedTasks.includes(taskId)) {
+      setFetchedTasks((prev) => [...prev, taskId])
+      let datos: any = { ...files }
 
-    const q = query(
-      collection(db, 'files'),
-      where('taskId', '==', taskId),
-      orderBy('createdAt', 'asc')
-    )
-    const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((doc) => {
-      const userData = { ...doc.data(), id: doc.id }
-      if (!datos[doc.id]) {
-        datos = { ...datos, [doc.id]: userData }
-        console.log(datos)
-      }
-    })
+      const q = query(
+        collection(db, 'files'),
+        where('taskId', '==', taskId),
+        orderBy('createdAt', 'asc')
+      )
+      const querySnapshot = await getDocs(q)
+      querySnapshot.forEach((doc) => {
+        const allData = { ...doc.data(), id: doc.id }
+        if (!datos[doc.id]) {
+          datos = { ...datos, [doc.id]: allData }
+          console.log(datos)
+        }
+      })
+      setFiles(datos)
+    }
+    setLoading(false)
+  }
 
-    setFiles(datos)
+  const getFilesOfProject = async (projectId: string) => {
+    setLoading(true)
+    if (!fetchedProjects.includes(projectId)) {
+      setFetchedProjects((prev) => [...prev, projectId])
+      let datos: any = { ...files }
+
+      const q = query(
+        collection(db, 'files'),
+        where('projectId', '==', projectId),
+        orderBy('createdAt', 'asc')
+      )
+      const querySnapshot = await getDocs(q)
+      const fetchTasks = [...fetchedTasks]
+      querySnapshot.forEach((doc) => {
+        const data = doc.data()
+        const allData = { ...data, id: doc.id }
+        if (!datos[doc.id]) {
+          datos = { ...datos, [doc.id]: allData }
+          if (!fetchedTasks.includes(data.taskId)) {
+            fetchTasks.push(data.taskId)
+          }
+        }
+      })
+      setFetchedTasks(fetchTasks)
+      setFiles(datos)
+    }
     setLoading(false)
   }
 
@@ -53,8 +86,8 @@ const useFile = () => {
     let datos = {}
     Object.keys(files)
       .map((key) => files[key])
-      .filter((file) => file.id != idRef)
-      .map((file) => {
+      .filter((file) => file.id !== idRef)
+      .forEach((file) => {
         datos = { ...datos, [file.id]: file }
       })
     setFiles(datos)
@@ -70,10 +103,9 @@ const useFile = () => {
     setLoading(false)
   }
 
-  const uploadFile = async (file: File, userId: string, taskId: string) => {
+  const uploadFile = async (file: File, userId: string, taskId: string, projectId: string) => {
     const storageRef = ref(storage, `/${file.name}`)
     const uploadTask = uploadBytesResumable(storageRef, file)
-    let datos = files
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -105,6 +137,7 @@ const useFile = () => {
             url,
             extension: file.type,
             userId,
+            projectId,
             taskId,
             createdAt: new Date(),
             updateAt: new Date()
@@ -125,7 +158,8 @@ const useFile = () => {
     downloadURL,
     getFilesOfTask,
     files,
-    deleteFile
+    deleteFile,
+    getFilesOfProject
   }
 }
 
