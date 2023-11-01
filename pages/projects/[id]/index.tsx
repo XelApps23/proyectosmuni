@@ -36,6 +36,13 @@ const ProjectIndex = () => {
     getProject(query.id as string)
   }, [])
 
+  useEffect(() => {
+    Object.keys(files).forEach(key => {
+      getTask(files[key].taskId)
+    })
+  }, [files])
+  
+
   const handleInvite = () => {
     console.log()
   }
@@ -121,7 +128,7 @@ const ProjectIndex = () => {
             icon: <UserIcon />
           },
           {
-            component: <FilesTable files={files} />,
+            component: <FilesTable files={files} tasks={tasks} />,
             name: 'Archivos',
             icon: <ArchiveIcon />
           }
