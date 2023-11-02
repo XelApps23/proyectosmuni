@@ -7,6 +7,8 @@ import Divider from '../main/Divider'
 import Checkbox from '../main/Checkbox'
 import { useEffect, useState } from 'react'
 import { Role } from '@/hooks/types/Role'
+import { useToast } from '@chakra-ui/react'
+
 
 const schema = yup.object().shape({
   name: yup.string().required('Debe de ingresar un nombre')
@@ -26,6 +28,7 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
 
   const { createRole, loading, updateRole } = useRoles()
   const router = useRouter()
+  const toast = useToast()
 
   const onSubmit = async (data: FormValues) => {
     if (!edit) {
@@ -33,13 +36,45 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
         name: data.name,
         permissions
       })
-      router.push('/roles/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/roles/')
+      }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     } else if (defaultRole) {
       const response = await updateRole(defaultRole.id, {
         name: data.name,
         permissions
       })
-      router.push('/roles/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/roles/')
+      }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     }
   }
 

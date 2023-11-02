@@ -94,21 +94,25 @@ const useUsers = () => {
     setLoading(false)
   }
 
-  const deleteUser = async (id: string) => {
-    setLoading(true)
-    await updateDoc(doc(db, table, id), {
-      status: 'deleted',
-      updatedAt: new Date()
-    })
-    setLoading(false)
-  }
-
-  const delay = (ms: number = 1000) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true)
-      }, ms)
-    })
+  const deleteUser = async (id: string): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await updateDoc(doc(db, table, id), {
+        status: 'deleted',
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario eliminado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   const createUser = async ({
@@ -121,7 +125,6 @@ const useUsers = () => {
   }: UserFormInput): Promise<HookResponse> => {
     setLoading(true)
     try {
-      await delay(10000)
       const { user } = await createUserWithEmailAndPassword(
         auxAuth,
         email,
@@ -157,16 +160,28 @@ const useUsers = () => {
   const updateUser = async (
     id: string,
     { firstname, lastname, phone, role }: UserUpdate
-  ) => {
-    setLoading(true)
-    await updateDoc(doc(db, table, id), {
-      firstname: firstname || null,
-      lastname: lastname || null,
-      phone: phone || null,
-      role: role || null,
-      updatedAt: new Date()
-    })
-    setLoading(false)
+  ): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await updateDoc(doc(db, table, id), {
+        firstname: firstname || null,
+        lastname: lastname || null,
+        phone: phone || null,
+        role: role || null,
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario actualizado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   return {

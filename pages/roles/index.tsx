@@ -12,12 +12,14 @@ import EditIcon from '@/components/icons/EditIcon'
 import TrashIcon from '@/components/icons/TrashIcon'
 import Button from '@/components/main/Button'
 import Info from '@/components/main/Info'
+import { useToast } from '@chakra-ui/react'
 
 const index = () => {
   const router = useRouter()
 
   const { getRoles, roles, deleteRole } = useRoles()
   const [targetRole, setTargetRole] = useState<string>('')
+  const toast = useToast()
 
   const { isOpen, onClose, onOpen } = useDisclosure()
   const {
@@ -40,9 +42,25 @@ const index = () => {
     onOpenInfo()
   }
 
-  const confirmDelete = () => {
-    deleteRole(targetRole)
-    delete roles[targetRole]
+  const confirmDelete = async () => {
+    const response = await deleteRole(targetRole)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+      delete roles[targetRole]
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
     onClose()
   }
 

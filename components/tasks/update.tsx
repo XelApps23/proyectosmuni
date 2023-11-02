@@ -4,10 +4,11 @@ import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import CommentUpdate from './commentUpdate'
 import { UserList } from '@/hooks/types/User'
+import { useToast } from '@chakra-ui/react'
 
 type Props = {
-    currentTask: string
-    users: UserList
+  currentTask: string
+  users: UserList
 }
 
 const UpdateView = ({ currentTask, users }: Props) => {
@@ -16,6 +17,8 @@ const UpdateView = ({ currentTask, users }: Props) => {
   const [isWrite, setIsWrite] = useState(false)
   const [rows, setRows] = useState(1)
   const [text, setText] = useState('')
+  const toast = useToast()
+
   useEffect(() => {
     getUpdatesOfTask(currentTask)
   }, [])
@@ -34,40 +37,56 @@ const UpdateView = ({ currentTask, users }: Props) => {
     setRows(1)
   }
 
-  const sendUpdate = (id: string) => {
-    createUpdate({
+  const sendUpdate = async (id: string) => {
+    const response = await createUpdate({
       userId: id,
       taskId: currentTask,
       description: text
     })
-    cancel()
-    getUpdatesOfTask(currentTask)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+      cancel()
+      getUpdatesOfTask(currentTask)
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   return (
     <>
       <textarea
-      onClick={() => writeUpdate()}
-      className='rounded-md w-[100%] border-solid border-2'
-      rows={rows}
-      placeholder='Añadir un comentario'
-      value={text}
-      onChange={changeText}
+        onClick={() => writeUpdate()}
+        className='rounded-md w-[100%] border-solid border-2'
+        rows={rows}
+        placeholder='Añadir un comentario'
+        value={text}
+        onChange={changeText}
       ></textarea>
       {
         isWrite &&
-            <div className='flex gap-x-1 mt-1'>
-              <Button
-                onClick={() => sendUpdate(id)}
-                variant="primary"
-                text="Enviar"
-              />
-              <Button
-                onClick={cancel}
-                variant="icon"
-                text="Cancelar"
-              />
-            </div>
+        <div className='flex gap-x-1 mt-1'>
+          <Button
+            onClick={() => sendUpdate(id)}
+            variant="primary"
+            text="Enviar"
+          />
+          <Button
+            onClick={cancel}
+            variant="icon"
+            text="Cancelar"
+          />
+        </div>
       }
       <div className='mt-2'>
         {Object.keys(updates)
@@ -75,7 +94,7 @@ const UpdateView = ({ currentTask, users }: Props) => {
           .filter((update) => update.taskId === currentTask)
           .map((update, index) => (
             <div key={update.id}>
-              <CommentUpdate update={update} users={users} currentTask={currentTask}/>
+              <CommentUpdate update={update} users={users} currentTask={currentTask} />
             </div>
           ))}
       </div>

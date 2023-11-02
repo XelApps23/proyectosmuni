@@ -23,6 +23,7 @@ import ExcelIcon from '../icons/ExcelIcon'
 import TrashIcon from '../icons/TrashIcon'
 import VisibilityIcon from '../icons/VisibilityIcon'
 import useUsers from '@/hooks/useUsers'
+import { useToast } from '@chakra-ui/react'
 
 type Props = {
   tasks: TaskList
@@ -42,6 +43,8 @@ const NewTaskList = ({ tasks, loading }: Props) => {
   const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
   const { getUsers, users } = useUsers()
   const [willUpload, setWillUpload] = useState(false)
+  const toast = useToast()
+
 
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles?.length) {
@@ -69,26 +72,56 @@ const NewTaskList = ({ tasks, loading }: Props) => {
     setFile([])
   }, [willUpload])
 
-  const enviarArchivo = () => {
-    setLoading(true)
+  const enviarArchivo = async () => {
     if (file.length != 0) {
-      file.map(newFile => {
+      file.map(async newFile => {
         console.log(newFile)
-        uploadFile(newFile, id, currentTask)
+        const response = await uploadFile(newFile, id, currentTask)
+        if (response.status === 'success') {
+          toast({
+            title: response.message,
+            status: 'success',
+            duration: 4000,
+            isClosable: true
+          })
+        }
+        if (response.status === 'error') {
+          toast({
+            title: response.message,
+            status: 'error',
+            duration: 3000,
+            isClosable: true
+          })
+        }
       })
       setWillUpload(false)
     } else {
       console.log('No se ha seleccionado un archivo')
     }
-    setLoading(false)
   }
 
   const cancelUpload = () => {
     setWillUpload(false)
   }
 
-  const deleteFileFromList = (idRef: string, urlRef: string) => {
-    deleteFile(idRef, urlRef)
+  const deleteFileFromList = async (idRef: string, urlRef: string) => {
+    const response = await deleteFile(idRef, urlRef)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   const handleChangeTab = (tab: number) => {
@@ -97,7 +130,6 @@ const NewTaskList = ({ tasks, loading }: Props) => {
     }
     if (tab === 2) {
       getFilesOfTask(currentTask)
-      getUsers({ perPage: 1 })
     }
   }
   useEffect(() => {
@@ -223,7 +255,7 @@ const NewTaskList = ({ tasks, loading }: Props) => {
               name: 'Actualizaciones',
               icon: <ChatIcon />,
               component: (
-                <UpdateView currentTask={currentTask} users={users}/>
+                <UpdateView currentTask={currentTask} users={users} />
               )
             },
             {

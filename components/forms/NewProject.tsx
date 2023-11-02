@@ -4,6 +4,8 @@ import PlantillaForm from '../main/PlantillaForm'
 import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import { useRouter } from 'next/router'
+import { useToast } from '@chakra-ui/react'
+
 
 const schema = yup.object().shape({
   name: yup.string().required('Es necesario ingresar un nombre'),
@@ -33,16 +35,35 @@ const NewProject = () => {
   const { createProject } = useProjects()
   const { createDefaultProjectTasks } = useTasks()
   const router = useRouter()
+  const toast = useToast()
+
 
   const onSubmit = async (data: FormValues) => {
-    const projectId = await createProject({
+    const response = await createProject({
       expectedDate: data.expectedDate,
       name: data.name,
       description: data.description,
       initialDate: data.initialDate
     })
-    await createDefaultProjectTasks(projectId)
-    router.push(`/projects/${projectId}`)
+    const projectId = response.refId
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+      await createDefaultProjectTasks(projectId)
+      router.push(`/projects/${projectId}`)
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
   return (
     <div className="md:w-1/2 w-full">

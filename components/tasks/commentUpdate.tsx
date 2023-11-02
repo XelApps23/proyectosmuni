@@ -4,6 +4,7 @@ import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import { Update } from '@/hooks/types/Update'
 import { UserList } from '@/hooks/types/User'
+import { useToast } from '@chakra-ui/react'
 
 type Props = {
   currentTask: string
@@ -15,14 +16,51 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   const { deteleUpdate, updateUpdate } = useUpdates()
   const [isEdit, setIsEdit] = useState(false)
   const [newText, setNewText] = useState('')
+  const toast = useToast()
 
   const changeNewText = (e) => {
     setNewText(e.target.value)
   }
 
-  const sendUpdateUpdate = (id: string, text: string) => {
-    updateUpdate(id, text)
-    cancelModification()
+  const sendUpdateUpdate = async (id: string, text: string) => {
+    const response = await updateUpdate(id, text)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+      cancelModification()
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
+  }
+
+  const deleteUpdateText = async (id: string) => {
+    const response = await deteleUpdate(id)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
   const cancelModification = () => {
     setNewText('')
@@ -35,8 +73,8 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   }
   return (
     <div className='flex mb-1 p-1'>
-        <img className="h-[35px] w-[50px] bg-aprobadoHoverig md:bg-black1 mr-2"></img>
-        <div className='text-gray1'>
+      <img className="h-[35px] w-[50px] bg-aprobadoHoverig md:bg-black1 mr-2"></img>
+      <div className='text-gray1'>
         <div className='flex gap-x-1 mb-2'>
           <p>{users[update.userId].firstname} {users[update.userId].lastname}</p>
           <p>{formatDate(update.createdAt, 'PPPPp')}</p>
@@ -44,10 +82,10 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
         {isEdit
           ? <div className='mb-1'>
             <textarea
-            className='rounded-md w-[100%] border-solid border-2'
-            rows={2}
-            value={newText}
-            onChange={changeNewText}
+              className='rounded-md w-[100%] border-solid border-2'
+              rows={2}
+              value={newText}
+              onChange={changeNewText}
             ></textarea>
             <div className='flex gap-x-1 mt-1'>
               <Button
@@ -61,22 +99,22 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
                 text="Cancelar"
               />
             </div>
-            </div>
+          </div>
           : <p className='mb-1'>{update.description}</p>
-            }
-            <div className='flex'>
-              <Button
-                onClick={() => startEditing(update.description)}
-                variant="icon"
-                text="Editar"
-              />
-              <Button
-                onClick={() => deteleUpdate(update.id)}
-                variant="icon"
-                text="Eliminar"
-              />
-            </div>
+        }
+        <div className='flex'>
+          <Button
+            onClick={() => startEditing(update.description)}
+            variant="icon"
+            text="Editar"
+          />
+          <Button
+            onClick={() => deleteUpdateText(update.id)}
+            variant="icon"
+            text="Eliminar"
+          />
         </div>
+      </div>
     </div>
   )
 }

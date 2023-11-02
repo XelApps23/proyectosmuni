@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
 import { ProjectList, ProjectUpdate } from './types/Project'
+import ProjectResponse from './types/ProjectResponse'
 
 type ProjectInput = {
   name: string
@@ -60,27 +61,40 @@ const useProjects = () => {
     description,
     initialDate,
     expectedDate
-  }: ProjectInput) => {
+  }: ProjectInput): Promise<ProjectResponse> => {
     setLoading(true)
-    const docRef = await addDoc(collection(db, table), {
-      name: name || null,
-      description: description || null,
-      initialDate: initialDate || null,
-      endDate: null,
-      expectedDate: expectedDate || null,
-      idState: null,
-      done: false,
-      totalTasks: 107,
-      doneTasks: 0,
-      startedTasks: 0,
-      stoppedTasks: 0,
-      notStartedTasks: 107,
-      createdAt: new Date(),
-      updateAt: new Date()
-    })
-    console.log(docRef)
-    setLoading(false)
-    return docRef.id
+    try {
+      const docRef = await addDoc(collection(db, table), {
+        name: name || null,
+        description: description || null,
+        initialDate: initialDate || null,
+        endDate: null,
+        expectedDate: expectedDate || null,
+        idState: null,
+        done: false,
+        totalTasks: 107,
+        doneTasks: 0,
+        startedTasks: 0,
+        stoppedTasks: 0,
+        notStartedTasks: 107,
+        createdAt: new Date(),
+        updateAt: new Date()
+      })
+      console.log(docRef)
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Proyecto creado correctamente',
+        refId: docRef.id
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message,
+        refId: ''
+      }
+    }
   }
 
   const updateIncrementalField = async (docId: string, field: string, type: '++' | '--') => {
