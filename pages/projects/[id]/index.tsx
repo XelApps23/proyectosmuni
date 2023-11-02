@@ -1,4 +1,5 @@
 import GanttChart from '@/components/ganttChart/GanttChart'
+import GanttChartController from '@/components/ganttChart/GanttChartController'
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
@@ -22,7 +23,7 @@ import { useEffect, useState } from 'react'
 const ProjectIndex = () => {
   const [currentTab, setCurrentTab] = useState<number>(0)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { tasks, getTaskFiltered } = useTasks()
+  const { tasks, getTaskFiltered, updateTaskDates } = useTasks()
   const [ids, setIds] = useState<string[]>([])
 
   const { query } = useRouter()
@@ -98,10 +99,7 @@ const ProjectIndex = () => {
           },
           {
             component: (
-              <GanttChart
-                tasks={tasks}
-                requestPhase={(phase) => requestPhase(phase)}
-              />
+              <GanttChartController tasks={tasks} requestPhase={(phase) => requestPhase(phase)} update={(id, startDate, endDate) => updateTaskDates(id, startDate, endDate)} />
             ),
             name: 'Diagrama de Gantt',
             icon: <GraphicsIcon />

@@ -8,13 +8,18 @@ import {
 import { months } from '../../constants'
 import { TaskList } from '@/hooks/types/Task'
 import { convertDate } from '@/utils/convertDataFirebase'
+import { useDraggable } from 'react-use-draggable-scroll'
+import { useRef } from 'react'
 
 type Props = {
   tasks: TaskList
   timeRange: any
 }
 
-export default function TimeTable ({ timeRange, tasks }: Props) {
+export default function TimeTable({ timeRange, tasks }: Props) {
+  const ref = useRef<any>() // We will use React useRef hook to reference the wrapping div:
+  const { events } = useDraggable(ref)
+
   // for dynamic css styling
   const ganttTimePeriod = {
     display: 'grid',
@@ -141,31 +146,33 @@ export default function TimeTable ({ timeRange, tasks }: Props) {
               data-task={tasks[key]?.id}
               data-date={formattedDate}
             >
-              {Object.keys(tasks).map(key => {
-                return {
-                  id: key,
-                  start: convertDate(tasks[key].initialDate),
-                  end: convertDate(tasks[key].endDate),
-                  task: key
-                }
-              }).map((el, i) => {
-                if (el?.task === key && el?.start === formattedDate) {
-                  return (
-                    <div
-                      key={`${i}-${el?.id}`}
-                      tabIndex={0}
-                      style={{
-                        ...taskDuration,
-                        width: `calc(${dayDiff(
-                          el?.start,
-                          el?.end
-                        )} * 100% - 1px)`
-                      }}
-                    ></div>
-                  )
-                }
-                return null
-              })}
+              {Object.keys(tasks)
+                .map((key) => {
+                  return {
+                    id: key,
+                    start: convertDate(tasks[key].initialDate),
+                    end: convertDate(tasks[key].endDate),
+                    task: key
+                  }
+                })
+                .map((el, i) => {
+                  if (el?.task === key && el?.start === formattedDate) {
+                    return (
+                      <div
+                        key={`${i}-${el?.id}`}
+                        tabIndex={0}
+                        style={{
+                          ...taskDuration,
+                          width: `calc(${dayDiff(
+                            el?.start,
+                            el?.end
+                          )} * 100% - 1px)`
+                        }}
+                      ></div>
+                    )
+                  }
+                  return null
+                })}
             </div>
           )
         }
@@ -186,6 +193,9 @@ export default function TimeTable ({ timeRange, tasks }: Props) {
     <div
       id="gantt-grid-container__time"
       style={{ gridTemplateColumns: `repeat(${numMonths}, 1fr)` }}
+      className="cursor-grab"
+      ref={ref}
+      {...events}
     >
       {monthRows}
       {dayRows}

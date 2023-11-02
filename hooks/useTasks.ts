@@ -9,7 +9,8 @@ import {
   updateDoc,
   query,
   where,
-  orderBy
+  orderBy,
+  Timestamp
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
 import { TaskList, TaskUpdate } from './types/Task'
@@ -57,6 +58,7 @@ const useTasks = () => {
   const getTaskFiltered = async (projectId: string, phase: number) => {
     setLoading(true)
     setFetchedPhases((prev) => [...prev, phase])
+    console.log(fetchedPhases)
     let datos: any = { ...tasks }
 
     if (!fetchedPhases.includes(phase)) {
@@ -72,7 +74,6 @@ const useTasks = () => {
         const userData = { ...doc.data(), id: doc.id }
         if (!datos[doc.id]) {
           datos = { ...datos, [doc.id]: userData }
-          console.log(datos)
         }
       })
 
@@ -138,6 +139,32 @@ const useTasks = () => {
     setLoading(false)
   }
 
+  const updateTaskDates = async (
+    docId: string,
+    initialDate: Date,
+    expectedDate: Date
+  ) => {
+    setLoading(true)
+    const pruebaDocRef = doc(db, 'tasks', docId)
+    await updateDoc(pruebaDocRef, {
+      initialDate,
+      expectedDate,
+      updatedAt: new Date()
+    })
+    const datos = {
+      ...tasks,
+      [docId]: {
+        ...tasks[docId],
+        name: 'prueba actualización',
+        initialDate: Timestamp.fromDate(initialDate),
+        expectedDate: Timestamp.fromDate(expectedDate),
+        updatedAt: Timestamp.fromDate(new Date())
+      }
+    }
+    setTasks(datos)
+    setLoading(false)
+  }
+
   return {
     getTasks,
     getTask,
@@ -147,7 +174,8 @@ const useTasks = () => {
     tasks,
     loading,
     createDefaultProjectTasks,
-    getTaskFiltered
+    getTaskFiltered,
+    updateTaskDates
   }
 }
 
