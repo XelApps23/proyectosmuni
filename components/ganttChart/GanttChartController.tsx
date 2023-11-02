@@ -6,6 +6,7 @@ import { ganttLocaleEs } from '@/services/Utils'
 import { Tooltip } from '@chakra-ui/react'
 import { TaskList } from '@/hooks/types/Task'
 import { Timestamp } from 'firebase/firestore'
+import { PhaseList } from '@/hooks/types/Phase'
 
 type PhasesList = {
   [key: number]: string
@@ -25,32 +26,50 @@ const phasesList: PhasesList = {
 
 type Props = {
   tasks: TaskList
+  phases: PhaseList
   requestPhase: (phase: number) => void
-  update: (id: string, startDate: Date, endDate: Date) => Promise<void>
+  updateTask: (id: string, startDate: Date, endDate: Date) => Promise<void>
+  updatePhase: (id: string, startDate: Date, endDate: Date) => Promise<void>
 }
 
-const GanttChartController = ({ tasks, requestPhase, update }: Props) => {
+const handleDate = (timestamp: Timestamp | null) => {
+  if (timestamp) {
+    return dayjs(timestamp.toDate()).format('YYYY-MM-DD')
+  } else {
+    return undefined
+  }
+}
+
+const GanttChartController = ({
+  phases,
+  tasks,
+  requestPhase,
+  updateTask,
+  updatePhase
+}: Props) => {
   const [collapsedPhases, setCollapsedPhases] = useState<number[]>([])
+  console.log(phases)
   const [data, setData] = useState<GanttProps['data']>(
-    Object.keys(phasesList).map((phase) => ({
+    Object.keys(phases).map((key) => ({
       name: (
-        <Tooltip label={phasesList[Number(phase)]} key={Number(phase)}>
+        <Tooltip label={phases[key].name} key={phases[key].index}>
           <div className="text-ellipsis overflow-hidden">
-            {phasesList[Number(phase)]}
+            {phases[key].name}
           </div>
         </Tooltip>
       ),
-      key: phase,
-      startDate: '2023-07-10',
-      endDate: '2023-07-12',
+      id: key,
+      key: phases[key].index,
+      startDate: handleDate(phases[key].initialDate),
+      endDate: handleDate(phases[key].expectedDate),
       collapsed: true,
-      content: '123123123',
+      content: 'phase',
       children: [
         {
           name: 'Cargando...',
           startDate: '2023-07-10',
           endDate: '2023-07-12',
-          content: '123123123'
+          content: 'task'
         }
       ]
     }))
@@ -69,14 +88,6 @@ const GanttChartController = ({ tasks, requestPhase, update }: Props) => {
       setCollapsedPhases((prev) => [...prev, phase])
     } else {
       setCollapsedPhases((prev) => prev.filter((item) => item !== phase))
-    }
-  }
-
-  const handleDate = (timestamp: Timestamp | null) => {
-    if (timestamp) {
-      return dayjs(timestamp.toDate()).format('YYYY-MM-DD')
-    } else {
-      return undefined
     }
   }
 
@@ -134,22 +145,44 @@ const GanttChartController = ({ tasks, requestPhase, update }: Props) => {
         ]}
         onExpand={(record) => handleExpand(Number(record.name.key))}
         onUpdate={async (row, startDate, endDate) => {
-          console.log(startDate, endDate)
-          if (startDate.length > 12 && endDate.length > 12) {
-            await update(row.name.key, new Date(startDate), new Date(endDate))
-          } else if (startDate.length > 12 && endDate.length < 12) {
-            console.log(endDate)
-            await update(
-              row.name.key,
-              new Date(startDate),
-              new Date(endDate + ' 23:59:59')
-            )
-          } else if (startDate.length < 12 && endDate.length > 12) {
-            await update(
-              row.name.key,
-              new Date(startDate + ' 00:00:00'),
-              new Date(endDate)
-            )
+          if (row.content === 'phase') {
+            if (startDate.length > 12 && endDate.length > 12) {
+              await updatePhase(row.id, new Date(startDate), new Date(endDate))
+            } else if (startDate.length > 12 && endDate.length < 12) {
+              console.log(endDate)
+              await updatePhase(
+                row.id,
+                new Date(startDate),
+                new Date(endDate + ' 23:59:59')
+              )
+            } else if (startDate.length < 12 && endDate.length > 12) {
+              await updatePhase(
+                row.id,
+                new Date(startDate + ' 00:00:00'),
+                new Date(endDate)
+              )
+            }
+          } else {
+            if (startDate.length > 12 && endDate.length > 12) {
+              await updateTask(
+                row.name.key,
+                new Date(startDate),
+                new Date(endDate)
+              )
+            } else if (startDate.length > 12 && endDate.length < 12) {
+              console.log(endDate)
+              await updateTask(
+                row.name.key,
+                new Date(startDate),
+                new Date(endDate + ' 23:59:59')
+              )
+            } else if (startDate.length < 12 && endDate.length > 12) {
+              await updateTask(
+                row.name.key,
+                new Date(startDate + ' 00:00:00'),
+                new Date(endDate)
+              )
+            }
           }
           return true
         }}

@@ -13,6 +13,7 @@ import Tabs from '@/components/main/Tabs'
 import UserSelector from '@/components/main/UserSelector'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
+import usePhases from '@/hooks/usePhases'
 import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import useUsers from '@/hooks/useUsers'
@@ -29,10 +30,12 @@ const ProjectIndex = () => {
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
   const { users, getUsers } = useUsers()
+  const { getPhasesOfProject, phases, updatePhaseDates } = usePhases()
 
   useEffect(() => {
     getProject(query.id as string)
     getUsers({})
+    getPhasesOfProject(query.id as string)
   }, [])
 
   const handleInvite = () => {
@@ -98,8 +101,18 @@ const ProjectIndex = () => {
             icon: <GanttIcon />
           },
           {
-            component: (
-              <GanttChartController tasks={tasks} requestPhase={(phase) => requestPhase(phase)} update={(id, startDate, endDate) => updateTaskDates(id, startDate, endDate)} />
+            component: Object.keys(phases).length > 0 && (
+              <GanttChartController
+                phases={phases}
+                tasks={tasks}
+                requestPhase={(phase) => requestPhase(phase)}
+                updateTask={(id, startDate, endDate) =>
+                  updateTaskDates(id, startDate, endDate)
+                }
+                updatePhase={(id, startDate, endDate) =>
+                  updatePhaseDates(id, startDate, endDate)
+                }
+              />
             ),
             name: 'Diagrama de Gantt',
             icon: <GraphicsIcon />

@@ -13,8 +13,9 @@ import {
   Timestamp
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
-import { TaskList, TaskUpdate } from './types/Task'
+import { TaskList } from './types/Task'
 import TaskListObj from '@/services/TaskListObj'
+import usePhases from './usePhases'
 
 type TaskInput = {
   name: string
@@ -26,10 +27,57 @@ type TaskInput = {
 
 const table = 'tasks'
 
+type PhasesListText = {
+  [key: string]: {
+    name: string
+    totalTasks: number
+  }
+}
+
+const phasesList: PhasesListText = {
+  1: {
+    name: 'Formulación del proyecto',
+    totalTasks: 33
+  },
+  2: {
+    name: 'Creación de bases',
+    totalTasks: 15
+  },
+  3: {
+    name: 'Adjudicación del proyecto',
+    totalTasks: 12
+  },
+  4: {
+    name: 'Contratación del proyecto',
+    totalTasks: 6
+  },
+  5: {
+    name: 'Ejecución del proyecto anticipo',
+    totalTasks: 5
+  },
+  6: {
+    name: 'Ejecución del proyecto estimaciones',
+    totalTasks: 8
+  },
+  7: {
+    name: 'Ejecución del proyecto documento de cambio',
+    totalTasks: 11
+  },
+  8: {
+    name: 'Liquidación del proyecto',
+    totalTasks: 17
+  },
+  9: {
+    name: 'Otros',
+    totalTasks: 0
+  }
+}
+
 const useTasks = () => {
   const [tasks, setTasks] = useState<TaskList>({})
   const [loading, setLoading] = useState(false)
   const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
+  const { createPhase } = usePhases()
 
   const getTasks = async () => {
     setLoading(true)
@@ -128,6 +176,18 @@ const useTasks = () => {
         phase: task.phase
       })
     }
+    for (const index in phasesList) {
+      await createPhase({
+        doneTasks: 0,
+        index: Number(index),
+        name: phasesList[index].name,
+        notStartedTasks: phasesList[index].totalTasks,
+        projectId,
+        startedTasks: 0,
+        stoppedTasks: 0,
+        totalTasks: phasesList[index].totalTasks
+      })
+    }
   }
 
   const updateTask = async (docId: string, field: string, value: any) => {
@@ -155,7 +215,6 @@ const useTasks = () => {
       ...tasks,
       [docId]: {
         ...tasks[docId],
-        name: 'prueba actualización',
         initialDate: Timestamp.fromDate(initialDate),
         expectedDate: Timestamp.fromDate(expectedDate),
         updatedAt: Timestamp.fromDate(new Date())
