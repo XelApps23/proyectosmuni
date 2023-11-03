@@ -5,9 +5,8 @@ import { useRouter } from 'next/router'
 import Select from '../main/Select'
 import useUsers from '@/hooks/useUsers'
 import useRoles from '@/hooks/useRoles'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { User } from '@/hooks/types/User'
-import VisibilityIcon from '../icons/VisibilityIcon'
 import { useToast } from '@chakra-ui/react'
 
 const schema = yup.object().shape({

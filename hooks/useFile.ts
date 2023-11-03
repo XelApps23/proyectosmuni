@@ -22,6 +22,7 @@ const table = 'files'
 
 const useFile = () => {
   const [loading, setLoading] = useState(false)
+  const [loadingUpload, setLoadingUpload] = useState(false)
   const [progress, setProgress] = useState(0)
   const [downloadURL, setDownloadURL] = useState('')
   const [files, setFiles] = useState<FileList>({})
@@ -71,9 +72,9 @@ const useFile = () => {
   }
 
   const uploadFile = async (file: File, userId: string, taskId: string) => {
+    setLoadingUpload(true)
     const storageRef = ref(storage, `/${file.name}`)
     const uploadTask = uploadBytesResumable(storageRef, file)
-    let datos = files
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -83,19 +84,19 @@ const useFile = () => {
         // Estado de la carga
         switch (snapshot.state) {
           case 'paused':
-            setLoading(false)
+            setLoadingUpload(false)
             break
           case 'running':
-            setLoading(true)
+            setLoadingUpload(true)
             break
           case 'canceled':
-            setLoading(false)
+            setLoadingUpload(false)
             break
         }
       },
       (error) => {
         console.log(error.message)
-        setLoading(false)
+        setLoadingUpload(false)
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
@@ -111,11 +112,11 @@ const useFile = () => {
           })
           console.log(docRef)
           getFilesOfTask(taskId)
-          setLoading(false)
+          setLoadingUpload(false)
         })
       }
     )
-    setLoading(false)
+    setLoadingUpload(false)
   }
 
   return {
@@ -125,7 +126,8 @@ const useFile = () => {
     downloadURL,
     getFilesOfTask,
     files,
-    deleteFile
+    deleteFile,
+    loadingUpload
   }
 }
 

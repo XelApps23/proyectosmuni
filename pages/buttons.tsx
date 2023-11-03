@@ -7,9 +7,8 @@ const Buttons = () => {
       <Button variant="cancelar" text="cancelar"></Button>
       <Button variant="icon" text="icon"></Button>
       <Button variant="login" text="login"></Button>
-      <Button variant="menu" text="menu"></Button>
       <Button variant="primary" text="primary"></Button>
-      <Button variant="simple" text="simple"></Button>
+      <Button variant="secondary" text="simple"></Button>
     </div>
   )
 }

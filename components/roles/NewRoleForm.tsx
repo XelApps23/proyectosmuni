@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import useRoles from '@/hooks/useRoles'
 import Divider from '../main/Divider'
 import Checkbox from '../main/Checkbox'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Role } from '@/hooks/types/Role'
 
 const schema = yup.object().shape({
@@ -23,8 +23,7 @@ type Props = {
 
 const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
   const [permissions, setPermissions] = useState<string[]>(edit ? defaultRole?.permissions ?? [] : [])
-
-  const { createRole, loading, updateRole } = useRoles()
+  const { createRole, updateRole, loading } = useRoles()
   const router = useRouter()
 
   const onSubmit = async (data: FormValues) => {

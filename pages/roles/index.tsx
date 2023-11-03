@@ -97,8 +97,8 @@ const index = () => {
         isOpen={isOpen}
         onClose={onClose}
         actions={
-          <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="simple" onClick={onClose} />
+          <div className="flex items-center justify-between gap-2">
+            <Button text="Cancelar" variant='secondary' onClick={onClose} />
             <Button
               text="Confirmar"
               variant="cancelar"

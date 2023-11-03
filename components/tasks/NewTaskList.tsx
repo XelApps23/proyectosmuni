@@ -1,7 +1,7 @@
 import { TaskList } from '@/hooks/types/Task'
 import React, { useState, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Tooltip, useDisclosure } from '@chakra-ui/react'
+import { Tooltip, useDisclosure, Icon } from '@chakra-ui/react'
 import Modal from '../main/Modal'
 import Divider from '../main/Divider'
 import Bubble from '../main/Bubble'
@@ -20,9 +20,9 @@ import DocumentAddIcon from '../icons/DocumentAddIcon'
 import Button from '../main/Button'
 import WordIcon from '../icons/WordIcon'
 import ExcelIcon from '../icons/ExcelIcon'
-import TrashIcon from '../icons/TrashIcon'
-import VisibilityIcon from '../icons/VisibilityIcon'
 import useUsers from '@/hooks/useUsers'
+import { GoTrash } from 'react-icons/go'
+import { AiOutlineEye } from 'react-icons/ai'
 
 type Props = {
   tasks: TaskList
@@ -35,11 +35,11 @@ const styles = {
   colTitle: 'font-semibold text-sm'
 }
 
-const NewTaskList = ({ tasks, loading }: Props) => {
+const NewTaskList = ({ tasks }: Props) => {
   const [currentTask, setCurrentTask] = useState<string>('')
   const { onClose, isOpen, onOpen } = useDisclosure()
   const [file, setFile] = useState([])
-  const { uploadFile, getFilesOfTask, files, deleteFile } = useFile()
+  const { uploadFile, getFilesOfTask, files, deleteFile, loadingUpload } = useFile()
   const { getUsers, users } = useUsers()
   const [willUpload, setWillUpload] = useState(false)
 
@@ -52,7 +52,8 @@ const NewTaskList = ({ tasks, loading }: Props) => {
     }
   }, [])
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop, accept: {
+    onDrop,
+    accept: {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
       'aplication/pdf': []
@@ -69,18 +70,23 @@ const NewTaskList = ({ tasks, loading }: Props) => {
     setFile([])
   }, [willUpload])
 
+  useEffect(() => {
+    if (loadingUpload) {
+      setWillUpload(true)
+    } else {
+      setWillUpload(false)
+    }
+  }, [loadingUpload])
+
   const enviarArchivo = () => {
-    setLoading(true)
-    if (file.length != 0) {
+    if (file.length !== 0) {
       file.map(newFile => {
         console.log(newFile)
         uploadFile(newFile, id, currentTask)
       })
-      setWillUpload(false)
     } else {
       console.log('No se ha seleccionado un archivo')
     }
-    setLoading(false)
   }
 
   const cancelUpload = () => {
@@ -231,28 +237,29 @@ const NewTaskList = ({ tasks, loading }: Props) => {
               icon: <ArchiveIcon />,
               component: (
                 <>
-                  {willUpload ?
-                    (<>
+                  {
+                  willUpload
+                    ? (<>
                       <div {...getRootProps({
-                        className: "w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer"
+                        className: 'w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer'
                       })}>
                         <span className="flex justify-start space-x-2">
                           <input {...getInputProps()} />
                           {
-                            file.length > 0 ?
-                              (<ul>
+                            file.length > 0
+                              ? (<ul>
                                 {file.map(file => (
                                   <li key={file.name}>{file.name}</li>
                                 ))}
-                              </ul>) :
-                              (<div className='flex items-center space-x-2'>
+                              </ul>)
+                              : (<div className='flex items-center space-x-2'>
                                 <div className='w-7'>
                                   <DocumentAddIcon />
                                 </div>
                                 {
-                                  isDragActive ?
-                                    <p>Suelte los archivos a subir aquí</p> :
-                                    <p>Puede arrastrar y soltar archivos aquí o hacer click para seleccionarlos</p>
+                                  isDragActive
+                                    ? <p>Suelte los archivos a subir aquí</p>
+                                    : <p>Puede arrastrar y soltar archivos aquí o hacer click para seleccionarlos</p>
                                 }
                               </div>)
                           }
@@ -262,14 +269,18 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                       <div className='flex justify-start space-x-2'>
                         <Button
                           onClick={enviarArchivo}
-                          variant="primary"
-                          text="Guardar" />
+                          variant='primary'
+                          text="Guardar"
+                          loading={loadingUpload}
+                          type="submit"
+                          />
                         <Button
                           onClick={cancelUpload}
-                          variant="primary"
+                          variant="secondary"
                           text="Cancelar" />
                       </div>
-                    </>) : (
+                    </>)
+                    : (
                       <Button
                         onClick={() => setWillUpload(true)}
                         variant="primary"
@@ -281,35 +292,32 @@ const NewTaskList = ({ tasks, loading }: Props) => {
                     .map((listedFile, index) => (
                       <div className='flex space-x-4 border-2 border-gray-300 rounded-xl my-4 p-2'>
                         <div className='w-[75px]'>
-                          {listedFile.extension.includes('word') ?
-                            <WordIcon /> : <ExcelIcon />}
+                          {listedFile.extension.includes('word')
+                            ? <WordIcon />
+                            : <ExcelIcon />}
                         </div>
-                        <div className='grid grid-rows-2 items-center gap-y-[50%]'>
+                        <div className='grid grid-rows-2 items-center'>
                           <div className='flex justify-between'>
                             <p key={listedFile.id}>{listedFile.name}</p>
-                            <div className='flex w-10'>
+                            <div className='flex w-10 gap-2'>
                               <Button
                                 onClick={() => deleteFileFromList(listedFile.id, listedFile.url)}
                                 variant="icon"
-                                icon={<TrashIcon />}
+                                icon={<Icon as={GoTrash} />}
+                                onlyIcon={true}
                               />
                               <a href={listedFile.url}>
                                 <Button
                                   onClick={onOpen}
                                   variant="icon"
-                                  icon={<VisibilityIcon />}
+                                  icon={<Icon as={AiOutlineEye} />}
+                                  onlyIcon={true}
                                 />
                               </a>
                             </div>
                           </div>
-                          <div className='flex space-x-8'>
-                            {
-                              Object.keys(users).map((key) => users[key])
-                                .filter((user) => user.id === listedFile.userId)
-                                .map((user, index) => (
-                                  <p>{user.firstname} {user.lastname}</p>
-                                ))
-                            }
+                          <div className='flex gap-2'>
+                            <p>{users[listedFile.userId].firstname} {users[listedFile.userId].lastname}</p>
                             <p>{formatDate(listedFile.createdAt, 'PPPPp')}</p>
                           </div>
                         </div>

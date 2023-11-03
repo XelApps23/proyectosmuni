@@ -64,7 +64,7 @@ const UpdateView = ({ currentTask, users }: Props) => {
               />
               <Button
                 onClick={cancel}
-                variant="icon"
+                variant="secondary"
                 text="Cancelar"
               />
             </div>

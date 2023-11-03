@@ -53,26 +53,25 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
               <Button
                 onClick={() => sendUpdateUpdate(update.id, newText)}
                 variant="primary"
-                text="Enviar"
-              />
+                text="Enviar"/>
               <Button
                 onClick={() => cancelModification()}
-                variant="icon"
+                variant="secondary"
                 text="Cancelar"
               />
             </div>
             </div>
           : <p className='mb-1'>{update.description}</p>
             }
-            <div className='flex'>
+            <div className='flex gap-1'>
               <Button
                 onClick={() => startEditing(update.description)}
-                variant="icon"
+                variant="secondary"
                 text="Editar"
               />
               <Button
                 onClick={() => deteleUpdate(update.id)}
-                variant="icon"
+                variant="secondary"
                 text="Eliminar"
               />
             </div>

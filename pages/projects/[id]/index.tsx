@@ -1,7 +1,6 @@
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
-import PlusIcon from '@/components/icons/PlusIcon'
 import UserIcon from '@/components/icons/UserIcon'
 import Button from '@/components/main/Button'
 import Card from '@/components/main/Card'
@@ -20,6 +19,7 @@ import Graphic from '@/pages-done/graphic'
 import { useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { AddIcon } from '@chakra-ui/icons'
 
 const ProjectIndex = () => {
   const [currentTab, setCurrentTab] = useState<number>(0)
@@ -59,7 +59,7 @@ const ProjectIndex = () => {
           <Button
             onClick={onOpen}
             variant="primary"
-            icon={<PlusIcon color="white" />}
+            icon={<AddIcon/>}
             text="Agregar colaborador"
           />
         </div>
