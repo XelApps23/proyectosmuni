@@ -42,7 +42,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
       <div className="">
         <div className="flex gap-x-1 mb-2 items-center">
           <p className="font-semibold">
-            {users[update.userId].firstname} {users[update.userId].lastname}
+            {users[update.userId]?.firstname} {users[update.userId]?.lastname}
           </p>
           <p className="text-sm text-gray1">{formatDate(update.createdAt, 'PPPPp')}</p>
         </div>

@@ -1,4 +1,5 @@
 import ArchiveIcon from '@/components/icons/ArchiveIcon'
+import GanttChartController from '@/components/ganttChart/GanttChartController'
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
@@ -14,34 +15,40 @@ import FilesTable from '@/components/projects/FilesTable'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
 import useFile from '@/hooks/useFile'
+import usePhases from '@/hooks/usePhases'
+import TaskModal from '@/components/tasks/TaskModal'
+import { Task } from '@/hooks/types/Task'
 import useProjects from '@/hooks/useProjects'
+import useTasks from '@/hooks/useTasks'
 import useUpdates from '@/hooks/useUpdates'
 import useUsers from '@/hooks/useUsers'
-import GanttChart from '@/pages-done/ganttChart'
 import { useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 const ProjectIndex = () => {
-  const [ids, setIds] = useState<string[]>([])
-
+  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { tasks, getTaskFiltered, updateTaskDates, getTask } = useTasks()
+  const [ids, setIds] = useState<string[]>([])
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
   const { users, getUsers } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
   const { getFilesOfProject, getFilesOfTask, files } = useFile()
+  const { getPhasesOfProject, phases, updatePhaseDates } = usePhases()
 
   useEffect(() => {
     getProject(query.id as string)
+    getUsers({})
+    getPhasesOfProject(query.id as string)
   }, [])
 
   useEffect(() => {
-    Object.keys(files).forEach(key => {
+    Object.keys(files).forEach((key) => {
       getTask(files[key].taskId)
     })
   }, [files])
-  
 
   const handleInvite = () => {
     console.log()
@@ -51,6 +58,15 @@ const ProjectIndex = () => {
     if (tab === 4) {
       getFilesOfProject(query.id as string)
     }
+  }
+
+  const requestPhase = (phase: number) => {
+    getTaskFiltered(query.id as string, phase)
+  }
+
+  const handleSelectedTask = (key: string) => {
+    setSelectedTask(tasks[key])
+    onOpen()
   }
 
   return (
@@ -96,18 +112,29 @@ const ProjectIndex = () => {
             component: projects[query.id as string] && (
               <TaskListController
                 users={users}
-                files={files}
-                updates={updates}
-                requestUpdates={(update) => getUpdatesOfTask(update)}
-                requestFiles={(task) => getFilesOfTask(task)}
-                projectId={projects[query.id as string].id}
+                openTask={(id) => handleSelectedTask(id)}
+                tasks={tasks}
+                requestPhase={(phase) => requestPhase(phase)}
               />
             ),
             name: 'Tareas',
             icon: <GanttIcon />
           },
           {
-            component: <GanttChart />,
+            component: Object.keys(phases).length > 0 && (
+              <GanttChartController
+                phases={phases}
+                selectedTask={(key) => handleSelectedTask(key)}
+                tasks={tasks}
+                requestPhase={(phase) => requestPhase(phase)}
+                updateTask={(id, startDate, endDate) =>
+                  updateTaskDates(id, startDate, endDate)
+                }
+                updatePhase={(id, startDate, endDate) =>
+                  updatePhaseDates(id, startDate, endDate)
+                }
+              />
+            ),
             name: 'Diagrama de Gantt',
             icon: <GraphicsIcon />
           },
@@ -134,6 +161,19 @@ const ProjectIndex = () => {
           }
         ]}
       />
+      {selectedTask && (
+        <TaskModal
+          files={files}
+          updates={updates}
+          users={users}
+          projectId={query.id as string}
+          requestFiles={(task) => getFilesOfTask(task)}
+          requestUpdates={(update) => getUpdatesOfTask(update)}
+          currentTask={selectedTask}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      )}
     </Card>
   )
 }

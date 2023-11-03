@@ -43,11 +43,7 @@ const styles: Styles = {
 }
 
 const Bubble = ({ type }: Props) => {
-  return (
-    <div className={styles[type].color}>
-      {type}
-    </div>
-  )
+  return <div className={styles[type]?.color}>{type}</div>
 }
 
 export default Bubble

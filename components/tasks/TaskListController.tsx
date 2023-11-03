@@ -1,19 +1,15 @@
 import React, { useState } from 'react'
-import useTasks from '@/hooks/useTasks'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
 import NewTaskList from './NewTaskList'
 import { AnimatePresence } from 'framer-motion'
-import { FileList } from '@/hooks/types/File'
-import { UpdateList } from '@/hooks/types/Update'
 import { UserList } from '@/hooks/types/User'
+import { TaskList } from '@/hooks/types/Task'
 
 type Props = {
-  projectId: string
-  files: FileList
-  requestFiles: (task: string) => void
-  requestUpdates: (update: string) => void
-  updates: UpdateList
   users: UserList
+  tasks: TaskList
+  requestPhase: (phase: number) => void
+  openTask: (id: string) => void
 }
 
 type PhasesList = {
@@ -33,25 +29,12 @@ const phasesList: PhasesList = {
 }
 
 const TaskListController = ({
-  projectId,
-  files,
-  requestFiles,
-  requestUpdates,
-  updates,
-  users
+  users, tasks, requestPhase, openTask
 }: Props) => {
-  const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
   const [openPhases, setOpenPhases] = useState<number[]>([])
-  const { getTaskFiltered, tasks } = useTasks()
 
   const handleFetchTasks = (phase: number) => {
-    console.log(fetchedPhases)
-    console.log(openPhases)
-
-    if (!fetchedPhases.includes(phase)) {
-      getTaskFiltered(projectId, phase)
-      setFetchedPhases((prev) => [...prev, phase])
-    }
+    requestPhase(phase)
 
     if (!openPhases.includes(phase)) {
       setOpenPhases((prev) => [...prev, phase])
@@ -117,18 +100,13 @@ const TaskListController = ({
             {openPhases.includes(Number(key)) && (
               <NewTaskList
                 users={users}
-                requestFiles={requestFiles}
-                requestUpdates={requestUpdates}
-                updates={updates}
-                files={files}
-                projectId={projectId}
+                openTask={(id) => openTask(id)}
                 tasks={Object.keys(tasks)
                   .map((key) => tasks[key])
                   .filter((task) => task.phase === Number(key))
                   .reduce((cur, task) => {
                     return Object.assign(cur, { [task.id]: task })
                   }, {})}
-                loading={false}
               />
             )}
           </AnimatePresence>
