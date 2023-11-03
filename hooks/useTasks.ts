@@ -9,11 +9,13 @@ import {
   updateDoc,
   query,
   where,
-  orderBy
+  orderBy,
+  Timestamp
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
-import { TaskList, TaskUpdate } from './types/Task'
+import { TaskList } from './types/Task'
 import TaskListObj from '@/services/TaskListObj'
+import usePhases from './usePhases'
 
 type TaskInput = {
   name: string
@@ -25,9 +27,57 @@ type TaskInput = {
 
 const table = 'tasks'
 
+type PhasesListText = {
+  [key: string]: {
+    name: string
+    totalTasks: number
+  }
+}
+
+const phasesList: PhasesListText = {
+  1: {
+    name: 'Formulación del proyecto',
+    totalTasks: 33
+  },
+  2: {
+    name: 'Creación de bases',
+    totalTasks: 15
+  },
+  3: {
+    name: 'Adjudicación del proyecto',
+    totalTasks: 12
+  },
+  4: {
+    name: 'Contratación del proyecto',
+    totalTasks: 6
+  },
+  5: {
+    name: 'Ejecución del proyecto anticipo',
+    totalTasks: 5
+  },
+  6: {
+    name: 'Ejecución del proyecto estimaciones',
+    totalTasks: 8
+  },
+  7: {
+    name: 'Ejecución del proyecto documento de cambio',
+    totalTasks: 11
+  },
+  8: {
+    name: 'Liquidación del proyecto',
+    totalTasks: 17
+  },
+  9: {
+    name: 'Otros',
+    totalTasks: 0
+  }
+}
+
 const useTasks = () => {
   const [tasks, setTasks] = useState<TaskList>({})
   const [loading, setLoading] = useState(false)
+  const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
+  const { createPhase } = usePhases()
 
   const getTasks = async () => {
     setLoading(true)
@@ -55,24 +105,28 @@ const useTasks = () => {
 
   const getTaskFiltered = async (projectId: string, phase: number) => {
     setLoading(true)
+    setFetchedPhases((prev) => [...prev, phase])
+    console.log(fetchedPhases)
     let datos: any = { ...tasks }
 
-    const q = query(
-      collection(db, 'tasks'),
-      where('projectId', '==', projectId),
-      where('phase', '==', Number(phase)),
-      orderBy('index', 'asc')
-    )
-    const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((doc) => {
-      const userData = { ...doc.data(), id: doc.id }
-      if (!datos[doc.id]) {
-        datos = { ...datos, [doc.id]: userData }
-        console.log(datos)
-      }
-    })
+    if (!fetchedPhases.includes(phase)) {
+      console.log('CONSULTA')
+      const q = query(
+        collection(db, 'tasks'),
+        where('projectId', '==', projectId),
+        where('phase', '==', Number(phase)),
+        orderBy('index', 'asc')
+      )
+      const querySnapshot = await getDocs(q)
+      querySnapshot.forEach((doc) => {
+        const userData = { ...doc.data(), id: doc.id }
+        if (!datos[doc.id]) {
+          datos = { ...datos, [doc.id]: userData }
+        }
+      })
 
-    setTasks(datos)
+      setTasks(datos)
+    }
     setLoading(false)
   }
 
@@ -122,6 +176,18 @@ const useTasks = () => {
         phase: task.phase
       })
     }
+    for (const index in phasesList) {
+      await createPhase({
+        doneTasks: 0,
+        index: Number(index),
+        name: phasesList[index].name,
+        notStartedTasks: phasesList[index].totalTasks,
+        projectId,
+        startedTasks: 0,
+        stoppedTasks: 0,
+        totalTasks: phasesList[index].totalTasks
+      })
+    }
   }
 
   const updateTask = async (docId: string, field: string, value: any) => {
@@ -130,6 +196,31 @@ const useTasks = () => {
     await updateDoc(pruebaDocRef, {
       [field]: value
     })
+    setLoading(false)
+  }
+
+  const updateTaskDates = async (
+    docId: string,
+    initialDate: Date,
+    expectedDate: Date
+  ) => {
+    setLoading(true)
+    const pruebaDocRef = doc(db, 'tasks', docId)
+    await updateDoc(pruebaDocRef, {
+      initialDate,
+      expectedDate,
+      updatedAt: new Date()
+    })
+    const datos = {
+      ...tasks,
+      [docId]: {
+        ...tasks[docId],
+        initialDate: Timestamp.fromDate(initialDate),
+        expectedDate: Timestamp.fromDate(expectedDate),
+        updatedAt: Timestamp.fromDate(new Date())
+      }
+    }
+    setTasks(datos)
     setLoading(false)
   }
 
@@ -142,7 +233,8 @@ const useTasks = () => {
     tasks,
     loading,
     createDefaultProjectTasks,
-    getTaskFiltered
+    getTaskFiltered,
+    updateTaskDates
   }
 }
 

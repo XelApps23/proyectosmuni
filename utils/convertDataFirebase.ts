@@ -1,4 +1,6 @@
-export function convertDate (firebaseDate) {
+import { Timestamp } from 'firebase/firestore'
+
+export function convertDate (firebaseDate: Timestamp | null) {
   if (!firebaseDate) {
     return '' // Manejo de casos inválidos
   }
