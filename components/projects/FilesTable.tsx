@@ -1,14 +1,16 @@
+import { TaskList } from '@/hooks/types/Task'
 import Table from '../main/Table'
 import { FileList } from '@/hooks/types/File'
 
 type Props = {
-  files: FileList
+  files: FileList,
+  tasks: TaskList
 }
 
-const FilesTable = ({ files }: Props) => {
+const FilesTable = ({ files, tasks }: Props) => {
   return <Table headers={['Nombre', 'Tarea perteneciente', 'Test']} cells={Object.keys(files).map(key => ({
     name: files[key].name,
-    task: files[key].taskId
+    task: tasks[files[key].taskId]?.name
   }))} />
 }
 

@@ -52,7 +52,7 @@ const TaskModal = ({
   requestFiles,
   requestUpdates
 }: Props) => {
-  const [file, setFile] = useState([])
+  const [file, setFile] = useState<globalThis.File[]>([])
   const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
 
@@ -60,7 +60,7 @@ const TaskModal = ({
     setFile([])
   }, [willUpload])
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback((acceptedFiles: globalThis.File[]) => {
     if (acceptedFiles?.length) {
       setFile((previousFiles: any) => [...previousFiles, ...acceptedFiles])
     }
@@ -75,7 +75,7 @@ const TaskModal = ({
     }
   })
 
-  const { id } = useSelector((state) => state.login)
+  const { id } = useSelector((state: any) => state.login)
 
   const enviarArchivo = () => {
     if (file.length !== 0) {

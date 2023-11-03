@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
+import { UpdateList } from '@/hooks/types/Update'
+import { UserList } from '@/hooks/types/User'
 import { useSelector } from 'react-redux'
-import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import CommentUpdate from './commentUpdate'
-import { UserList } from '@/hooks/types/User'
-import { UpdateList } from '@/hooks/types/Update'
+import useUpdates from '@/hooks/useUpdates'
 
 type Props = {
   currentTask: string
@@ -15,7 +15,7 @@ type Props = {
 
 const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
   const { createUpdate } = useUpdates()
-  const { id } = useSelector((state) => state.login)
+  const { id } = useSelector((state: any) => state.login)
   const [isWrite, setIsWrite] = useState(false)
   const [rows, setRows] = useState(1)
   const [text, setText] = useState('')
@@ -24,7 +24,7 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
     setRows(4)
   }
 
-  const changeText = (e) => {
+  const changeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
   }
 
