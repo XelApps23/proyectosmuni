@@ -13,6 +13,8 @@ import Tabs from '@/components/main/Tabs'
 import UserSelector from '@/components/main/UserSelector'
 import ProjectSummary from '@/components/projects/ProjectSummary'
 import TaskListController from '@/components/tasks/TaskListController'
+import TaskModal from '@/components/tasks/TaskModal'
+import { Task } from '@/hooks/types/Task'
 import usePhases from '@/hooks/usePhases'
 import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
@@ -22,6 +24,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 const ProjectIndex = () => {
+  const [selectedTask, setSelectedTask] = useState<Task>(undefined)
   const [currentTab, setCurrentTab] = useState<number>(0)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { tasks, getTaskFiltered, updateTaskDates } = useTasks()
@@ -44,6 +47,11 @@ const ProjectIndex = () => {
 
   const requestPhase = (phase: number) => {
     getTaskFiltered(query.id as string, phase)
+  }
+
+  const handleSelectedTask = (key: string) => {
+    setSelectedTask(tasks[key])
+    onOpen()
   }
 
   return (
@@ -93,6 +101,7 @@ const ProjectIndex = () => {
           {
             component: projects[query.id as string] && (
               <TaskListController
+                openTask={(id) => handleSelectedTask(id)}
                 tasks={tasks}
                 requestPhase={(phase) => requestPhase(phase)}
               />
@@ -104,6 +113,7 @@ const ProjectIndex = () => {
             component: Object.keys(phases).length > 0 && (
               <GanttChartController
                 phases={phases}
+                selectedTask={(key) => handleSelectedTask(key)}
                 tasks={tasks}
                 requestPhase={(phase) => requestPhase(phase)}
                 updateTask={(id, startDate, endDate) =>
@@ -135,6 +145,13 @@ const ProjectIndex = () => {
           }
         ]}
       />
+      {selectedTask && (
+        <TaskModal
+          currentTask={selectedTask}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      )}
     </Card>
   )
 }

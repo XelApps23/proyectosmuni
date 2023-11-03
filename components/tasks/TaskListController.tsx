@@ -9,6 +9,7 @@ import { TaskList } from '@/hooks/types/Task'
 type Props = {
   tasks: TaskList
   requestPhase: (phase: number) => void
+  openTask: (id: string) => void
 }
 
 type PhasesList = {
@@ -27,7 +28,7 @@ const phasesList: PhasesList = {
   9: 'Otros'
 }
 
-const TaskListController = ({ tasks, requestPhase }: Props) => {
+const TaskListController = ({ tasks, requestPhase, openTask }: Props) => {
   const [openPhases, setOpenPhases] = useState<number[]>([])
 
   const handleFetchTasks = (phase: number) => {
@@ -96,6 +97,7 @@ const TaskListController = ({ tasks, requestPhase }: Props) => {
           <AnimatePresence mode="wait">
             {openPhases.includes(Number(key)) && (
               <NewTaskList
+                openTask={(id) => openTask(id)}
                 tasks={Object.keys(tasks)
                   .map((key) => tasks[key])
                   .filter((task) => task.phase === Number(key))

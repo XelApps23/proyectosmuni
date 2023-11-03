@@ -8,28 +8,13 @@ import { TaskList } from '@/hooks/types/Task'
 import { Timestamp } from 'firebase/firestore'
 import { PhaseList } from '@/hooks/types/Phase'
 
-type PhasesList = {
-  [key: number]: string
-}
-
-const phasesList: PhasesList = {
-  1: 'Formulación del proyecto',
-  2: 'Creación de bases',
-  3: 'Adjudicación del proyecto',
-  4: 'Contratación del proyecto',
-  5: 'Ejecución del proyecto anticipo',
-  6: 'Ejecución del proyecto estimaciones',
-  7: 'Ejecución del proyecto documento de cambio',
-  8: 'Liquidación del proyecto',
-  9: 'Otros'
-}
-
 type Props = {
   tasks: TaskList
   phases: PhaseList
   requestPhase: (phase: number) => void
   updateTask: (id: string, startDate: Date, endDate: Date) => Promise<void>
   updatePhase: (id: string, startDate: Date, endDate: Date) => Promise<void>
+  selectedTask: (id: string) => void
 }
 
 const handleDate = (timestamp: Timestamp | null) => {
@@ -45,7 +30,8 @@ const GanttChartController = ({
   tasks,
   requestPhase,
   updateTask,
-  updatePhase
+  updatePhase,
+  selectedTask
 }: Props) => {
   const [collapsedPhases, setCollapsedPhases] = useState<number[]>([])
   console.log(phases)
@@ -103,17 +89,17 @@ const GanttChartController = ({
           children:
             phaseTasks.length > 0
               ? phaseTasks.map((task) => ({
-                  name: (
+                name: (
                     <Tooltip key={task.id} label={task.description}>
-                      <div className="text-ellipsis overflow-hidden">
+                      <div className="text-ellipsis overflow-hidden cursor-pointer" onClick={() => selectedTask(task.id)}>
                         {task.name} {task.description}
                       </div>
                     </Tooltip>
-                  ),
-                  startDate: handleDate(task.initialDate),
-                  endDate: handleDate(task.expectedDate),
-                  content: task.description
-                }))
+                ),
+                startDate: handleDate(task.initialDate),
+                endDate: handleDate(task.expectedDate),
+                content: task.description
+              }))
               : [
                   {
                     name: 'Cargando...',

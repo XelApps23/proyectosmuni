@@ -38,7 +38,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
         <img className="h-[35px] w-[50px] bg-aprobadoHoverig md:bg-black1 mr-2"></img>
         <div className='text-gray1'>
         <div className='flex gap-x-1 mb-2'>
-          <p>{users[update.userId].firstname} {users[update.userId].lastname}</p>
+          <p>{users[update.userId]?.firstname} {users[update.userId]?.lastname}</p>
           <p>{formatDate(update.createdAt, 'PPPPp')}</p>
         </div>
         {isEdit
