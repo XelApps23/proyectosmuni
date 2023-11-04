@@ -24,7 +24,12 @@ const Home = () => {
                 projectId={key}
                 key={key}
                 title={projects[key].name}
-                progress={projects[key].progress || 22}
+                progress={Number(
+                  (
+                    (projects[key].doneTasks / projects[key].totalTasks) *
+                    100
+                  ).toFixed(2)
+                )}
               />
             ))}
           </div>

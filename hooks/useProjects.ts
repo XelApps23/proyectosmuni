@@ -71,6 +71,7 @@ const useProjects = () => {
       idState: null,
       done: false,
       totalTasks: 107,
+      assignedUsers: [],
       doneTasks: 0,
       startedTasks: 0,
       stoppedTasks: 0,

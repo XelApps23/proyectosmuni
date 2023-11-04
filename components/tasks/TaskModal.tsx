@@ -22,6 +22,7 @@ import useFile from '@/hooks/useFile'
 import VisibilityIcon from '../icons/VisibilityIcon'
 import WordIcon from '../icons/WordIcon'
 import { FileList } from '@/hooks/types/File'
+import { Input, Textarea } from '@chakra-ui/react'
 
 type Props = {
   currentTask: Task
@@ -33,6 +34,7 @@ type Props = {
   users: UserList
   requestFiles: (task: string) => void
   requestUpdates: (task: string) => void
+  requestUser: (id: string) => void
 }
 
 const styles = {
@@ -43,6 +45,7 @@ const styles = {
 
 const TaskModal = ({
   currentTask,
+  requestUser,
   onClose,
   isOpen,
   projectId,
@@ -55,6 +58,7 @@ const TaskModal = ({
   const [file, setFile] = useState<globalThis.File[]>([])
   const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
+  const [editingDescription, setEditingDescription] = useState(false)
 
   useEffect(() => {
     setFile([])
@@ -111,7 +115,10 @@ const TaskModal = ({
       size="2xl"
       title={currentTask.name}
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        onClose()
+        setEditingDescription(false)
+      }}
     >
       <Tabs
         changedTab={(tab) => handleChangeTab(tab)}
@@ -121,58 +128,59 @@ const TaskModal = ({
             name: 'Información',
             component: (
               <>
-                <p>{currentTask.description}</p>
+                <div className="flex">
+                  {editingDescription
+                    ? (
+                    <Textarea defaultValue={currentTask.description} />
+                      )
+                    : (
+                    <p>{currentTask.description}</p>
+                      )}
+                  {!editingDescription && (
+                    <div
+                      className="h-6 w-6 cursor-pointer"
+                      onClick={() => setEditingDescription(true)}
+                    >
+                      <EditIcon color="gray" />
+                    </div>
+                  )}
+                </div>
                 <Divider />
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Estado</h2>
-                  <p className="col-span-2 flex">
-                    <div className="w-20">
+                  <div className="col-span-2 flex">
+                    <div className="w-24">
                       <Bubble type={currentTask.status} />
                     </div>
-                    <div className="ml-4 w-6 h-6">
-                      <EditIcon color="#888888" />
-                    </div>
-                  </p>
+                  </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Prioridad</h2>
-                  <p className="col-span-2 flex">
-                    <div className="w-20">
+                  <div className="col-span-2 flex">
+                    <div className="w-24">
                       <Bubble type={currentTask.priority} />
                     </div>
-                    <div className="ml-4 w-6 h-6">
-                      <EditIcon color="#888888" />
-                    </div>
-                  </p>
+                  </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de inicio</h2>
-                  <p className="col-span-2 flex">
+                  <div className="col-span-2 flex">
                     {formatDate(currentTask.initialDate, 'PPPP')}
-                    <div className="ml-4 w-6 h-6">
-                      <EditIcon color="#888888" />
-                    </div>
-                  </p>
+                  </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>
                     Fecha de finalización prevista
                   </h2>
-                  <p className="col-span-2 flex">
+                  <div className="col-span-2 flex">
                     {formatDate(currentTask.expectedDate, 'PPPP')}
-                    <div className="ml-4 w-6 h-6">
-                      <EditIcon color="#888888" />
-                    </div>
-                  </p>
+                  </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de finalización</h2>
-                  <p className="col-span-2 flex hover:bg-fondo">
+                  <div className="col-span-2 flex">
                     {formatDate(currentTask.endDate, 'PPPP')}
-                    <div className="ml-4 w-6 h-6">
-                      <EditIcon color="#888888" />
-                    </div>
-                  </p>
+                  </div>
                 </div>
               </>
             )

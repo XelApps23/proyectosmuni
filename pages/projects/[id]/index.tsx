@@ -29,20 +29,28 @@ import { useEffect, useState } from 'react'
 const ProjectIndex = () => {
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isOpenU, onOpen: onOpenU, onClose: onCloseU } = useDisclosure()
   const { tasks, getTaskFiltered, updateTaskDates, getTask } = useTasks()
   const [ids, setIds] = useState<string[]>([])
   const { query } = useRouter()
   const { getProject, projects } = useProjects()
-  const { users, getUsers } = useUsers()
+  const { users, getUser, getUsersOfProject } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
   const { getFilesOfProject, getFilesOfTask, files } = useFile()
   const { getPhasesOfProject, phases, updatePhaseDates } = usePhases()
 
   useEffect(() => {
     getProject(query.id as string)
-    getUsers({})
     getPhasesOfProject(query.id as string)
   }, [])
+
+  useEffect(() => {
+    if (projects[query.id as string]) {
+      projects[query.id as string]?.assignedUsers?.forEach((user) => {
+        getUser(user)
+      })
+    }
+  }, [projects])
 
   useEffect(() => {
     Object.keys(files).forEach((key) => {
@@ -73,8 +81,8 @@ const ProjectIndex = () => {
     <Card>
       <Modal
         title="Agregar colaborador"
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isOpenU}
+        onClose={onCloseU}
         actions={
           <>
             <Button
@@ -91,7 +99,7 @@ const ProjectIndex = () => {
         <div className="text-2xl">{projects[query.id as string]?.name}</div>
         <div>
           <Button
-            onClick={onOpen}
+            onClick={onOpenU}
             variant="primary"
             icon={<PlusIcon color="white" />}
             text="Agregar colaborador"
@@ -111,6 +119,7 @@ const ProjectIndex = () => {
           {
             component: projects[query.id as string] && (
               <TaskListController
+                phases={phases}
                 users={users}
                 openTask={(id) => handleSelectedTask(id)}
                 tasks={tasks}
@@ -163,6 +172,7 @@ const ProjectIndex = () => {
       />
       {selectedTask && (
         <TaskModal
+          requestUser={(user) => getUser(user)}
           files={files}
           updates={updates}
           users={users}

@@ -6,7 +6,7 @@ import { formatDate } from '@/services/Utils'
 import { UserList } from '@/hooks/types/User'
 
 type Props = {
-  tasks: TaskList,
+  tasks: TaskList
   users: UserList
   openTask: (id: string) => void
 }
@@ -17,11 +17,7 @@ const styles = {
   colTitle: 'font-semibold text-sm'
 }
 
-const NewTaskList = ({
-  tasks,
-  openTask,
-  users
-}: Props) => {
+const NewTaskList = ({ tasks, openTask, users }: Props) => {
   return (
     <motion.div
       className="flex flex-col bg-fondo mb-4"
@@ -33,6 +29,58 @@ const NewTaskList = ({
         <div className="p-1.5 min-w-full inline-block">
           <div className="border border-gray2 rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray2">
+              <thead>
+                <tr>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Tarea
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Descripción
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Responsables
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Fecha de inicio
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Fecha prevista de finalización
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Prioridad
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Estado
+                  </th>
+                  <th
+                    align="left"
+                    className="py-2 px-6 font-normal text-black2 bg-fondo"
+                  >
+                    Opciones
+                  </th>
+                </tr>
+              </thead>
               <tbody className="divide-y divide-gray2">
                 {Object.keys(tasks).map((key, index) => (
                   <tr
