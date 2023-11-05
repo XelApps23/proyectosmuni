@@ -14,7 +14,13 @@ import EditIcon from '../icons/EditIcon'
 import ExcelIcon from '../icons/ExcelIcon'
 import MenuIcon from '../icons/MenuIcon'
 import Modal from '../main/Modal'
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import Tabs from '../main/Tabs'
 import TrashIcon from '../icons/TrashIcon'
 import UpdateView from './update'
@@ -67,6 +73,9 @@ const TaskModal = ({
   requestUpdates,
   updateTask
 }: Props) => {
+  const expectedDateRef = useRef()
+  const endDateRef = useRef()
+  const initialDateRef = useRef()
   const [file, setFile] = useState<globalThis.File[]>([])
   const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
@@ -74,6 +83,15 @@ const TaskModal = ({
   const [text, setText] = useState(currentTask.description)
   const [status, setStatus] = useState(currentTask.status)
   const [priority, setPriority] = useState(currentTask.priority)
+  const [expectedDate, setExpectedDate] = useState<Date | undefined>(
+    currentTask.expectedDate?.toDate()
+  )
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    currentTask.endDate?.toDate()
+  )
+  const [initialDate, setInitialDate] = useState<Date | undefined>(
+    currentTask.initialDate?.toDate()
+  )
 
   useEffect(() => {
     setFile([])
@@ -98,6 +116,18 @@ const TaskModal = ({
       'aplication/pdf': []
     }
   })
+
+  const handleExpectedDate = () => {
+    expectedDateRef.current!.showPicker()
+  }
+
+  const handleEndDate = () => {
+    endDateRef.current!.showPicker()
+  }
+
+  const handleInitialDate = () => {
+    initialDateRef.current!.showPicker()
+  }
 
   const { id } = useSelector((state: any) => state.login)
 
@@ -132,6 +162,18 @@ const TaskModal = ({
 
   const changeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
+  }
+
+  const formatDefaultDate = (date: Date | undefined | null) => {
+    if (date) {
+      return `${date.getFullYear().toString().padStart(4, '0')}-${(
+        date.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+    } else {
+      return undefined
+    }
   }
 
   return (
@@ -247,28 +289,106 @@ const TaskModal = ({
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de inicio</h2>
-                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
-                    {formatDate(currentTask.initialDate, 'PPPP')}
-                  </div>
-                </div>
-                <div className={styles.gridContainer}>
-                  <h2 className={styles.colTitle}>Fecha de inicio</h2>
-                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
-                    {currentTask.id}
+                  <div
+                    onClick={handleInitialDate}
+                    className="col-span-2 h-10 flex items-center hover:bg-fondo w-full p-2 rounded-lg cursor-pointer"
+                  >
+                    {formatDate(initialDate, 'PPPP')}
+                    <input
+                      ref={initialDateRef}
+                      className="absolute h-0 p-0 w-0 invisible"
+                      defaultValue={formatDefaultDate(
+                        currentTask.initialDate?.toDate()
+                      )}
+                      onChange={(e) => {
+                        updateTask(
+                          currentTask.id,
+                          'initialDate',
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                        setInitialDate(
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                      }}
+                      placeholder="Test"
+                      type="date"
+                    />
                   </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>
                     Fecha de finalización prevista
                   </h2>
-                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
-                    {formatDate(currentTask.expectedDate, 'PPPP')}
+                  <div
+                    onClick={handleExpectedDate}
+                    className="col-span-2 h-10 flex items-center hover:bg-fondo w-full p-2 rounded-lg cursor-pointer"
+                  >
+                    {formatDate(expectedDate, 'PPPP')}
+                    <input
+                      ref={expectedDateRef}
+                      className="absolute h-0 p-0 w-0 invisible"
+                      defaultValue={formatDefaultDate(
+                        currentTask.expectedDate?.toDate()
+                      )}
+                      onChange={(e) => {
+                        updateTask(
+                          currentTask.id,
+                          'expectedDate',
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                        setExpectedDate(
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                      }}
+                      placeholder="Test"
+                      type="date"
+                    />
                   </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de finalización</h2>
-                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
-                    {formatDate(currentTask.endDate, 'PPPP')}
+                  <div
+                    onClick={handleEndDate}
+                    className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer"
+                  >
+                    {formatDate(endDate, 'PPPP')}
+                    <input
+                      ref={endDateRef}
+                      className="absolute h-0 p-0 w-0 invisible"
+                      defaultValue={formatDefaultDate(
+                        currentTask.endDate?.toDate()
+                      )}
+                      onChange={(e) => {
+                        updateTask(
+                          currentTask.id,
+                          'endDate',
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                        setEndDate(
+                          new Date(
+                            new Date(e.target.value).getTime() +
+                              6 * 60 * 60 * 1000
+                          )
+                        )
+                      }}
+                      placeholder="Test"
+                      type="date"
+                    />
                   </div>
                 </div>
               </>

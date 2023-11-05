@@ -195,13 +195,25 @@ const useTasks = () => {
     await updateDoc(pruebaDocRef, {
       [field]: value
     })
-    const datos = {
-      ...tasks,
-      [docId]: {
-        ...tasks[docId],
-        [field]: value
+    let datos = {}
+    if (field === 'initialDate' || field === 'expectedDate' || field === 'endDate') {
+      datos = {
+        ...tasks,
+        [docId]: {
+          ...tasks[docId],
+          [field]: Timestamp.fromDate(value)
+        }
+      }
+    } else {
+      datos = {
+        ...tasks,
+        [docId]: {
+          ...tasks[docId],
+          [field]: value
+        }
       }
     }
+
     console.log(datos[docId])
     setTasks(datos)
     setLoading(false)

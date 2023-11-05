@@ -27,13 +27,15 @@ export const getPhase = (phase: number) => {
 }
 
 export const formatDate = (
-  date: Timestamp | null,
+  date: Timestamp | null | Date | undefined,
   mode: 'PPPP' | 'dd-MM-yyyy' | 'PPPPp'
 ) => {
-  if (date) {
+  if (date instanceof Timestamp) {
     return format(date.toDate(), mode, { locale: es })
+  } else if (date instanceof Date) {
+    return format(date, mode, { locale: es })
   } else {
-    return ''
+    return 'Sin definir'
   }
 }
 

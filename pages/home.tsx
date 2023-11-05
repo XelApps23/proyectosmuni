@@ -3,8 +3,7 @@ import CardFolder from '@/components/main/CardFolder'
 import PageHeader from '@/components/main/PageHeader'
 import NotificationPanel from '@/components/notifications/NotificationPanel'
 import useProjects from '@/hooks/useProjects'
-import { ChevronDownIcon } from '@chakra-ui/icons'
-import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { SingleDatepicker } from 'chakra-dayzed-datepicker'
 import { useEffect } from 'react'
 
 const Home = () => {
@@ -26,30 +25,14 @@ const Home = () => {
                 projectId={key}
                 key={key}
                 title={projects[key].name}
-                progress={Number(
-                  (
-                    (projects[key].doneTasks / projects[key].totalTasks) *
-                    100
-                  ).toFixed(2)
-                )}
-              />
+                progress={Number((projects[key].doneTasks / projects[key].totalTasks * 100).toFixed(2))}
+                />
             ))}
           </div>
         </div>
         <div>
           <span className="text-xl">Notificaciones</span>
-          <Menu>
-  <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-    Actions
-  </MenuButton>
-  <MenuList>
-    <MenuItem>Download</MenuItem>
-    <MenuItem>Create a Copy</MenuItem>
-    <MenuItem>Mark as Draft</MenuItem>
-    <MenuItem>Delete</MenuItem>
-    <MenuItem>Attend a Workshop</MenuItem>
-  </MenuList>
-</Menu>
+          <NotificationPanel />
         </div>
       </div>
     </Card>
