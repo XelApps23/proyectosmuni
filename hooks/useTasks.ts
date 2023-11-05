@@ -191,9 +191,19 @@ const useTasks = () => {
   const updateTask = async (docId: string, field: string, value: any) => {
     setLoading(true)
     const pruebaDocRef = doc(db, 'tasks', docId)
+
     await updateDoc(pruebaDocRef, {
       [field]: value
     })
+    const datos = {
+      ...tasks,
+      [docId]: {
+        ...tasks[docId],
+        [field]: value
+      }
+    }
+    console.log(datos[docId])
+    setTasks(datos)
     setLoading(false)
   }
 

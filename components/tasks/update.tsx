@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import Button from '@/components/main/Button'
 import CommentUpdate from './commentUpdate'
 import useUpdates from '@/hooks/useUpdates'
+import { Textarea } from '@chakra-ui/react'
 
 type Props = {
   currentTask: string
@@ -46,9 +47,9 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
 
   return (
     <>
-      <textarea
+      <Textarea
         onClick={() => writeUpdate()}
-        className="rounded-lg w-full border-solid border-2 p-2"
+        className="rounded-lg w-full border-solid border-2 p-2 mb-2"
         rows={rows}
         placeholder="Añadir un comentario"
         value={text}

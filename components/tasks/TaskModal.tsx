@@ -14,7 +14,7 @@ import EditIcon from '../icons/EditIcon'
 import ExcelIcon from '../icons/ExcelIcon'
 import MenuIcon from '../icons/MenuIcon'
 import Modal from '../main/Modal'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import Tabs from '../main/Tabs'
 import TrashIcon from '../icons/TrashIcon'
 import UpdateView from './update'
@@ -22,7 +22,13 @@ import useFile from '@/hooks/useFile'
 import VisibilityIcon from '../icons/VisibilityIcon'
 import WordIcon from '../icons/WordIcon'
 import { FileList } from '@/hooks/types/File'
-import { Input, Textarea } from '@chakra-ui/react'
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Textarea
+} from '@chakra-ui/react'
 
 type Props = {
   currentTask: Task
@@ -35,12 +41,17 @@ type Props = {
   requestFiles: (task: string) => void
   requestUpdates: (task: string) => void
   requestUser: (id: string) => void
+  updateTask: (id: string, field: string, value: any) => void
 }
+
+const statusBubbles = ['Listo', 'En Curso', 'Detenido', 'No Iniciado']
+
+const priorityBubbles = ['Sin definir', 'Critica', 'Alta', 'Media', 'Baja']
 
 const styles = {
   cell: 'px-6 py-4 whitespace-nowrap',
-  gridContainer: 'grid grid-cols-3 gap-2 p-2',
-  colTitle: 'font-semibold text-sm'
+  gridContainer: 'grid grid-cols-3 mb-1',
+  colTitle: 'font-semibold text-sm p-2'
 }
 
 const TaskModal = ({
@@ -53,16 +64,25 @@ const TaskModal = ({
   updates,
   users,
   requestFiles,
-  requestUpdates
+  requestUpdates,
+  updateTask
 }: Props) => {
   const [file, setFile] = useState<globalThis.File[]>([])
   const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
+  const [text, setText] = useState(currentTask.description)
+  const [status, setStatus] = useState(currentTask.status)
+  const [priority, setPriority] = useState(currentTask.priority)
 
   useEffect(() => {
     setFile([])
   }, [willUpload])
+
+  useEffect(() => {
+    setText(currentTask.description)
+    setStatus(currentTask.status)
+  }, [currentTask])
 
   const onDrop = useCallback((acceptedFiles: globalThis.File[]) => {
     if (acceptedFiles?.length) {
@@ -110,6 +130,10 @@ const TaskModal = ({
     }
   }
 
+  const changeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value)
+  }
+
   return (
     <Modal
       size="2xl"
@@ -131,10 +155,14 @@ const TaskModal = ({
                 <div className="flex">
                   {editingDescription
                     ? (
-                    <Textarea defaultValue={currentTask.description} />
+                    <Textarea
+                      defaultValue={currentTask.description}
+                      onChange={changeText}
+                      value={text}
+                    />
                       )
                     : (
-                    <p>{currentTask.description}</p>
+                    <p>{text}</p>
                       )}
                   {!editingDescription && (
                     <div
@@ -144,41 +172,102 @@ const TaskModal = ({
                       <EditIcon color="gray" />
                     </div>
                   )}
+                  {editingDescription && (
+                    <div className="flex gap-x-1 mt-1 mb-8 items-center">
+                      <Button
+                        onClick={() => {
+                          updateTask(currentTask.id, 'description', text)
+                          setEditingDescription(false)
+                        }}
+                        variant="primary"
+                        text="Guardar"
+                      />
+                      <Button
+                        onClick={() => setEditingDescription(false)}
+                        variant="simple"
+                        text="Cancelar"
+                      />
+                    </div>
+                  )}
                 </div>
                 <Divider />
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Estado</h2>
-                  <div className="col-span-2 flex">
-                    <div className="w-24">
-                      <Bubble type={currentTask.status} />
-                    </div>
-                  </div>
+                  <Menu>
+                    <MenuButton className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                      <div className="w-24">
+                        <Bubble type={status} />
+                      </div>
+                    </MenuButton>
+                    <MenuList className="flex flex-col flex-wrap">
+                      {statusBubbles.map((bubble) => (
+                        <MenuItem
+                          key={bubble}
+                          onClick={() => {
+                            setStatus(bubble)
+                            if (status !== bubble) {
+                              updateTask(currentTask.id, 'status', bubble)
+                            }
+                          }}
+                          className="hover:bg-fondo p-2 cursor-pointer"
+                        >
+                          <div className="w-full">
+                            <Bubble type={bubble} />
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Prioridad</h2>
-                  <div className="col-span-2 flex">
-                    <div className="w-24">
-                      <Bubble type={currentTask.priority} />
-                    </div>
+                  <Menu>
+                    <MenuButton className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                      <div className="w-24">
+                        <Bubble type={priority} />
+                      </div>
+                    </MenuButton>
+                    <MenuList className="flex flex-col flex-wrap">
+                      {priorityBubbles.map((bubble) => (
+                        <MenuItem
+                          key={bubble}
+                          onClick={() => {
+                            setPriority(bubble)
+                            updateTask(currentTask.id, 'priority', bubble)
+                          }}
+                          className="hover:bg-fondo p-2 cursor-pointer"
+                        >
+                          <div className="w-full">
+                            <Bubble type={bubble} />
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                </div>
+                <div className={styles.gridContainer}>
+                  <h2 className={styles.colTitle}>Fecha de inicio</h2>
+                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
+                    {formatDate(currentTask.initialDate, 'PPPP')}
                   </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de inicio</h2>
-                  <div className="col-span-2 flex">
-                    {formatDate(currentTask.initialDate, 'PPPP')}
+                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
+                    {currentTask.id}
                   </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>
                     Fecha de finalización prevista
                   </h2>
-                  <div className="col-span-2 flex">
+                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
                     {formatDate(currentTask.expectedDate, 'PPPP')}
                   </div>
                 </div>
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Fecha de finalización</h2>
-                  <div className="col-span-2 flex">
+                  <div className="col-span-2 flex hover:bg-fondo w-full p-2 rounded-lg cursor-pointer">
                     {formatDate(currentTask.endDate, 'PPPP')}
                   </div>
                 </div>

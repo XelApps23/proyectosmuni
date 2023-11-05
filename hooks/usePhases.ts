@@ -10,7 +10,8 @@ import {
   query,
   where,
   orderBy,
-  Timestamp
+  Timestamp,
+  increment
 } from 'firebase/firestore'
 import { db } from '@/services/Firebase'
 import { PhaseList } from './types/Phase'
@@ -41,6 +42,10 @@ const usePhases = () => {
     })
     setPhases(datos)
     setLoading(false)
+  }
+
+  const refreshPhases = () => {
+    setPhases(phases)
   }
 
   const getPhase = async (idRef: string) => {
@@ -78,6 +83,20 @@ const usePhases = () => {
     setLoading(false)
   }
 
+  const updatePhaseIncrementalField = async (docId: string, field: string, type: '++' | '--') => {
+    setLoading(true)
+    const currentPhase = phases[docId]
+    const pruebaDocRef = doc(db, 'phases', docId)
+    await updateDoc(pruebaDocRef, {
+      [field]: type === '++' ? increment(1) : increment(-1)
+    })
+    phases[docId] = {
+      ...currentPhase,
+      [field]: type === '++' ? currentPhase[field] + 1 : currentPhase[field] - 1
+    }
+    setLoading(false)
+  }
+
   const deletePhase = async (id: string) => {
     setLoading(true)
     await getPhase(id)
@@ -111,7 +130,6 @@ const usePhases = () => {
       createdAt: new Date(),
       updateAt: new Date()
     })
-    console.log(docRef)
     setLoading(false)
   }
 
@@ -158,7 +176,9 @@ const usePhases = () => {
     phases,
     loading,
     getPhasesOfProject,
-    updatePhaseDates
+    updatePhaseDates,
+    updatePhaseIncrementalField,
+    refreshPhases
   }
 }
 

@@ -24,10 +24,6 @@ const TaskListController = ({
 }: Props) => {
   const [openPhases, setOpenPhases] = useState<string[]>([])
 
-  useEffect(() => {
-    console.log(tasks)
-  }, [tasks])
-
   const handleFetchTasks = (phase: Phase) => {
     requestPhase(phase.index)
 
@@ -77,7 +73,7 @@ const TaskListController = ({
               <div className="bg-fondo rounded-full h-3 w-1/2">
                 <div
                   style={{
-                    width: `${phases[key].doneTasks / phases[key].totalTasks}%`
+                    width: `${(phases[key].doneTasks / phases[key].totalTasks) * 100}%`
                   }}
                   className={'bg-estadoListo rounded-full h-3 '}
                 />

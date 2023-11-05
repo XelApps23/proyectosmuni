@@ -86,10 +86,16 @@ const useProjects = () => {
 
   const updateIncrementalField = async (docId: string, field: string, type: '++' | '--') => {
     setLoading(true)
+    const currentProject = projects[docId]
     const pruebaDocRef = doc(db, 'projects', docId)
     await updateDoc(pruebaDocRef, {
       [field]: type === '++' ? increment(1) : increment(-1)
     })
+    projects[docId] = {
+      ...currentProject,
+      [field]: type === '++' ? currentProject[field] + 1 : currentProject[field] - 1
+    }
+    setLoading(false)
   }
 
   // Actualizar un documento

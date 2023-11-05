@@ -30,14 +30,14 @@ const ProjectIndex = () => {
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpenU, onOpen: onOpenU, onClose: onCloseU } = useDisclosure()
-  const { tasks, getTaskFiltered, updateTaskDates, getTask } = useTasks()
+  const { tasks, getTaskFiltered, updateTaskDates, getTask, updateTask } = useTasks()
   const [ids, setIds] = useState<string[]>([])
   const { query } = useRouter()
-  const { getProject, projects } = useProjects()
+  const { getProject, projects, updateIncrementalField } = useProjects()
   const { users, getUser, getUsersOfProject } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
   const { getFilesOfProject, getFilesOfTask, files } = useFile()
-  const { getPhasesOfProject, phases, updatePhaseDates } = usePhases()
+  const { getPhasesOfProject, phases, updatePhaseDates, updatePhaseIncrementalField, refreshPhases } = usePhases()
 
   useEffect(() => {
     getProject(query.id as string)
@@ -75,6 +75,53 @@ const ProjectIndex = () => {
   const handleSelectedTask = (key: string) => {
     setSelectedTask(tasks[key])
     onOpen()
+  }
+
+  const handleTasksUpdates = async (id: string, status: string) => {
+    const phaseToUpdate = Object.keys(phases).map(key => phases[key]).find(phase => phase.index === tasks[id].phase)!
+    let wasNotStarted = false
+
+    if (tasks[id].status === 'Listo') {
+      await updateIncrementalField(query.id as string, 'doneTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'doneTasks', '--')
+    } else if (tasks[id].status === 'En Progreso') {
+      await updateIncrementalField(query.id as string, 'startedTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'startedTasks', '--')
+    } else if (tasks[id].status === 'Detenido') {
+      await updateIncrementalField(query.id as string, 'stoppedTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '--')
+    } else if (tasks[id].status === 'No Iniciado') {
+      await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+      wasNotStarted = true
+    }
+
+    if (status === 'Listo') {
+      await updateIncrementalField(query.id as string, 'doneTasks', '++')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'doneTasks', '++')
+      if (wasNotStarted) {
+        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
+        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+      }
+    } else if (status === 'En Curso') {
+      console.log(status)
+      await updateIncrementalField(query.id as string, 'startedTasks', '++')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'startedTasks', '++')
+      if (wasNotStarted) {
+        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
+        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+      }
+    } else if (status === 'Detenido') {
+      await updateIncrementalField(query.id as string, 'stoppedTasks', '++')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '++')
+      if (wasNotStarted) {
+        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
+        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+      }
+    } else if (status === 'No Iniciado') {
+      await updateIncrementalField(query.id as string, 'notStartedTasks', '++')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '++')
+    }
   }
 
   return (
@@ -172,6 +219,13 @@ const ProjectIndex = () => {
       />
       {selectedTask && (
         <TaskModal
+          updateTask={async (id, field, value) => {
+            console.log(field, value)
+            if (field === 'status') {
+              await handleTasksUpdates(id, value)
+            }
+            await updateTask(id, field, value)
+          }}
           requestUser={(user) => getUser(user)}
           files={files}
           updates={updates}

@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Props = {
-  type: string
+  type: 'Critica' | 'Alta' | 'Media' | 'Baja' | 'Sin definir' | 'Listo' | 'En Curso' | 'Detenido' | 'No Iniciado' | string
 }
 
 type Styles = {
