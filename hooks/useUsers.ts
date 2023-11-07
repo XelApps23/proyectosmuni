@@ -9,7 +9,9 @@ import {
   where,
   limit,
   startAfter,
-  updateDoc
+  updateDoc,
+  or,
+  and
 } from 'firebase/firestore'
 import { UserList, UserUpdate } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
@@ -101,6 +103,33 @@ const useUsers = () => {
     setLoading(false)
   }
 
+  const searchUser = async (search: string) => {
+    setLoading(true)
+    let datos: any = { ...users }
+
+    const q = query(
+      collection(db, 'users'),
+      and(
+        where('status', '==', 'active'),
+        or(
+          where('firstname', '==', search),
+          where('lastname', '==', search),
+          where('email', '==', search)
+        )
+      )
+    )
+    const querySnapshot = await getDocs(q)
+    querySnapshot.forEach((doc) => {
+      const userData = { ...doc.data(), id: doc.id }
+      if (!datos[doc.id]) {
+        datos = { ...datos, [doc.id]: userData }
+      }
+    })
+
+    setUsers(datos)
+    setLoading(false)
+  }
+
   const deleteUser = async (id: string) => {
     setLoading(true)
     await updateDoc(doc(db, table, id), {
@@ -163,6 +192,7 @@ const useUsers = () => {
     deleteUser,
     createUser,
     loading,
+    searchUser,
     roles
   }
 }

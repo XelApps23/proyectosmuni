@@ -16,7 +16,8 @@ type ProjectInput = {
   name: string
   description: string
   initialDate: Date
-  expectedDate: Date
+  expectedDate: Date,
+  userId: string
 }
 
 const table = 'projects'
@@ -59,7 +60,8 @@ const useProjects = () => {
     name,
     description,
     initialDate,
-    expectedDate
+    expectedDate,
+    userId
   }: ProjectInput) => {
     setLoading(true)
     const docRef = await addDoc(collection(db, table), {
@@ -71,7 +73,7 @@ const useProjects = () => {
       idState: null,
       done: false,
       totalTasks: 107,
-      assignedUsers: [],
+      assignedUsers: [userId],
       doneTasks: 0,
       startedTasks: 0,
       stoppedTasks: 0,
@@ -108,6 +110,20 @@ const useProjects = () => {
     setLoading(false)
   }
 
+  const assignUser = async (docId: string, userId: string) => {
+    setLoading(true)
+    const currentProject = projects[docId]
+    const pruebaDocRef = doc(db, 'projects', docId)
+    await updateDoc(pruebaDocRef, {
+      assignedUsers: [...currentProject.assignedUsers, userId]
+    })
+    projects[docId] = {
+      ...currentProject,
+      assignedUsers: [...currentProject.assignedUsers, userId]
+    }
+    setLoading(false)
+  }
+
   return {
     getProjects,
     getProject,
@@ -116,7 +132,8 @@ const useProjects = () => {
     updateProject,
     updateIncrementalField,
     projects,
-    loading
+    loading,
+    assignUser
   }
 }
 

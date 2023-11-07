@@ -29,15 +29,25 @@ import { useEffect, useState } from 'react'
 const ProjectIndex = () => {
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { isOpen: isOpenU, onOpen: onOpenU, onClose: onCloseU } = useDisclosure()
-  const { tasks, getTaskFiltered, updateTaskDates, getTask, updateTask } = useTasks()
+  const {
+    isOpen: isOpenU,
+    onOpen: onOpenU,
+    onClose: onCloseU
+  } = useDisclosure()
+  const { tasks, getTaskFiltered, updateTaskDates, getTask, updateTask } =
+    useTasks()
   const [ids, setIds] = useState<string[]>([])
   const { query } = useRouter()
-  const { getProject, projects, updateIncrementalField } = useProjects()
-  const { users, getUser, getUsersOfProject } = useUsers()
+  const { getProject, projects, updateIncrementalField, assignUser } = useProjects()
+  const { users, getUser } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
   const { getFilesOfProject, getFilesOfTask, files } = useFile()
-  const { getPhasesOfProject, phases, updatePhaseDates, updatePhaseIncrementalField, refreshPhases } = usePhases()
+  const {
+    getPhasesOfProject,
+    phases,
+    updatePhaseDates,
+    updatePhaseIncrementalField
+  } = usePhases()
 
   useEffect(() => {
     getProject(query.id as string)
@@ -50,6 +60,7 @@ const ProjectIndex = () => {
         getUser(user)
       })
     }
+    console.log(projects)
   }, [projects])
 
   useEffect(() => {
@@ -59,7 +70,10 @@ const ProjectIndex = () => {
   }, [files])
 
   const handleInvite = () => {
-    console.log()
+    for (const id of ids) {
+      assignUser(query.id as string, id)
+      getUser(id)
+    }
   }
 
   const handleTabChange = (tab: number) => {
@@ -78,7 +92,9 @@ const ProjectIndex = () => {
   }
 
   const handleTasksUpdates = async (id: string, status: string) => {
-    const phaseToUpdate = Object.keys(phases).map(key => phases[key]).find(phase => phase.index === tasks[id].phase)!
+    const phaseToUpdate = Object.keys(phases)
+      .map((key) => phases[key])
+      .find((phase) => phase.index === tasks[id].phase)!
     let wasNotStarted = false
 
     if (tasks[id].status === 'Listo') {
@@ -92,7 +108,11 @@ const ProjectIndex = () => {
       await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '--')
     } else if (tasks[id].status === 'No Iniciado') {
       await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-      await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+      await updatePhaseIncrementalField(
+        phaseToUpdate.id,
+        'notStartedTasks',
+        '--'
+      )
       wasNotStarted = true
     }
 
@@ -100,27 +120,55 @@ const ProjectIndex = () => {
       await updateIncrementalField(query.id as string, 'doneTasks', '++')
       await updatePhaseIncrementalField(phaseToUpdate.id, 'doneTasks', '++')
       if (wasNotStarted) {
-        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+        await updateIncrementalField(
+          query.id as string,
+          'notStartedTasks',
+          '--'
+        )
+        await updatePhaseIncrementalField(
+          phaseToUpdate.id,
+          'notStartedTasks',
+          '--'
+        )
       }
     } else if (status === 'En Curso') {
       console.log(status)
       await updateIncrementalField(query.id as string, 'startedTasks', '++')
       await updatePhaseIncrementalField(phaseToUpdate.id, 'startedTasks', '++')
       if (wasNotStarted) {
-        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+        await updateIncrementalField(
+          query.id as string,
+          'notStartedTasks',
+          '--'
+        )
+        await updatePhaseIncrementalField(
+          phaseToUpdate.id,
+          'notStartedTasks',
+          '--'
+        )
       }
     } else if (status === 'Detenido') {
       await updateIncrementalField(query.id as string, 'stoppedTasks', '++')
       await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '++')
       if (wasNotStarted) {
-        await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-        await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '--')
+        await updateIncrementalField(
+          query.id as string,
+          'notStartedTasks',
+          '--'
+        )
+        await updatePhaseIncrementalField(
+          phaseToUpdate.id,
+          'notStartedTasks',
+          '--'
+        )
       }
     } else if (status === 'No Iniciado') {
       await updateIncrementalField(query.id as string, 'notStartedTasks', '++')
-      await updatePhaseIncrementalField(phaseToUpdate.id, 'notStartedTasks', '++')
+      await updatePhaseIncrementalField(
+        phaseToUpdate.id,
+        'notStartedTasks',
+        '++'
+      )
     }
   }
 
@@ -140,7 +188,11 @@ const ProjectIndex = () => {
           </>
         }
       >
-        <UserSelector label="Agregar colaborador" setIds={setIds} />
+        <UserSelector
+          label="Agregar colaborador"
+          setIds={setIds}
+          project={projects[query.id as string]}
+        />
       </Modal>
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{projects[query.id as string]?.name}</div>

@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import SearchIcon from '../icons/SearchIcon'
 import useUsers from '@/hooks/useUsers'
 import CancelIcon from '../icons/CancelIcon'
+import { useSelector } from 'react-redux'
+import ProfilePicture from './ProfilePicture'
+import { Project } from '@/hooks/types/Project'
 
 const variantsInput = {
   normal: {
@@ -38,6 +41,7 @@ type Props = {
   label: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
   setIds: any
+  project: Project
 }
 
 const UserSelector = ({
@@ -45,20 +49,18 @@ const UserSelector = ({
   placeholder = true,
   label,
   size = 'xl',
-  setIds
+  setIds,
+  project
 }: Props) => {
   const [text, setText] = useState('')
   const [localIds, setLocalIds] = useState<any[]>([])
   const [openDialog, setOpenDialog] = useState(false)
   const [firstFetch, setFirstFetch] = useState(false)
   const wrapperRef = useRef(null)
+
   useOutsideAlerter(wrapperRef)
-
-  const { getUsers, users } = useUsers()
-
-  useEffect(() => {
-    console.log(text)
-  }, [text])
+  const { getUsers, users, searchUser } = useUsers()
+  const { id } = useSelector((state: any) => state.login)
 
   useEffect(() => {
     if (
@@ -69,13 +71,9 @@ const UserSelector = ({
     }
   }, [localIds])
 
-  useEffect(() => {
-    console.log(users)
-  }, [users])
-
-  function useOutsideAlerter(ref: any) {
+  function useOutsideAlerter (ref: any) {
     useEffect(() => {
-      function handleClickOutside(event: any) {
+      function handleClickOutside (event: any) {
         if (ref.current && !ref.current.contains(event.target)) {
           setOpenDialog(false)
         }
@@ -87,14 +85,32 @@ const UserSelector = ({
     }, [ref])
   }
 
-  const handleChange = (e: any) => {
-    setText(e.target.value)
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(text)
+    }, 1000)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [text])
+
+  useEffect(() => {
+    if (search) {
+      searchUser(search)
+    }
+  }, [search])
+
+  const handleChange = (value: string) => {
+    setText(value)
   }
 
   const triggerDialog = () => {
-    setOpenDialog(true)
+    setOpenDialog(!openDialog)
     if (!firstFetch) {
-      getUsers({ perPage: 3 })
+      getUsers({ perPage: 1 })
       setFirstFetch(true)
     }
   }
@@ -112,13 +128,15 @@ const UserSelector = ({
   return (
     <>
       <div ref={wrapperRef}>
-        <div className="p-1">
+        <div className="p-1 flex bg-black1 flex-wrap">
           {localIds.map((id) => (
             <div
               key={id}
-              className="flex items-center p-1 bg-skyBlue w-min whitespace-nowrap rounded-full"
+              className="flex mb-1 items-center p-1 bg-skyBlue w-min whitespace-nowrap rounded-full"
             >
-              <div className="min-h-[20px] min-w-[20px] rounded-full bg-black1"></div>
+              <div className="min-h-[20px] min-w-[20px] rounded-full">
+                <ProfilePicture user={users[id]} />
+              </div>
               <span className="ml-2 text-sm text-gray1">
                 {users[id].firstname} {users[id].lastname}
               </span>
@@ -136,7 +154,7 @@ const UserSelector = ({
             type="text"
             id="users"
             value={text}
-            onChange={(e) => handleChange(e)}
+            onChange={(e) => handleChange(e.target.value)}
             name="users"
             className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
             placeholder="Buscar usuario"
@@ -151,14 +169,32 @@ const UserSelector = ({
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)
+                    .filter((key) => key !== id)
                     .filter((key) => !localIds.includes(key))
+                    .filter((key) => !project.assignedUsers.includes(key))
+                    .filter((key) =>
+                      text.length > 0
+                        ? users[key].firstname
+                          .toLowerCase()
+                          .includes(text.toLowerCase()) ||
+                          users[key].lastname
+                            .toLowerCase()
+                            .includes(text.toLowerCase()) ||
+                          users[key].email
+                            .toLowerCase()
+                            .includes(text.toLowerCase())
+                        : true
+                    )
+                    .filter((key, index) => index < 10)
                     .map((key) => (
                       <button
                         onClick={() => handleAddUser(key)}
                         key={key}
                         className="flex items-center px-2 py-1 rounded-lg hover:bg-fondo focus:bg-skyBlue"
                       >
-                        <div className="w-8 h-8 bg-black1"></div>
+                        <div className="w-8 h-8">
+                          <ProfilePicture user={users[id]} />
+                        </div>
                         <span className="ml-2">
                           {users[key].firstname} {users[key].lastname} (
                           {users[key].email})
