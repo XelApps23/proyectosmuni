@@ -10,6 +10,7 @@ type ButtonProps = {
   variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'secondary'
   fullWidth?: boolean
   loading?: boolean
+  disabled?: boolean
 }
 
 const buttonVariants = {
@@ -52,7 +53,8 @@ const Button = ({
   type = 'button',
   onlyIcon = false,
   variant = 'menu',
-  loading
+  loading,
+  disabled = false
 }: ButtonProps) => {
   return (
     <>
@@ -76,6 +78,7 @@ const Button = ({
             </ButtonGroup>
               : <ChButton
             isLoading = {loading}
+            disabled={disabled}
             loadingText='Cargando'
             spinnerPlacement='start'
             onClick={onClick}

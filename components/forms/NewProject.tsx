@@ -5,6 +5,7 @@ import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const schema = yup.object().shape({
   name: yup.string().required('Es necesario ingresar un nombre'),
@@ -36,18 +37,22 @@ const NewProject = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
+  const { id } = useSelector((state: any) => state.login)
+
   const onSubmit = async (data: FormValues) => {
     setLoading(true)
     const projectId = await createProject({
       expectedDate: data.expectedDate,
       name: data.name,
       description: data.description,
-      initialDate: data.initialDate
+      initialDate: data.initialDate,
+      userId: id
     })
     await createDefaultProjectTasks(projectId)
     setLoading(false)
     router.push(`/projects/${projectId}`)
   }
+
   return (
     <div className="md:w-1/2 w-full">
       <PlantillaForm

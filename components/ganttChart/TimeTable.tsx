@@ -6,13 +6,20 @@ import {
   dayDiff
 } from '../../helpers/dateFunctions'
 import { months } from '../../constants'
+import { TaskList } from '@/hooks/types/Task'
+import { convertDate } from '@/utils/convertDataFirebase'
+import { useDraggable } from 'react-use-draggable-scroll'
+import { useRef } from 'react'
 
-export default function TimeTable ({
-  timeRange,
-  tasks,
-  taskDurations,
-  setTaskDurations
-}) {
+type Props = {
+  tasks: TaskList
+  timeRange: any
+}
+
+export default function TimeTable({ timeRange, tasks }: Props) {
+  const ref = useRef<any>() // We will use React useRef hook to reference the wrapping div:
+  const { events } = useDraggable(ref)
+
   // for dynamic css styling
   const ganttTimePeriod = {
     display: 'grid',
@@ -114,7 +121,7 @@ export default function TimeTable ({
 
   // create task rows
   if (tasks) {
-    tasks.forEach((task) => {
+    Object.keys(tasks).forEach((key) => {
       const mnth = new Date(startMonth)
       for (let i = 0; i < numMonths; i++) {
         const curYear = mnth.getFullYear()
@@ -126,47 +133,52 @@ export default function TimeTable ({
           // color weekend cells differently
           const dayOfTheWeek = getDayOfWeek(curYear, curMonth - 1, j - 1)
           // add task and date data attributes
-          const formattedDate = createFormattedDateFromStr(
-            curYear,
-            curMonth,
-            j
-          )
+          const formattedDate = createFormattedDateFromStr(curYear, curMonth, j)
 
           taskRow.push(
             <div
-              key={`${task.id}-${j}`}
+              key={`${tasks[key].id}-${j}`}
               style={{
                 ...ganttTimePeriodCell,
                 backgroundColor:
                   dayOfTheWeek === 'D' ? 'var(--color-tertiary)' : '#fff'
               }}
-              data-task={task?.id}
+              data-task={tasks[key]?.id}
               data-date={formattedDate}
             >
-              {taskDurations.map((el, i) => {
-                if (el?.task === task?.id && el?.start === formattedDate) {
-                  return (
-                    <div
-                      key={`${i}-${el?.id}`}
-                      tabIndex="0"
-                      style={{
-                        ...taskDuration,
-                        width: `calc(${dayDiff(
-                          el?.start,
-                          el?.end
-                        )} * 100% - 1px)`
-                      }}
-                    ></div>
-                  )
-                }
-                return null
-              })}
+              {Object.keys(tasks)
+                .map((key) => {
+                  return {
+                    id: key,
+                    start: convertDate(tasks[key].initialDate),
+                    end: convertDate(tasks[key].endDate),
+                    task: key
+                  }
+                })
+                .map((el, i) => {
+                  if (el?.task === key && el?.start === formattedDate) {
+                    return (
+                      <div
+                        key={`${i}-${el?.id}`}
+                        tabIndex={0}
+                        style={{
+                          ...taskDuration,
+                          width: `calc(${dayDiff(
+                            el?.start,
+                            el?.end
+                          )} * 100% - 1px)`
+                        }}
+                      ></div>
+                    )
+                  }
+                  return null
+                })}
             </div>
           )
         }
 
         taskRows.push(
-          <div key={`${i}-${task?.id}`} style={ganttTimePeriod}>
+          <div key={`${i}-${key?.id}`} style={ganttTimePeriod}>
             {taskRow}
           </div>
         )
@@ -181,6 +193,9 @@ export default function TimeTable ({
     <div
       id="gantt-grid-container__time"
       style={{ gridTemplateColumns: `repeat(${numMonths}, 1fr)` }}
+      className="cursor-grab"
+      ref={ref}
+      {...events}
     >
       {monthRows}
       {dayRows}

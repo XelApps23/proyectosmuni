@@ -5,6 +5,8 @@ import CancelIcon from '../icons/CancelIcon'
 import { useSelector } from 'react-redux'
 import ProfilePicture from './ProfilePicture'
 import { Project } from '@/hooks/types/Project'
+import { UserList } from '@/hooks/types/User'
+import { Task } from '@/hooks/types/Task'
 
 const variantsInput = {
   normal: {
@@ -37,20 +39,18 @@ const sizeInput = {
 
 type Props = {
   variant?: 'normal' | 'search'
-  placeholder?: boolean
-  label: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  users: UserList
+  task: Task,
   setIds: any
-  project: Project
 }
 
-const UserSelector = ({
+const ProjectUserSelector = ({
   variant = 'normal',
-  placeholder = true,
-  label,
   size = 'xl',
+  task,
   setIds,
-  project
+  users
 }: Props) => {
   const [text, setText] = useState('')
   const [localIds, setLocalIds] = useState<any[]>([])
@@ -59,7 +59,6 @@ const UserSelector = ({
   const wrapperRef = useRef(null)
 
   useOutsideAlerter(wrapperRef)
-  const { getUsers, users, searchUser } = useUsers()
   const { id } = useSelector((state: any) => state.login)
 
   useEffect(() => {
@@ -85,24 +84,6 @@ const UserSelector = ({
     }, [ref])
   }
 
-  const [search, setSearch] = useState('')
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearch(text)
-    }, 1000)
-
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [text])
-
-  useEffect(() => {
-    if (search) {
-      searchUser(search)
-    }
-  }, [search])
-
   const handleChange = (value: string) => {
     setText(value)
   }
@@ -110,7 +91,6 @@ const UserSelector = ({
   const triggerDialog = () => {
     setOpenDialog(!openDialog)
     if (!firstFetch) {
-      getUsers({ perPage: 1 })
       setFirstFetch(true)
     }
   }
@@ -128,7 +108,7 @@ const UserSelector = ({
   return (
     <>
       <div ref={wrapperRef}>
-        <div className="p-1 flex bg-black1 flex-wrap">
+        <div className="p-1 flex flex-wrap">
           {localIds.map((id) => (
             <div
               key={id}
@@ -137,7 +117,7 @@ const UserSelector = ({
               <div className="min-h-[20px] min-w-[20px] rounded-full">
                 <ProfilePicture user={users[id]} />
               </div>
-              <span className="ml-2 text-sm text-gray1">
+              <span className="mx-2 text-sm text-gray1">
                 {users[id].firstname} {users[id].lastname}
               </span>
               <button
@@ -156,6 +136,7 @@ const UserSelector = ({
             value={text}
             onChange={(e) => handleChange(e.target.value)}
             name="users"
+            autoComplete='off'
             className={`rounded-lg ${variantsInput[variant].input} ${sizeInput[size].input}`}
             placeholder="Buscar usuario"
             onClick={() => triggerDialog()}
@@ -169,9 +150,8 @@ const UserSelector = ({
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)
-                    .filter((key) => key !== id)
                     .filter((key) => !localIds.includes(key))
-                    .filter((key) => !project.assignedUsers.includes(key))
+                    .filter(key => !task.assignedUsers.includes(key))
                     .filter((key) =>
                       text.length > 0
                         ? users[key].firstname
@@ -211,4 +191,4 @@ const UserSelector = ({
   )
 }
 
-export default UserSelector
+export default ProjectUserSelector

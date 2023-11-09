@@ -77,7 +77,7 @@ const List = () => {
                     <EditIcon />
                   </div>
                 </Tooltip>
-                <Tooltip label="Borrar">
+                <Tooltip label="Eliminar">
                   <div
                     className="w-5 h-5 mr-2 cursor-pointer"
                     onClick={() => handleDelete(key)}
