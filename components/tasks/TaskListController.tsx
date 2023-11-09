@@ -13,6 +13,7 @@ type Props = {
   requestPhase: (phase: number) => void
   openTask: (id: string) => void
   phases: PhaseList
+  handleDelete: (id: string) => void
 }
 
 const TaskListController = ({
@@ -20,7 +21,8 @@ const TaskListController = ({
   tasks,
   requestPhase,
   openTask,
-  phases
+  phases,
+  handleDelete
 }: Props) => {
   const [openPhases, setOpenPhases] = useState<string[]>([])
 
@@ -87,6 +89,7 @@ const TaskListController = ({
           <AnimatePresence mode="wait">
             {openPhases.includes(key) && (
               <NewTaskList
+                handleDelete={handleDelete}
                 users={users}
                 openTask={(id) => openTask(id)}
                 tasks={Object.keys(tasks)

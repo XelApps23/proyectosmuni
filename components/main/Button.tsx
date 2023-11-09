@@ -9,6 +9,7 @@ type ButtonProps = {
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
   variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'simple'
   fullWidth?: boolean
+  disabled?: boolean
 }
 
 const buttonVariants = {
@@ -52,7 +53,8 @@ const Button = ({
   onlyIcon = false,
   onlyText = false,
   fullWidth = false,
-  variant = 'menu'
+  variant = 'menu',
+  disabled = false
 }: ButtonProps) => {
   return (
     <button
@@ -61,6 +63,7 @@ const Button = ({
         (fullWidth ? ' w-full ' : ' ') +
         ' transition-all'
       }
+      disabled={disabled}
       onClick={onClick}
       type={type}
     >

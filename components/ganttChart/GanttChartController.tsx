@@ -7,6 +7,7 @@ import { Tooltip } from '@chakra-ui/react'
 import { TaskList } from '@/hooks/types/Task'
 import { Timestamp } from 'firebase/firestore'
 import { PhaseList } from '@/hooks/types/Phase'
+import { useSelector } from 'react-redux'
 
 type Props = {
   tasks: TaskList
@@ -34,7 +35,6 @@ const GanttChartController = ({
   selectedTask
 }: Props) => {
   const [collapsedPhases, setCollapsedPhases] = useState<number[]>([])
-  console.log(phases)
   const [data, setData] = useState<GanttProps['data']>(
     Object.keys(phases).map((key) => ({
       name: (
@@ -77,6 +77,8 @@ const GanttChartController = ({
     }
   }
 
+  const { permissions } = useSelector(state => state.login)
+
   const handleChangeData = () => {
     setData((prevData) => {
       const newData = prevData.map((phaseData) => {
@@ -117,6 +119,7 @@ const GanttChartController = ({
   return (
     <div style={{ width: '100%', height: 500 }} className="select-none">
       <RcGantt
+        disabled={!permissions.includes('projects/task-update-all')}
         locale={ganttLocaleEs}
         unit={'day'}
         data={data}

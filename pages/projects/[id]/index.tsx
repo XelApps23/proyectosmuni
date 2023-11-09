@@ -22,9 +22,10 @@ import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import useUpdates from '@/hooks/useUpdates'
 import useUsers from '@/hooks/useUsers'
-import { useDisclosure } from '@chakra-ui/react'
+import { Tooltip, useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const ProjectIndex = () => {
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined)
@@ -34,11 +35,26 @@ const ProjectIndex = () => {
     onOpen: onOpenU,
     onClose: onCloseU
   } = useDisclosure()
-  const { tasks, getTaskFiltered, updateTaskDates, getTask, updateTask } =
-    useTasks()
+
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete
+  } = useDisclosure()
+  const {
+    tasks,
+    getTaskFiltered,
+    updateTaskDates,
+    getTask,
+    updateTask,
+    deleteTask,
+    assignUsers
+  } = useTasks()
   const [ids, setIds] = useState<string[]>([])
+  const [taskId, setTaskId] = useState<string>('')
   const { query } = useRouter()
-  const { getProject, projects, updateIncrementalField, assignUser } = useProjects()
+  const { getProject, projects, updateIncrementalField, assignUser } =
+    useProjects()
   const { users, getUser } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
   const { getFilesOfProject, getFilesOfTask, files } = useFile()
@@ -69,6 +85,12 @@ const ProjectIndex = () => {
     })
   }, [files])
 
+  useEffect(() => {
+    if (selectedTask) {
+      setSelectedTask(tasks[selectedTask.id])
+    }
+  }, [tasks])
+
   const handleInvite = () => {
     for (const id of ids) {
       assignUser(query.id as string, id)
@@ -89,6 +111,10 @@ const ProjectIndex = () => {
   const handleSelectedTask = (key: string) => {
     setSelectedTask(tasks[key])
     onOpen()
+  }
+
+  const handleAssign = async (ids: string[]) => {
+    await assignUsers(selectedTask?.id!, ids)
   }
 
   const handleTasksUpdates = async (id: string, status: string) => {
@@ -172,6 +198,47 @@ const ProjectIndex = () => {
     }
   }
 
+  const { permissions } = useSelector((state) => state.login)
+
+  const handleDelete = async (taskId: string) => {
+    setTaskId(taskId)
+    onOpenDelete()
+    onClose()
+  }
+
+  const confirmDelete = async () => {
+    const taskStatus = tasks[taskId].status
+    const phaseToUpdate = Object.keys(phases)
+      .map((key) => phases[key])
+      .find((phase) => phase.index === tasks[taskId].phase)!
+    if (taskStatus === 'Listo') {
+      await updateIncrementalField(query.id as string, 'doneTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'doneTasks', '--')
+    }
+    if (taskStatus === 'En Progreso') {
+      await updateIncrementalField(query.id as string, 'startedTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'startedTasks', '--')
+    }
+    if (taskStatus === 'Detenido') {
+      await updateIncrementalField(query.id as string, 'stoppedTasks', '--')
+      await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '--')
+    }
+    if (taskStatus === 'No Iniciado') {
+      await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
+      await updatePhaseIncrementalField(
+        phaseToUpdate.id,
+        'notStartedTasks',
+        '--'
+      )
+    }
+
+    await deleteTask(taskId)
+    await updateIncrementalField(query.id as string, 'totalTasks', '--')
+    await updatePhaseIncrementalField(phaseToUpdate.id, 'totalTasks', '--')
+
+    onCloseDelete()
+  }
+
   return (
     <Card>
       <Modal
@@ -194,15 +261,34 @@ const ProjectIndex = () => {
           project={projects[query.id as string]}
         />
       </Modal>
+      <Modal
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        title="¿Estás seguro de que deseas eliminar esta tarea?"
+        actions={
+          <div className="flex items-center justify-between">
+            <Button text="Cancelar" variant="simple" onClick={onCloseDelete} />
+            <Button
+              text="Confirmar"
+              variant="cancelar"
+              onClick={confirmDelete}
+            />
+          </div>
+        }
+      >
+        <div></div>
+      </Modal>
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{projects[query.id as string]?.name}</div>
         <div>
-          <Button
-            onClick={onOpenU}
-            variant="primary"
-            icon={<PlusIcon color="white" />}
-            text="Agregar colaborador"
-          />
+          {permissions.includes('projects/invite') && (
+            <Button
+              onClick={onOpenU}
+              variant="primary"
+              icon={<PlusIcon color="white" />}
+              text="Agregar colaborador"
+            />
+          )}
         </div>
       </div>
       <Tabs
@@ -218,6 +304,7 @@ const ProjectIndex = () => {
           {
             component: projects[query.id as string] && (
               <TaskListController
+                handleDelete={(id) => handleDelete(id)}
                 phases={phases}
                 users={users}
                 openTask={(id) => handleSelectedTask(id)}
@@ -253,7 +340,16 @@ const ProjectIndex = () => {
                   cells={Object.keys(users).map((key) => ({
                     name: `${users[key].firstname} ${users[key].lastname}`,
                     email: users[key].email,
-                    testt: users[key].firstname
+                    testt: (
+                      <Tooltip label="Eliminar del proyecto">
+                        <div
+                          className="w-5 h-5 cursor-pointer"
+                          onClick={() => delete users[key]}
+                        >
+                          <ArchiveIcon />
+                        </div>
+                      </Tooltip>
+                    )
                   }))}
                   headers={['Nombre', 'Correo', 'Acciones']}
                 />
@@ -271,6 +367,7 @@ const ProjectIndex = () => {
       />
       {selectedTask && (
         <TaskModal
+          assignUsers={(ids) => handleAssign(ids)}
           updateTask={async (id, field, value) => {
             console.log(field, value)
             if (field === 'status') {
@@ -286,7 +383,7 @@ const ProjectIndex = () => {
           requestFiles={(task) => getFilesOfTask(task)}
           requestUpdates={(update) => getUpdatesOfTask(update)}
           currentTask={selectedTask}
-          isOpen={isOpen}
+          isOpen={!isOpenDelete && isOpen}
           onClose={onClose}
         />
       )}

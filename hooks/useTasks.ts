@@ -96,7 +96,8 @@ const useTasks = () => {
     const docRef = doc(db, table, idRef)
     const querySnapshot = await getDoc(docRef)
     datos = {
-      ...datos, [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
+      ...datos,
+      [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
     }
     setTasks(datos)
     setLoading(false)
@@ -129,10 +130,14 @@ const useTasks = () => {
     setLoading(false)
   }
 
-  const deteleTask = async (id: string) => {
+  const deleteTask = async (id: string) => {
     setLoading(true)
     await getTask(id)
     await deleteDoc(doc(db, table, id))
+    setTasks((prev) => {
+      const { [id]: removed, ...rest } = prev
+      return rest
+    })
     setLoading(false)
   }
 
@@ -153,7 +158,7 @@ const useTasks = () => {
       expectedDate: null,
       projectId,
       updated: [],
-      priority: 'Baja',
+      priority: 'Sin definir',
       status: 'No Iniciado',
       phase: Number(phase),
       assignedUsers: [],
@@ -196,7 +201,11 @@ const useTasks = () => {
       [field]: value
     })
     let datos = {}
-    if (field === 'initialDate' || field === 'expectedDate' || field === 'endDate') {
+    if (
+      field === 'initialDate' ||
+      field === 'expectedDate' ||
+      field === 'endDate'
+    ) {
       datos = {
         ...tasks,
         [docId]: {
@@ -214,7 +223,6 @@ const useTasks = () => {
       }
     }
 
-    console.log(datos[docId])
     setTasks(datos)
     setLoading(false)
   }
@@ -244,12 +252,30 @@ const useTasks = () => {
     setLoading(false)
   }
 
+  const assignUsers = async (docId: string, userIds: string[]) => {
+    setLoading(true)
+    const currentTask = tasks[docId]
+    const pruebaDocRef = doc(db, 'tasks', docId)
+    await updateDoc(pruebaDocRef, {
+      assignedUsers: [...currentTask.assignedUsers, ...userIds]
+    })
+    setTasks((prev) => ({
+      ...prev,
+      [docId]: {
+        ...prev[docId],
+        assignedUsers: [...currentTask.assignedUsers, ...userIds]
+      }
+    }))
+    setLoading(false)
+  }
+
   return {
     getTasks,
     getTask,
-    deteleTask,
+    deleteTask,
     createTask,
     updateTask,
+    assignUsers,
     tasks,
     loading,
     createDefaultProjectTasks,

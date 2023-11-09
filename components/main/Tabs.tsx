@@ -24,22 +24,25 @@ const Tabs = ({ tabs, changedTab }: Props) => {
     <>
       <div className="border-b border-fondo mt-2 mb-4">
         <ul className="sm:flex sm:flex-wrap text-sm text-center text-gray1">
-          {tabs.map((tab, index) => (
-            <li className="mr-2" key={tab.name}>
-              <button
-                onClick={() => handleTab(index)}
-                className={
-                  (activeTab === index
-                    ? 'border-blue2 border-b-2'
-                    : ' border-fondo border-b') +
-                  ' flex items-center justify-center p-2   rounded-t-lg group'
-                }
-              >
-                <div className="w-4 h-4 mr-4">{tab.icon}</div>
-                <span>{tab.name}.</span>
-              </button>
-            </li>
-          ))}
+          {tabs.map(
+            (tab, index) =>
+              tab.name && (
+                <li className="mr-2" key={tab.name}>
+                  <button
+                    onClick={() => handleTab(index)}
+                    className={
+                      (activeTab === index
+                        ? 'border-blue2 border-b-2'
+                        : ' border-fondo border-b') +
+                      ' flex items-center justify-center p-2   rounded-t-lg group'
+                    }
+                  >
+                    <div className="w-4 h-4 mr-4">{tab.icon}</div>
+                    <span>{tab.name}.</span>
+                  </button>
+                </li>
+              )
+          )}
         </ul>
       </div>
       <AnimatePresence mode="wait">

@@ -33,8 +33,12 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Textarea
+  Textarea,
+  useToast
 } from '@chakra-ui/react'
+import UserIcon from '../icons/UserIcon'
+import ProjectUserSelector from '../main/ProjectUserSelector'
+import ProfilePicture from '../main/ProfilePicture'
 
 type Props = {
   currentTask: Task
@@ -48,6 +52,7 @@ type Props = {
   requestUpdates: (task: string) => void
   requestUser: (id: string) => void
   updateTask: (id: string, field: string, value: any) => void
+  assignUsers: (ids: any[]) => void
 }
 
 const statusBubbles = ['Listo', 'En Curso', 'Detenido', 'No Iniciado']
@@ -71,18 +76,21 @@ const TaskModal = ({
   users,
   requestFiles,
   requestUpdates,
-  updateTask
+  updateTask,
+  assignUsers
 }: Props) => {
   const expectedDateRef = useRef()
   const endDateRef = useRef()
   const initialDateRef = useRef()
   const [file, setFile] = useState<globalThis.File[]>([])
+  const [isAssignOpen, setIsAssignOpen] = useState(false)
   const { uploadFile, deleteFile } = useFile()
   const [willUpload, setWillUpload] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
   const [text, setText] = useState(currentTask.description)
   const [status, setStatus] = useState(currentTask.status)
   const [priority, setPriority] = useState(currentTask.priority)
+  const [ids, setIds] = useState<any[]>([])
   const [expectedDate, setExpectedDate] = useState<Date | undefined>(
     currentTask.expectedDate?.toDate()
   )
@@ -100,6 +108,10 @@ const TaskModal = ({
   useEffect(() => {
     setText(currentTask.description)
     setStatus(currentTask.status)
+    setPriority(currentTask.priority)
+    setExpectedDate(currentTask.expectedDate?.toDate())
+    setEndDate(currentTask.endDate?.toDate())
+    setInitialDate(currentTask.initialDate?.toDate())
   }, [currentTask])
 
   const onDrop = useCallback((acceptedFiles: globalThis.File[]) => {
@@ -129,7 +141,9 @@ const TaskModal = ({
     initialDateRef.current!.showPicker()
   }
 
-  const { id } = useSelector((state: any) => state.login)
+  const toast = useToast()
+
+  const { id, permissions } = useSelector((state: any) => state.login)
 
   const enviarArchivo = () => {
     if (file.length !== 0) {
@@ -176,6 +190,11 @@ const TaskModal = ({
     }
   }
 
+  const handleAssign = () => {
+    setIds([])
+    assignUsers(ids)
+  }
+
   return (
     <Modal
       size="2xl"
@@ -206,7 +225,7 @@ const TaskModal = ({
                     : (
                     <p>{text}</p>
                       )}
-                  {!editingDescription && (
+                  {permissions.includes('projects/task-update-all') && !editingDescription && (
                     <div
                       className="h-6 w-6 cursor-pointer"
                       onClick={() => setEditingDescription(true)}
@@ -236,7 +255,7 @@ const TaskModal = ({
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Estado</h2>
                   <Menu>
-                    <MenuButton className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                    <MenuButton disabled={!permissions.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
                       <div className="w-24">
                         <Bubble type={status} />
                       </div>
@@ -264,7 +283,7 @@ const TaskModal = ({
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Prioridad</h2>
                   <Menu>
-                    <MenuButton className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                    <MenuButton disabled={!permissions.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
                       <div className="w-24">
                         <Bubble type={priority} />
                       </div>
@@ -295,26 +314,43 @@ const TaskModal = ({
                   >
                     {formatDate(initialDate, 'PPPP')}
                     <input
+                      disabled={!permissions.includes('projects/task-update-all')}
                       ref={initialDateRef}
                       className="absolute h-0 p-0 w-0 invisible"
                       defaultValue={formatDefaultDate(
                         currentTask.initialDate?.toDate()
                       )}
                       onChange={(e) => {
-                        updateTask(
-                          currentTask.id,
-                          'initialDate',
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
-                          )
+                        const newInitialDate = new Date(
+                          new Date(e.target.value).getTime() +
+                            6 * 60 * 60 * 1000
                         )
-                        setInitialDate(
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
+                        if (expectedDate && newInitialDate > expectedDate) {
+                          toast({
+                            title: 'Error',
+                            description:
+                              'La fecha de inicio no puede ser mayor que la fecha prevista de finalización',
+                            status: 'error',
+                            duration: 3000,
+                            isClosable: true
+                          })
+                        } else if (endDate && newInitialDate > endDate) {
+                          toast({
+                            title: 'Error',
+                            description:
+                              'La fecha de inicio no puede ser mayor que la fecha de finalización',
+                            status: 'error',
+                            duration: 3000,
+                            isClosable: true
+                          })
+                        } else {
+                          updateTask(
+                            currentTask.id,
+                            'initialDate',
+                            newInitialDate
                           )
-                        )
+                          setInitialDate(newInitialDate)
+                        }
                       }}
                       placeholder="Test"
                       type="date"
@@ -331,26 +367,34 @@ const TaskModal = ({
                   >
                     {formatDate(expectedDate, 'PPPP')}
                     <input
+                      disabled={!permissions.includes('projects/task-update-all')}
                       ref={expectedDateRef}
                       className="absolute h-0 p-0 w-0 invisible"
                       defaultValue={formatDefaultDate(
                         currentTask.expectedDate?.toDate()
                       )}
                       onChange={(e) => {
-                        updateTask(
-                          currentTask.id,
-                          'expectedDate',
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
-                          )
+                        const newExpectedDate = new Date(
+                          new Date(e.target.value).getTime() +
+                            6 * 60 * 60 * 1000
                         )
-                        setExpectedDate(
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
+                        if (initialDate && newExpectedDate < initialDate) {
+                          toast({
+                            title: 'Error',
+                            description:
+                              'La fecha prevista de finalización no puede ser menor que la fecha de inicio',
+                            status: 'error',
+                            duration: 3000,
+                            isClosable: true
+                          })
+                        } else {
+                          updateTask(
+                            currentTask.id,
+                            'expectedDate',
+                            newExpectedDate
                           )
-                        )
+                          setExpectedDate(newExpectedDate)
+                        }
                       }}
                       placeholder="Test"
                       type="date"
@@ -371,20 +415,23 @@ const TaskModal = ({
                         currentTask.endDate?.toDate()
                       )}
                       onChange={(e) => {
-                        updateTask(
-                          currentTask.id,
-                          'endDate',
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
-                          )
+                        const newEndDate = new Date(
+                          new Date(e.target.value).getTime() +
+                            6 * 60 * 60 * 1000
                         )
-                        setEndDate(
-                          new Date(
-                            new Date(e.target.value).getTime() +
-                              6 * 60 * 60 * 1000
-                          )
-                        )
+                        if (initialDate && newEndDate < initialDate) {
+                          toast({
+                            title: 'Error',
+                            description:
+                              'La fecha de finalización no puede ser menor que la fecha de inicio',
+                            status: 'error',
+                            duration: 3000,
+                            isClosable: true
+                          })
+                        } else {
+                          updateTask(currentTask.id, 'endDate', newEndDate)
+                          setEndDate(newEndDate)
+                        }
                       }}
                       placeholder="Test"
                       type="date"
@@ -394,7 +441,7 @@ const TaskModal = ({
               </>
             )
           },
-          {
+          permissions.includes('projects/task-update') && {
             name: 'Actualizaciones',
             icon: <ChatIcon />,
             component: (
@@ -524,6 +571,65 @@ const TaskModal = ({
                       </div>
                     </div>
                   ))}
+              </>
+            )
+          },
+          {
+            name: 'Asignados',
+            icon: <UserIcon />,
+            component: (
+              <>
+                <div className="text-lg font-bold">Personas asignadas</div>
+                {currentTask.assignedUsers.map((user) => (
+                  <div key={user} className="mx-2 my-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8">
+                        <ProfilePicture user={users[user]} />
+                      </div>
+                      <div>
+                        {users[user].firstname} {users[user].lastname} (
+                        {users[user].email})
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <Divider />
+                {isAssignOpen
+                  ? (
+                  <>
+                    <div className="text-lg font-bold">Agregar personas</div>
+                    <ProjectUserSelector
+                      task={currentTask}
+                      users={users}
+                      setIds={setIds}
+                    />
+                    <div className="flex mt-4">
+                      <div className="mr-4">
+                        <Button
+                          text="Confimar"
+                          variant="primary"
+                          onClick={() => {
+                            setIsAssignOpen(false)
+                            handleAssign()
+                          }}
+                        ></Button>
+                      </div>
+                      <Button
+                        text="Cancelar"
+                        onClick={() => {
+                          setIsAssignOpen(false)
+                        }}
+                      ></Button>
+                    </div>
+                  </>
+                    )
+                  : (
+                  <Button
+                    onClick={() => setIsAssignOpen(true)}
+                    variant="primary"
+                    text="Agregar personas"
+                  ></Button>
+                    )}
               </>
             )
           }

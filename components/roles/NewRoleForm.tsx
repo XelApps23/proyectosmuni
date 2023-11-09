@@ -93,12 +93,6 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
                 checked={permissions.includes('projects/view-assign')}
               />
               <Checkbox
-                label="Crear nuevas tareas"
-                value="projects/task-create"
-                controller={add}
-                checked={permissions.includes('projects/task-create')}
-              />
-              <Checkbox
                 label="Ver todas las tareas"
                 value="projects/task-view-all"
                 controller={add}

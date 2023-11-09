@@ -5,18 +5,20 @@ export const loginSlice = createSlice({
   initialState: {
     logged: false,
     username: undefined,
-    id: undefined
+    id: undefined,
+    permissions: []
   },
   reducers: {
     loginRedux: (state, action) => {
-      const {
-        status,
-        username,
-        id
-      } = action.payload
+      const { status, username, id } = action.payload
       state.logged = status
       state.username = username
       state.id = id
+    },
+    addPermissionsRedux: (state, action) => {
+      const { permissions } = action.payload
+      console.log(permissions)
+      state.permissions = permissions
     },
     logoutRedux: (state) => {
       state.logged = false
@@ -24,6 +26,7 @@ export const loginSlice = createSlice({
   }
 })
 
-export const { loginRedux, logoutRedux } = loginSlice.actions
+export const { loginRedux, logoutRedux, addPermissionsRedux } =
+  loginSlice.actions
 
 export default loginSlice.reducer
