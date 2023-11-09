@@ -3,7 +3,6 @@ import GanttChartController from '@/components/ganttChart/GanttChartController'
 import GanttIcon from '@/components/icons/GanttIcon'
 import GraphicsIcon from '@/components/icons/GraphicsIcon'
 import HomeIcon from '@/components/icons/HomeIcon'
-import PlusIcon from '@/components/icons/PlusIcon'
 import UserIcon from '@/components/icons/UserIcon'
 import Button from '@/components/main/Button'
 import Card from '@/components/main/Card'
@@ -25,6 +24,7 @@ import useUsers from '@/hooks/useUsers'
 import { Tooltip, useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { AddIcon } from '@chakra-ui/icons'
 import { useSelector } from 'react-redux'
 
 const ProjectIndex = () => {
@@ -96,6 +96,7 @@ const ProjectIndex = () => {
       assignUser(query.id as string, id)
       getUser(id)
     }
+    onCloseU()
   }
 
   const handleTabChange = (tab: number) => {
@@ -133,12 +134,6 @@ const ProjectIndex = () => {
       await updateIncrementalField(query.id as string, 'stoppedTasks', '--')
       await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '--')
     } else if (tasks[id].status === 'No Iniciado') {
-      await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-      await updatePhaseIncrementalField(
-        phaseToUpdate.id,
-        'notStartedTasks',
-        '--'
-      )
       wasNotStarted = true
     }
 
@@ -267,7 +262,7 @@ const ProjectIndex = () => {
         title="¿Estás seguro de que deseas eliminar esta tarea?"
         actions={
           <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="simple" onClick={onCloseDelete} />
+            <Button text="Cancelar" variant="secondary" onClick={onCloseDelete} />
             <Button
               text="Confirmar"
               variant="cancelar"
@@ -281,11 +276,11 @@ const ProjectIndex = () => {
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{projects[query.id as string]?.name}</div>
         <div>
-          {permissions.includes('projects/invite') && (
+          {permissions?.includes('projects/invite') && (
             <Button
               onClick={onOpenU}
               variant="primary"
-              icon={<PlusIcon color="white" />}
+              icon={<AddIcon />}
               text="Agregar colaborador"
             />
           )}
@@ -338,7 +333,7 @@ const ProjectIndex = () => {
               <div className="mt-4">
                 <Table
                   cells={Object.keys(users).map((key) => ({
-                    name: `${users[key].firstname} ${users[key].lastname}`,
+                    name: `${users[key].firstname} ${users[key].lastname ?? ''}`,
                     email: users[key].email,
                     testt: (
                       <Tooltip label="Eliminar del proyecto">

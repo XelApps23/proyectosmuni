@@ -1,47 +1,48 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { ButtonHTMLAttributes, ReactElement } from 'react'
+import { ButtonGroup, Button as ChButton, IconButton } from '@chakra-ui/react'
 
 type ButtonProps = {
   onClick?: () => void
   text?: string
-  icon?: ReactNode
+  icon?: ReactElement
   onlyIcon?: boolean
-  onlyText?: boolean
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
-  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'simple'
+  variant?: 'menu' | 'primary' | 'login' | 'cancelar' | 'icon' | 'secondary'
   fullWidth?: boolean
+  loading?: boolean
   disabled?: boolean
 }
 
 const buttonVariants = {
   menu: {
-    button: 'flex px-2 py-2.5 mb-2 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
-    icon: 'w-5 h-5 ',
-    text: 'text-sm text-black2'
-  },
-  simple: {
-    button: 'hover:bg-fondo transition-colors py-2 px-2.5 rounded-lg mx-2 ',
-    icon: 'w-5 h-5 ',
-    text: 'text-sm text-black2'
-  },
-  icon: {
-    button: 'flex p-1 rounded-lg hover:bg-fondo focus:bg-skyBlue ',
-    icon: 'w-5 h-5 ',
-    text: 'text-sm text-black2'
+    color: 'gray',
+    style: 'mb-2 w-full',
+    text: 'font-light'
   },
   primary: {
-    button: 'flex px-2.5 py-2 rounded-lg bg-blue2 hover:bg-prioridadBaja',
-    icon: 'w-4 h-4 ',
-    text: 'text-base text-white1 '
+    color: 'blue',
+    style: 'mb-2',
+    text: 'font-light'
+  },
+  secondary: {
+    color: 'gray',
+    style: 'mb-2',
+    text: 'font-light'
+  },
+  icon: {
+    color: 'whiteAlpha',
+    style: 'mb-2',
+    text: 'font-light'
   },
   login: {
-    button: `flex text-white1 px-2.5 py-2 rounded-[50px] bg-blue2
-    hover:outline hover:bg-white1 hover:text-blue2`,
-    text: 'text-base '
+    color: 'blue',
+    style: 'mb-2 w-full',
+    text: 'font-light'
   },
   cancelar: {
-    button: `flex text-white1  px-2.5 py-2 rounded-lg bg-errorDefault
-    hover:bg-white1  hover:outline hover:text-errorHoverig `,
-    text: 'text-base '
+    color: 'blue',
+    style: 'mb-2',
+    text: 'font-light'
   }
 }
 
@@ -51,49 +52,47 @@ const Button = ({
   icon,
   type = 'button',
   onlyIcon = false,
-  onlyText = false,
-  fullWidth = false,
   variant = 'menu',
+  loading,
   disabled = false
 }: ButtonProps) => {
   return (
-    <button
-      className={
-        buttonVariants[variant].button +
-        (fullWidth ? ' w-full ' : ' ') +
-        ' transition-all'
-      }
-      disabled={disabled}
-      onClick={onClick}
-      type={type}
-    >
-      <div
-        className={
-          'flex w-full items-center ' +
-          (onlyText ? ' justify-center ' : ' ') +
-          (onlyIcon ? ' justify-center ' : ' ')
-        }
-      >
-        {icon && (
-          <div
-            className={
-              (onlyText ? 'hidden ' : ' ') +
-              buttonVariants[variant].icon +
-              (!onlyText && !onlyIcon ? ' mr-2.5' : ' ')
-            }
+    <>
+      {
+      onlyIcon
+        ? <IconButton
+        aria-label=''
+        onClick={onClick}
+        icon={icon}
+        variant={'ghost'}
+        type={type}
+      />
+        : <div>
+          {
+            variant === 'menu'
+              ? <ButtonGroup onClick={onClick} isAttached className='w-full'>
+                  <IconButton aria-label='' icon={icon} />
+                  <ChButton className={buttonVariants[variant].style}>
+                    <p className={buttonVariants[variant].text}>{text}</p>
+                  </ChButton>
+            </ButtonGroup>
+              : <ChButton
+            isLoading = {loading}
+            disabled={disabled}
+            loadingText='Cargando'
+            spinnerPlacement='start'
+            onClick={onClick}
+            className={buttonVariants[variant].style}
+            leftIcon={icon}
+            colorScheme={buttonVariants[variant].color}
+            type={type}
           >
-            {icon}
-          </div>
-        )}
-        <p
-          className={
-            (onlyIcon ? 'hidden ' : ' ') + buttonVariants[variant].text
+             <p className={buttonVariants[variant].text}>{text}</p>
+          </ChButton>
           }
-        >
-          {text}
-        </p>
-      </div>
-    </button>
+        </div>
+      }
+    </>
   )
 }
 

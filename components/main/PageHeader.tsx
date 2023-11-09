@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from './Button'
-import PlusIcon from '../icons/PlusIcon'
+import { AddIcon } from '@chakra-ui/icons'
 import Divider from './Divider'
 
 type Props = {
@@ -22,7 +22,7 @@ const PageHeader = ({ title, actionButton, actionText, permission = false }: Pro
                   disabled={!permission}
                   variant="primary"
                   text={actionText}
-                  icon={<PlusIcon color="white" />}
+                  icon={<AddIcon />}
                   onClick={actionButton}
                 />
               </div>

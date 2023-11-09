@@ -117,9 +117,9 @@ const GanttChartController = ({
   }
 
   return (
-    <div style={{ width: '100%', height: 500 }} className="select-none">
+    <div style={{ width: '100%', height: 700 }} className="select-none">
       <RcGantt
-        disabled={!permissions.includes('projects/task-update-all')}
+        disabled={!permissions?.includes('projects/task-update-all')}
         locale={ganttLocaleEs}
         unit={'day'}
         data={data}

@@ -4,8 +4,8 @@ import { UserList } from '@/hooks/types/User'
 import { useSelector } from 'react-redux'
 import Button from '@/components/main/Button'
 import CommentUpdate from './commentUpdate'
+import { useToast, Textarea } from '@chakra-ui/react'
 import useUpdates from '@/hooks/useUpdates'
-import { Textarea } from '@chakra-ui/react'
 
 type Props = {
   currentTask: string
@@ -20,6 +20,8 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
   const [isWrite, setIsWrite] = useState(false)
   const [rows, setRows] = useState(1)
   const [text, setText] = useState('')
+  const toast = useToast()
+
   const writeUpdate = () => {
     setIsWrite(true)
     setRows(4)
@@ -35,14 +37,30 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
     setRows(1)
   }
 
-  const sendUpdate = (id: string) => {
-    createUpdate({
+  const sendUpdate = async (id: string) => {
+    const response = await createUpdate({
       userId: id,
       taskId: currentTask,
       description: text
     })
-    cancel()
-    requestUpdate(currentTask)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+      cancel()
+      requestUpdate(currentTask)
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   return (
@@ -56,13 +74,13 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
         onChange={changeText}
       />
       {isWrite && (
-        <div className="flex gap-x-1 mt-1 mb-8 items-center">
+        <div className=" flex gap-x-1 mt-1 mb-8 items-center">
           <Button
             onClick={() => sendUpdate(id)}
             variant="primary"
             text="Guardar"
           />
-          <Button onClick={cancel} variant="simple" text="Cancelar" />
+          <Button onClick={cancel} variant="secondary" text="Cancelar" />
         </div>
       )}
       <div className="mt-2">

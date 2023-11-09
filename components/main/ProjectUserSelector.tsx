@@ -118,7 +118,7 @@ const ProjectUserSelector = ({
                 <ProfilePicture user={users[id]} />
               </div>
               <span className="mx-2 text-sm text-gray1">
-                {users[id].firstname} {users[id].lastname}
+                {users[id].firstname} {users[id].lastname ?? ''}
               </span>
               <button
                 onClick={() => handleRemoveId(id)}
@@ -146,7 +146,7 @@ const ProjectUserSelector = ({
           </div>
           {openDialog && (
             <>
-              <div className="absolute bg-white1 top-12 max-h-52 overflow-y-auto w-full rounded-lg drop-shadow-xl p-4">
+              <div className="absolute z-50 bg-white1 top-12 max-h-52 overflow-y-auto w-full rounded-lg drop-shadow-xl p-4">
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)
@@ -176,7 +176,7 @@ const ProjectUserSelector = ({
                           <ProfilePicture user={users[id]} />
                         </div>
                         <span className="ml-2">
-                          {users[key].firstname} {users[key].lastname} (
+                          {users[key].firstname} {users[key].lastname ?? ''} (
                           {users[key].email})
                         </span>
                       </button>

@@ -145,11 +145,27 @@ const TaskModal = ({
 
   const { id, permissions } = useSelector((state: any) => state.login)
 
-  const enviarArchivo = () => {
-    if (file.length !== 0) {
-      file.forEach((newFile) => {
+  const enviarArchivo = async () => {
+    if (file.length != 0) {
+      file.map(async newFile => {
         console.log(newFile)
-        uploadFile(newFile, id, currentTask.id, projectId)
+        const response = await uploadFile(newFile, id, currentTask.id, projectId)
+        if (response.status === 'success') {
+          toast({
+            title: response.message,
+            status: 'success',
+            duration: 4000,
+            isClosable: true
+          })
+        }
+        if (response.status === 'error') {
+          toast({
+            title: response.message,
+            status: 'error',
+            duration: 3000,
+            isClosable: true
+          })
+        }
       })
       setWillUpload(false)
     } else {
@@ -161,8 +177,24 @@ const TaskModal = ({
     setWillUpload(false)
   }
 
-  const deleteFileFromList = (idRef: string, urlRef: string) => {
-    deleteFile(idRef, urlRef)
+  const deleteFileFromList = async (idRef: string, urlRef: string) => {
+    const response = await deleteFile(idRef, urlRef)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   const handleChangeTab = (tab: number) => {
@@ -225,7 +257,7 @@ const TaskModal = ({
                     : (
                     <p>{text}</p>
                       )}
-                  {permissions.includes('projects/task-update-all') && !editingDescription && (
+                  {permissions?.includes('projects/task-update-all') && !editingDescription && (
                     <div
                       className="h-6 w-6 cursor-pointer"
                       onClick={() => setEditingDescription(true)}
@@ -245,7 +277,7 @@ const TaskModal = ({
                       />
                       <Button
                         onClick={() => setEditingDescription(false)}
-                        variant="simple"
+                        variant="secondary"
                         text="Cancelar"
                       />
                     </div>
@@ -255,7 +287,7 @@ const TaskModal = ({
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Estado</h2>
                   <Menu>
-                    <MenuButton disabled={!permissions.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                    <MenuButton disabled={!permissions?.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
                       <div className="w-24">
                         <Bubble type={status} />
                       </div>
@@ -283,7 +315,7 @@ const TaskModal = ({
                 <div className={styles.gridContainer}>
                   <h2 className={styles.colTitle}>Prioridad</h2>
                   <Menu>
-                    <MenuButton disabled={!permissions.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
+                    <MenuButton disabled={!permissions?.includes('projects/task-update-all')} className="col-span-2 flex hover:bg-fondo w-full rounded-lg px-2 cursor-pointer">
                       <div className="w-24">
                         <Bubble type={priority} />
                       </div>
@@ -314,7 +346,7 @@ const TaskModal = ({
                   >
                     {formatDate(initialDate, 'PPPP')}
                     <input
-                      disabled={!permissions.includes('projects/task-update-all')}
+                      disabled={!permissions?.includes('projects/task-update-all')}
                       ref={initialDateRef}
                       className="absolute h-0 p-0 w-0 invisible"
                       defaultValue={formatDefaultDate(
@@ -367,7 +399,7 @@ const TaskModal = ({
                   >
                     {formatDate(expectedDate, 'PPPP')}
                     <input
-                      disabled={!permissions.includes('projects/task-update-all')}
+                      disabled={!permissions?.includes('projects/task-update-all')}
                       ref={expectedDateRef}
                       className="absolute h-0 p-0 w-0 invisible"
                       defaultValue={formatDefaultDate(
@@ -441,7 +473,7 @@ const TaskModal = ({
               </>
             )
           },
-          permissions.includes('projects/task-update') && {
+          permissions?.includes('projects/task-update') && {
             name: 'Actualizaciones',
             icon: <ChatIcon />,
             component: (
@@ -505,7 +537,7 @@ const TaskModal = ({
                       />
                       <Button
                         onClick={cancelUpload}
-                        variant="primary"
+                        variant="secondary"
                         text="Cancelar"
                       />
                     </div>
@@ -547,12 +579,12 @@ const TaskModal = ({
                                 )
                               }
                               variant="icon"
-                              icon={<TrashIcon />}
+                              icon={<div className="w-5 h-5"><TrashIcon /></div>}
                             />
                             <a href={listedFile.url}>
                               <Button
                                 variant="icon"
-                                icon={<VisibilityIcon />}
+                                icon={<div className="w-5 h-5"><VisibilityIcon /></div>}
                               />
                             </a>
                           </div>
@@ -587,7 +619,7 @@ const TaskModal = ({
                         <ProfilePicture user={users[user]} />
                       </div>
                       <div>
-                        {users[user].firstname} {users[user].lastname} (
+                        {users[user].firstname} {users[user].lastname ?? ''} (
                         {users[user].email})
                       </div>
                     </div>

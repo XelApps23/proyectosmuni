@@ -1,8 +1,10 @@
-import HomeIcon from '@/components/icons/HomeIcon'
-import SignOutIcon from '@/components/icons/SignOutIcon'
-import UserIcon from '@/components/icons/UserIcon'
 import Button from '../main/Button'
+import { Icon } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { GoHome } from 'react-icons/go'
+import { IoLogOutOutline } from 'react-icons/io5'
+import { HiOutlineUser, HiOutlineUsers } from 'react-icons/hi2'
+import { PiLayoutLight } from 'react-icons/pi'
 import ProyectoIcon from '../icons/ProyectoIcon'
 import ProfilePicture from '../main/ProfilePicture'
 import { useSelector } from 'react-redux'
@@ -61,27 +63,27 @@ const sidebarItems = [
   {
     name: 'Inicio',
     href: '/home',
-    icon: <HomeIcon />
+    icon: <Icon as={GoHome} />
   },
   {
     name: 'Proyectos',
     href: '/projects',
-    icon: <ProyectoIcon />
+    icon: <Icon as={PiLayoutLight}/>
   },
   {
     name: 'Usuarios',
     href: '/users',
-    icon: <UserIcon />
+    icon: <Icon as={HiOutlineUser} />
   },
   {
     name: 'Roles',
     href: '/roles',
-    icon: <UserIcon />
+    icon: <Icon as={HiOutlineUsers} />
   },
   {
     name: 'Cerrar Sesión',
     href: '/logout',
-    icon: <SignOutIcon />
+    icon: <Icon as={IoLogOutOutline}/>
   }
 ]
 

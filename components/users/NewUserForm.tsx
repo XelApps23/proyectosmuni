@@ -5,9 +5,9 @@ import { useRouter } from 'next/router'
 import Select from '../main/Select'
 import useUsers from '@/hooks/useUsers'
 import useRoles from '@/hooks/useRoles'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { User } from '@/hooks/types/User'
-import VisibilityIcon from '../icons/VisibilityIcon'
+import { useToast } from '@chakra-ui/react'
 
 const schema = yup.object().shape({
   firstname: yup.string().required('Debe de ingresar un nombre'),
@@ -41,9 +41,10 @@ type Props = {
 }
 
 const NewUserForm = ({ edit = false, defaultUser }: Props) => {
-  const { createUser, updateUser } = useUsers()
+  const { createUser, updateUser, loading } = useUsers()
   const { roles, getRoles } = useRoles()
   const router = useRouter()
+  const toast = useToast()
 
   useEffect(() => {
     getRoles({ perPage: 1000 })
@@ -52,7 +53,7 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
 
   const onSubmit = async (data: FormValues) => {
     if (!edit) {
-      await createUser({
+      const response = await createUser({
         email: data.email,
         firstname: data.firstname,
         lastname: data.lastname,
@@ -60,20 +61,53 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
         phone: data.phone,
         role: data.role
       })
-      router.push('/users/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/users/')
+      }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     } else if (defaultUser) {
-      await updateUser(defaultUser.id, {
+      const response = await updateUser(defaultUser.id, {
         firstname: data.firstname,
         lastname: data.lastname,
         phone: data.phone,
         role: data.role
       })
-      router.push('/users/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/users/')
+      }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     }
   }
   return (
     <div className="md:w-1/2 w-full">
       <PlantillaForm
+        loading={loading}
         schema={edit ? schema.omit(['password', 'passwordRepeat', 'email']) : schema}
         title={edit ? 'Editar usuario' : 'Nuevo usuario'}
         onSubmit={onSubmit}

@@ -17,11 +17,13 @@ import {
   where
 } from 'firebase/firestore'
 import { FileList } from './types/File'
+import HookResponse from './types/HookResponse'
 
 const table = 'files'
 
 const useFile = () => {
   const [loading, setLoading] = useState(false)
+  const [loadingUpload, setLoadingUpload] = useState(false)
   const [progress, setProgress] = useState(0)
   const [downloadURL, setDownloadURL] = useState('')
   const [files, setFiles] = useState<FileList>({})
@@ -81,74 +83,94 @@ const useFile = () => {
     setLoading(false)
   }
 
-  const deleteFile = async (idRef: string, urlRef: string) => {
-    setLoading(true)
-    let datos = {}
-    Object.keys(files)
-      .map((key) => files[key])
-      .filter((file) => file.id !== idRef)
-      .forEach((file) => {
-        datos = { ...datos, [file.id]: file }
-      })
-    setFiles(datos)
-    const storageRef = ref(storage, urlRef)
-    await deleteObject(storageRef)
-      .then(() => {
-        console.log('Imagen borrada exitosamente')
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    await deleteDoc(doc(db, table, idRef))
-    setLoading(false)
+  const deleteFile = async (
+    idRef: string,
+    urlRef: string
+  ): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      const storageRef = ref(storage, urlRef)
+      const name = files[idRef].name
+      await deleteObject(storageRef)
+        .then(() => {
+          console.log('Archivo borrada exitosamente')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      await deleteDoc(doc(db, table, idRef))
+      setLoading(false)
+      delete files[idRef]
+      return {
+        status: 'success',
+        message: 'Archivo eliminado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   const uploadFile = async (file: File, userId: string, taskId: string, projectId: string) => {
-    const storageRef = ref(storage, `/${file.name}`)
-    const uploadTask = uploadBytesResumable(storageRef, file)
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // Progreso de carga
-        setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+    try {
+      const storageRef = ref(storage, `/${file.name}`)
+      const uploadTask = uploadBytesResumable(storageRef, file)
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Progreso de carga
+          setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
 
-        // Estado de la carga
-        switch (snapshot.state) {
-          case 'paused':
-            setLoading(false)
-            break
-          case 'running':
-            setLoading(true)
-            break
-          case 'canceled':
-            setLoading(false)
-            break
-        }
-      },
-      (error) => {
-        console.log(error.message)
-        setLoading(false)
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
-          setDownloadURL(url)
-          const docRef = await addDoc(collection(db, table), {
-            name: file.name,
-            url,
-            extension: file.type,
-            userId,
-            projectId,
-            taskId,
-            createdAt: new Date(),
-            updateAt: new Date()
-          })
-          console.log(docRef)
-          getFilesOfTask(taskId)
+          // Estado de la carga
+          switch (snapshot.state) {
+            case 'paused':
+              setLoading(false)
+              break
+            case 'running':
+              setLoading(true)
+              break
+            case 'canceled':
+              setLoading(false)
+              break
+          }
+        },
+        (error) => {
+          console.log(error.message)
           setLoading(false)
-        })
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+            setDownloadURL(url)
+            const docRef = await addDoc(collection(db, table), {
+              name: file.name,
+              url,
+              extension: file.type,
+              userId,
+              taskId,
+              projectId,
+              createdAt: new Date(),
+              updateAt: new Date()
+            })
+            getFilesOfTask(taskId)
+            setLoading(false)
+          })
+        }
+      )
+      setLoading(false)
+      return {
+        status: 'success',
+        message: `${file.name} guardado correctamente`
       }
-    )
-    setLoading(false)
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   return {
@@ -159,6 +181,7 @@ const useFile = () => {
     getFilesOfTask,
     files,
     deleteFile,
+    loadingUpload,
     getFilesOfProject
   }
 }

@@ -128,7 +128,7 @@ const UserSelector = ({
   return (
     <>
       <div ref={wrapperRef}>
-        <div className="p-1 flex bg-black1 flex-wrap">
+        <div className="p-1 flex flex-wrap">
           {localIds.map((id) => (
             <div
               key={id}
@@ -138,7 +138,7 @@ const UserSelector = ({
                 <ProfilePicture user={users[id]} />
               </div>
               <span className="ml-2 text-sm text-gray1">
-                {users[id].firstname} {users[id].lastname}
+                {users[id].firstname} {users[id].lastname ?? ''}
               </span>
               <button
                 onClick={() => handleRemoveId(id)}
@@ -165,7 +165,7 @@ const UserSelector = ({
           </div>
           {openDialog && (
             <>
-              <div className="absolute bg-white1 top-12 max-h-52 overflow-y-auto w-full rounded-lg drop-shadow-xl p-4">
+              <div className="absolute z-50 bg-white1 top-12 max-h-52 overflow-y-auto w-full rounded-lg drop-shadow-xl p-4">
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)
@@ -196,7 +196,7 @@ const UserSelector = ({
                           <ProfilePicture user={users[id]} />
                         </div>
                         <span className="ml-2">
-                          {users[key].firstname} {users[key].lastname} (
+                          {users[key].firstname} {users[key].lastname ?? ''} (
                           {users[key].email})
                         </span>
                       </button>

@@ -16,17 +16,21 @@ const Home = () => {
     getProjects()
   }, [])
 
+  useEffect(( ) => {
+    console.log(projects)
+  }, [projects])
+
   return (
     <Card>
       <PageHeader
         actionText="Nuevo Proyecto"
-        permission={permissions.includes('projects/create')}
+        permission={permissions?.includes('projects/create')}
         actionButton={() => router.push('projects/new-project')}
         title="Proyectos"
       />
       <h2 className="text-xl mb-4">Proyectos en curso</h2>
       <div className="grid lg:grid-cols-3 xl:grid-cols-4 gap-4 grid-cols-2 justify-start bg-white w-full">
-        {permissions.includes('projects/view-all')
+        {permissions?.includes('projects/view-all')
           ? (
               Object.keys(projects).map((key) => (
             <CardFolder
@@ -42,7 +46,7 @@ const Home = () => {
             />
               ))
             )
-          : permissions.includes('projects/view-assign')
+          : permissions?.includes('projects/view-assign')
             ? (
                 Object.keys(projects)
                   .map((key) => projects[key])

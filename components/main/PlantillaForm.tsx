@@ -7,12 +7,11 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Button from '../main/Button'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import Card from './Card'
-import ArrowLeftIcon from '../icons/ArrowLeftIcon'
 import Divider from './Divider'
-import ArrowRightIcon from '../icons/ArrowRightIcon'
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 
 type PlantillaFormProps<T extends FieldValues> = {
   title: string
@@ -20,6 +19,7 @@ type PlantillaFormProps<T extends FieldValues> = {
   children: (control: any, errors: any) => ReactNode
   onSubmit: SubmitHandler<T>
   defaultValues?: DefaultValues<T>
+  loading?: boolean
 }
 
 const PlantillaForm = <T extends object>({
@@ -27,7 +27,8 @@ const PlantillaForm = <T extends object>({
   schema,
   children,
   onSubmit,
-  defaultValues
+  defaultValues,
+  loading
 }: PlantillaFormProps<T>) => {
   const router = useRouter()
 
@@ -48,7 +49,7 @@ const PlantillaForm = <T extends object>({
         <Button
           onlyIcon
           variant="icon"
-          icon={<ArrowLeftIcon />}
+          icon={<ChevronLeftIcon color={'black'}/>}
           onClick={() => router.back()}
         />
         <h2 className="text-xl ml-4">{title}</h2>
@@ -59,9 +60,10 @@ const PlantillaForm = <T extends object>({
           {children(control, errors)}
           <div className="flex justify-end w-full mt-4">
             <Button
-              icon={<ArrowRightIcon color="white" />}
+              loading={loading}
+              icon={<ChevronRightIcon />}
               type="submit"
-              text="Aceptar"
+              text="Guardar"
               variant="primary"
             />
           </div>

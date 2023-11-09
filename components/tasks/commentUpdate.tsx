@@ -4,6 +4,7 @@ import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import { Update } from '@/hooks/types/Update'
 import { UserList } from '@/hooks/types/User'
+import { useToast } from '@chakra-ui/react'
 import ProfilePicture from '../main/ProfilePicture'
 
 type Props = {
@@ -16,14 +17,53 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   const { deteleUpdate, updateUpdate } = useUpdates()
   const [isEdit, setIsEdit] = useState(false)
   const [newText, setNewText] = useState('')
+  const [updatedText, setUpdatedText] = useState(undefined)
+  const toast = useToast()
 
   const changeNewText = (e) => {
     setNewText(e.target.value)
   }
 
-  const sendUpdateUpdate = (id: string, text: string) => {
-    updateUpdate(id, text)
-    cancelModification()
+  const sendUpdateUpdate = async (id: string, text: string) => {
+    const response = await updateUpdate(id, text)
+    setUpdatedText(text)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+      cancelModification()
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
+  }
+
+  const deleteUpdateText = async (id: string) => {
+    const response = await deteleUpdate(id)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
   const cancelModification = () => {
     setNewText('')
@@ -63,26 +103,26 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
               />
               <Button
                 onClick={() => cancelModification()}
-                variant="simple"
+                variant="secondary"
                 text="Cancelar"
               />
             </div>
           </div>
             )
           : (
-          <p className="mb-1">{update.description}</p>
+          <p className="mb-1">{updatedText || update.description}</p>
             )}
         <div className="flex">
           {!isEdit && (
             <>
               <Button
-                onClick={() => startEditing(update.description)}
-                variant="icon"
+                onClick={() => startEditing(updatedText || update.description)}
+                variant="secondary"
                 text="Editar"
               />
               <Button
-                onClick={() => deteleUpdate(update.id)}
-                variant="icon"
+                onClick={() => deleteUpdateText(update.id)}
+                variant="secondary"
                 text="Eliminar"
               />
             </>

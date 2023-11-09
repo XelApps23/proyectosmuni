@@ -17,6 +17,7 @@ import { UserList, UserUpdate } from './types/User'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auxAuth, db } from '@/services/Firebase'
 import useRoles from './useRoles'
+import HookResponse from './types/HookResponse'
 
 type UserFormInput = {
   firstname?: string
@@ -103,6 +104,26 @@ const useUsers = () => {
     setLoading(false)
   }
 
+  const deleteUser = async (id: string): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await updateDoc(doc(db, table, id), {
+        status: 'deleted',
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario eliminado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
+  }
   const searchUser = async (search: string) => {
     setLoading(true)
     let datos: any = { ...users }
@@ -130,15 +151,6 @@ const useUsers = () => {
     setLoading(false)
   }
 
-  const deleteUser = async (id: string) => {
-    setLoading(true)
-    await updateDoc(doc(db, table, id), {
-      status: 'deleted',
-      updatedAt: new Date()
-    })
-    setLoading(false)
-  }
-
   const createUser = async ({
     email,
     firstname,
@@ -146,42 +158,66 @@ const useUsers = () => {
     phone,
     password,
     role
-  }: UserFormInput) => {
+  }: UserFormInput): Promise<HookResponse> => {
     setLoading(true)
-    const { user } = await createUserWithEmailAndPassword(
-      auxAuth,
-      email,
-      password
-    )
-    if (user.uid) {
-      await setDoc(doc(db, table, user.uid), {
-        firstname: firstname || null,
-        lastname: lastname || null,
-        email: email || null,
-        phone: phone || null,
-        role: role || null,
-        status: 'active',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      })
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auxAuth,
+        email,
+        password
+      )
+      if (user.uid) {
+        await setDoc(doc(db, table, user.uid), {
+          firstname: firstname || null,
+          lastname: lastname || null,
+          email: email || null,
+          phone: phone || null,
+          role: role || null,
+          status: 'active',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+      }
+      auxAuth.signOut()
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario creado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
     }
-    auxAuth.signOut()
-    setLoading(false)
   }
 
   const updateUser = async (
     id: string,
     { firstname, lastname, phone, role }: UserUpdate
-  ) => {
-    setLoading(true)
-    await updateDoc(doc(db, table, id), {
-      firstname: firstname || null,
-      lastname: lastname || null,
-      phone: phone || null,
-      role: role || null,
-      updatedAt: new Date()
-    })
-    setLoading(false)
+  ): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await updateDoc(doc(db, table, id), {
+        firstname: firstname || null,
+        lastname: lastname || null,
+        phone: phone || null,
+        role: role || null,
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Usuario actualizado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   return {

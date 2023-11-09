@@ -12,12 +12,14 @@ import { formatDate } from '@/services/Utils'
 import { Tooltip, useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useToast } from '@chakra-ui/react'
 
 const List = () => {
   const router = useRouter()
 
   const { getUsers, users, roles } = useUsers()
   const [targetUser, setTargetUser] = useState<string>('')
+  const toast = useToast()
 
   const { isOpen, onClose, onOpen } = useDisclosure()
   const {
@@ -41,9 +43,25 @@ const List = () => {
     onOpenInfo()
   }
 
-  const confirmDelete = () => {
-    deleteUser(targetUser)
-    delete users[targetUser]
+  const confirmDelete = async () => {
+    const response = await deleteUser(targetUser)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+      delete users[targetUser]
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
     onClose()
   }
 
@@ -96,8 +114,8 @@ const List = () => {
         isOpen={isOpen}
         onClose={onClose}
         actions={
-          <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="simple" onClick={onClose} />
+          <div className="flex items-center justify-between gap-2">
+            <Button text="Cancelar" variant='secondary' onClick={onClose} />
             <Button
               text="Confirmar"
               variant="cancelar"
