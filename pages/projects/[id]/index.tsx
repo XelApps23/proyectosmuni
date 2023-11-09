@@ -96,6 +96,7 @@ const ProjectIndex = () => {
       assignUser(query.id as string, id)
       getUser(id)
     }
+    onCloseU()
   }
 
   const handleTabChange = (tab: number) => {
@@ -133,12 +134,6 @@ const ProjectIndex = () => {
       await updateIncrementalField(query.id as string, 'stoppedTasks', '--')
       await updatePhaseIncrementalField(phaseToUpdate.id, 'stoppedTasks', '--')
     } else if (tasks[id].status === 'No Iniciado') {
-      await updateIncrementalField(query.id as string, 'notStartedTasks', '--')
-      await updatePhaseIncrementalField(
-        phaseToUpdate.id,
-        'notStartedTasks',
-        '--'
-      )
       wasNotStarted = true
     }
 
@@ -267,7 +262,7 @@ const ProjectIndex = () => {
         title="¿Estás seguro de que deseas eliminar esta tarea?"
         actions={
           <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="simple" onClick={onCloseDelete} />
+            <Button text="Cancelar" variant="secondary" onClick={onCloseDelete} />
             <Button
               text="Confirmar"
               variant="cancelar"
@@ -281,7 +276,7 @@ const ProjectIndex = () => {
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{projects[query.id as string]?.name}</div>
         <div>
-          {permissions.includes('projects/invite') && (
+          {permissions?.includes('projects/invite') && (
             <Button
               onClick={onOpenU}
               variant="primary"
@@ -338,7 +333,7 @@ const ProjectIndex = () => {
               <div className="mt-4">
                 <Table
                   cells={Object.keys(users).map((key) => ({
-                    name: `${users[key].firstname} ${users[key].lastname}`,
+                    name: `${users[key].firstname} ${users[key].lastname ?? ''}`,
                     email: users[key].email,
                     testt: (
                       <Tooltip label="Eliminar del proyecto">

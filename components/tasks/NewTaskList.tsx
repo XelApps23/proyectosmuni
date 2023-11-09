@@ -41,7 +41,7 @@ const NewTaskList = ({ tasks, openTask, users, handleDelete }: Props) => {
           {task.assignedUsers.map((userId) => (
             <div key={userId} className="flex items-center">
               <Tooltip
-                label={`${users[userId].firstname} ${users[userId].lastname} (${users[userId].email})`}
+                label={`${users[userId].firstname} ${users[userId].lastname ?? ''} (${users[userId].email})`}
               >
                 <div className="w-8 h-8 mr-2">
                   <ProfilePicture user={users[userId]} />
@@ -63,7 +63,7 @@ const NewTaskList = ({ tasks, openTask, users, handleDelete }: Props) => {
           <Bubble type={task?.status} />
         </td>
         <td className={styles.cell}>
-          {permissions.includes('projects/task-delete') && (
+          {permissions?.includes('projects/task-delete') && (
             <Tooltip label="Eliminar">
               <div
                 className="w-5 h-5 mr-2 cursor-pointer"
@@ -145,11 +145,11 @@ const NewTaskList = ({ tasks, openTask, users, handleDelete }: Props) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray2">
-                {permissions.includes('projects/task-view-all')
+                {permissions?.includes('projects/task-view-all')
                   ? (
                       Object.keys(tasks).map((key, index) => displayRow(tasks[key]))
                     )
-                  : permissions.includes('projects/task-view-assign')
+                  : permissions?.includes('projects/task-view-assign')
                     ? (
                         Object.keys(tasks)
                           .map((key) => tasks[key])

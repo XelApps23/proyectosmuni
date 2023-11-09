@@ -76,68 +76,68 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
               <Checkbox
                 label="Crear proyectos"
                 value="projects/create"
-                checked={permissions.includes('projects/create')}
+                checked={permissions?.includes('projects/create')}
                 controller={add}
               />
               <Checkbox
                 label="Ver todos los proyectos"
                 value="projects/view-all"
                 controller={add}
-                checked={permissions.includes('projects/view-all')}
+                checked={permissions?.includes('projects/view-all')}
               />
               <Checkbox
                 label="Ver proyectos asignados"
                 value="projects/view-assign"
                 controller={add}
-                checked={permissions.includes('projects/view-assign')}
+                checked={permissions?.includes('projects/view-assign')}
               />
               <Checkbox
                 label="Ver todas las tareas"
                 value="projects/task-view-all"
                 controller={add}
-                checked={permissions.includes('projects/task-view-all')}
+                checked={permissions?.includes('projects/task-view-all')}
               />
               <Checkbox
                 label="Ver tareas asignadas"
                 value="projects/task-view-assign"
                 controller={add}
-                checked={permissions.includes('projects/task-view-assign')}
+                checked={permissions?.includes('projects/task-view-assign')}
               />
               <Checkbox
                 label="Crear actualizaciones en tareas"
                 value="projects/task-update"
                 controller={add}
-                checked={permissions.includes('projects/task-update')}
+                checked={permissions?.includes('projects/task-update')}
               />
               <Checkbox
                 label="Modificar todas tareas"
                 value="projects/task-update-all"
                 controller={add}
-                checked={permissions.includes('projects/task-update-all')}
+                checked={permissions?.includes('projects/task-update-all')}
               />
               <Checkbox
                 label="Modificar tareas asignadas"
                 value="projects/task-update-assign"
                 controller={add}
-                checked={permissions.includes('projects/task-update-assign')}
+                checked={permissions?.includes('projects/task-update-assign')}
               />
               <Checkbox
                 label="Eliminar tareas"
                 value="projects/task-delete"
                 controller={add}
-                checked={permissions.includes('projects/task-delete')}
+                checked={permissions?.includes('projects/task-delete')}
               />
               <Checkbox
                 label="Invitar participantes al proyecto"
                 value="projects/invite"
                 controller={add}
-                checked={permissions.includes('projects/invite')}
+                checked={permissions?.includes('projects/invite')}
               />
               <Checkbox
                 label="Asignar tareas"
                 value="projects/task-assign"
                 controller={add}
-                checked={permissions.includes('projects/task-assign')}
+                checked={permissions?.includes('projects/task-assign')}
               />
             </div>
             <Divider />
@@ -147,19 +147,19 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
                 label="Crear usuarios"
                 value="users/create"
                 controller={add}
-                checked={permissions.includes('users/create')}
+                checked={permissions?.includes('users/create')}
               />
               <Checkbox
                 label="Ver usuarios"
                 value="users/view-all"
                 controller={add}
-                checked={permissions.includes('users/view-all')}
+                checked={permissions?.includes('users/view-all')}
               />
               <Checkbox
                 label="Editar usuarios"
                 value="users/update"
                 controller={add}
-                checked={permissions.includes('users/update')}
+                checked={permissions?.includes('users/update')}
               />
             </div>
           </>
