@@ -61,7 +61,8 @@ const useProjects = () => {
     name,
     description,
     initialDate,
-    expectedDate
+    expectedDate,
+    userId
   }: ProjectInput): Promise<ProjectResponse> => {
     setLoading(true)
     try {
@@ -74,6 +75,7 @@ const useProjects = () => {
         idState: null,
         done: false,
         totalTasks: 107,
+        assignedUsers: [userId],
         doneTasks: 0,
         startedTasks: 0,
         stoppedTasks: 0,

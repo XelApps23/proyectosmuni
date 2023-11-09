@@ -74,7 +74,7 @@ const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
         onChange={changeText}
       />
       {isWrite && (
-        <div className="flex gap-x-1 mt-1 mb-8 items-center">
+        <div className=" flex gap-x-1 mt-1 mb-8 items-center">
           <Button
             onClick={() => sendUpdate(id)}
             variant="primary"

@@ -17,6 +17,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   const { deteleUpdate, updateUpdate } = useUpdates()
   const [isEdit, setIsEdit] = useState(false)
   const [newText, setNewText] = useState('')
+  const [updatedText, setUpdatedText] = useState(undefined)
   const toast = useToast()
 
   const changeNewText = (e) => {
@@ -25,6 +26,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
 
   const sendUpdateUpdate = async (id: string, text: string) => {
     const response = await updateUpdate(id, text)
+    setUpdatedText(text)
     if (response.status === 'success') {
       toast({
         title: response.message,
@@ -106,19 +108,25 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
               />
             </div>
           </div>
-          ) : <p className='mb-1'>{update.description}</p>
-        }
-        <div className='flex'>
-          <Button
-            onClick={() => startEditing(update.description)}
-            variant="icon"
-            text="Editar"
-          />
-          <Button
-            onClick={() => deleteUpdateText(update.id)}
-            variant="icon"
-            text="Eliminar"
-          />
+            )
+          : (
+          <p className="mb-1">{updatedText || update.description}</p>
+            )}
+        <div className="flex">
+          {!isEdit && (
+            <>
+              <Button
+                onClick={() => startEditing(updatedText || update.description)}
+                variant="secondary"
+                text="Editar"
+              />
+              <Button
+                onClick={() => deleteUpdateText(update.id)}
+                variant="secondary"
+                text="Eliminar"
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -177,7 +177,7 @@ const TaskModal = ({
     setWillUpload(false)
   }
 
-  const deleteFileFromList = (idRef: string, urlRef: string) => {
+  const deleteFileFromList = async (idRef: string, urlRef: string) => {
     const response = await deleteFile(idRef, urlRef)
     if (response.status === 'success') {
       toast({
