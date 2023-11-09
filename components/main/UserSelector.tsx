@@ -128,7 +128,7 @@ const UserSelector = ({
   return (
     <>
       <div ref={wrapperRef}>
-        <div className="p-1 flex bg-black1 flex-wrap">
+        <div className="p-1 flex flex-wrap">
           {localIds.map((id) => (
             <div
               key={id}
