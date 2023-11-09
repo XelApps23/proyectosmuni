@@ -1,9 +1,15 @@
-import HomeIcon from '@/components/icons/HomeIcon'
-import SignOutIcon from '@/components/icons/SignOutIcon'
-import UserIcon from '@/components/icons/UserIcon'
 import Button from '../main/Button'
+import { Icon } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { GoHome } from 'react-icons/go'
+import { IoLogOutOutline } from 'react-icons/io5'
+import { HiOutlineUser, HiOutlineUsers } from 'react-icons/hi2'
+import { PiLayoutLight } from 'react-icons/pi'
 import ProyectoIcon from '../icons/ProyectoIcon'
+import ProfilePicture from '../main/ProfilePicture'
+import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import useUsers from '@/hooks/useUsers'
 
 // const sidebarItems = [
 //   {
@@ -57,38 +63,49 @@ const sidebarItems = [
   {
     name: 'Inicio',
     href: '/home',
-    icon: <HomeIcon />
+    icon: <Icon as={GoHome} />
   },
   {
     name: 'Proyectos',
     href: '/projects',
-    icon: <ProyectoIcon />
+    icon: <Icon as={PiLayoutLight}/>
   },
   {
     name: 'Usuarios',
     href: '/users',
-    icon: <UserIcon />
+    icon: <Icon as={HiOutlineUser} />
   },
   {
     name: 'Roles',
     href: '/roles',
-    icon: <UserIcon />
+    icon: <Icon as={HiOutlineUsers} />
   },
   {
     name: 'Cerrar Sesión',
     href: '/logout',
-    icon: <SignOutIcon />
+    icon: <Icon as={IoLogOutOutline}/>
   }
 ]
 
 const Sidebar = () => {
   const router = useRouter()
-  console.log(router.pathname)
+
+  const { id } = useSelector((state) => state.login)
+  const { getUser, users } = useUsers()
+
+  useEffect(() => {
+    if (id) {
+      getUser(id)
+    }
+  }, [id])
+
   return (
     <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all md:block hidden">
       <div className="sm:h-36 h-24 relative">
         <div className="bg-blue1 h-1/2" />
-        <div className="absolute bg-black1 w-20 h-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bg-fondo w-20 h-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full">
+          <ProfilePicture user={users[id]} />
+        </div>
       </div>
       <div className="px-4">
         {sidebarItems.map(({ name, href, icon: Icon }) => {

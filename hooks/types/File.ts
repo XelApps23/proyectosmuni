@@ -6,6 +6,7 @@ type File = {
   url: string
   userId: string
   taskId: string
+  projectId: string
   extension: string
   createdAt: Timestamp
   updatedAt: Timestamp

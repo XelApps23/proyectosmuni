@@ -95,7 +95,7 @@ const List = () => {
                     <EditIcon />
                   </div>
                 </Tooltip>
-                <Tooltip label="Borrar">
+                <Tooltip label="Eliminar">
                   <div
                     className="w-5 h-5 mr-2 cursor-pointer"
                     onClick={() => handleDelete(key)}
@@ -114,8 +114,8 @@ const List = () => {
         isOpen={isOpen}
         onClose={onClose}
         actions={
-          <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="simple" onClick={onClose} />
+          <div className="flex items-center justify-between gap-2">
+            <Button text="Cancelar" variant='secondary' onClick={onClose} />
             <Button
               text="Confirmar"
               variant="cancelar"

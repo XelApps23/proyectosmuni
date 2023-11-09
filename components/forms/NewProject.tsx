@@ -6,6 +6,8 @@ import useTasks from '@/hooks/useTasks'
 import { useRouter } from 'next/router'
 import { useToast } from '@chakra-ui/react'
 
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const schema = yup.object().shape({
   name: yup.string().required('Es necesario ingresar un nombre'),
@@ -36,14 +38,18 @@ const NewProject = () => {
   const { createDefaultProjectTasks } = useTasks()
   const router = useRouter()
   const toast = useToast()
+  const [loading, setLoading] = useState(false)
 
+  const { id } = useSelector((state: any) => state.login)
 
   const onSubmit = async (data: FormValues) => {
+    setLoading(true)
     const response = await createProject({
       expectedDate: data.expectedDate,
       name: data.name,
       description: data.description,
-      initialDate: data.initialDate
+      initialDate: data.initialDate,
+      userId: id
     })
     const projectId = response.refId
     if (response.status === 'success') {
@@ -65,9 +71,11 @@ const NewProject = () => {
       })
     }
   }
+
   return (
     <div className="md:w-1/2 w-full">
       <PlantillaForm
+        loading={loading}
         schema={schema}
         title="Nuevo Proyecto"
         onSubmit={onSubmit}

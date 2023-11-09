@@ -67,7 +67,7 @@ export default function LoginPage () {
             type="password" {...register('password')} className="bg-white h-9 w-full border-2 p-1 rounded-lg border-white2 focus:outline-none focus:border-blue1 focus:ring-1 focus:ring-blue1 invalid:border-errorDefault invalid:text-black focus:invalid:border-errorDefault focus:invalid:ring-1 focus:invalid:ring-errorDefault"
           />
           <p className="text-blue1 text-xs md:text-sm mt-2 mb-6">¿Olvidaste tu contraseña?</p>
-        <Button text="Iniciar sesión" variant="login" onlyText={true} onClick={handleSubmit(onSubmit)} />
+        <Button text="Iniciar sesión" variant="login" onClick={handleSubmit(onSubmit)} />
         {error && error}
       </form>
     </div>

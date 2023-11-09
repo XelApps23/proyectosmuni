@@ -1,11 +1,13 @@
 import { auth } from '@/services/Firebase'
-import { loginRedux } from '@/store/login'
+import { addPermissionsRedux, loginRedux } from '@/store/login'
 import { onAuthStateChanged } from 'firebase/auth'
 import { ReactNode, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import Header from '@/components/layout/Header'
 import Sidebar from '@/components/layout/Sidebar'
+import useRoles from '@/hooks/useRoles'
+import useUsers from '@/hooks/useUsers'
 
 interface Props {
   children: ReactNode | ReactNode[]
@@ -15,7 +17,9 @@ export default function Default({ children }: Props) {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const { logged } = useSelector((state) => state.login)
+  const { logged, id } = useSelector((state) => state.login)
+  const { getRole, roles } = useRoles()
+  const { getUser, users } = useUsers()
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -30,6 +34,7 @@ export default function Default({ children }: Props) {
         )
         router.push('/login')
       } else {
+        getUser(user.uid)
         dispatch(
           loginRedux({
             status: true,
@@ -40,6 +45,22 @@ export default function Default({ children }: Props) {
       }
     })
   }, [])
+
+  useEffect(() => {
+    if (users[id]) {
+      getRole(users[id].role)
+    }
+  }, [users])
+
+  useEffect(() => {
+    if (roles[users[id]?.role]) {
+      dispatch(
+        addPermissionsRedux({
+          permissions: roles[users[id].role].permissions
+        })
+      )
+    }
+  }, [roles])
 
   return (
     <div className="bg-fondo h-screen">

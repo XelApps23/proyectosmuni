@@ -17,7 +17,8 @@ type ProjectInput = {
   name: string
   description: string
   initialDate: Date
-  expectedDate: Date
+  expectedDate: Date,
+  userId: string
 }
 
 const table = 'projects'
@@ -99,10 +100,16 @@ const useProjects = () => {
 
   const updateIncrementalField = async (docId: string, field: string, type: '++' | '--') => {
     setLoading(true)
+    const currentProject = projects[docId]
     const pruebaDocRef = doc(db, 'projects', docId)
     await updateDoc(pruebaDocRef, {
       [field]: type === '++' ? increment(1) : increment(-1)
     })
+    projects[docId] = {
+      ...currentProject,
+      [field]: type === '++' ? currentProject[field] + 1 : currentProject[field] - 1
+    }
+    setLoading(false)
   }
 
   // Actualizar un documento
@@ -115,6 +122,20 @@ const useProjects = () => {
     setLoading(false)
   }
 
+  const assignUser = async (docId: string, userId: string) => {
+    setLoading(true)
+    const currentProject = projects[docId]
+    const pruebaDocRef = doc(db, 'projects', docId)
+    await updateDoc(pruebaDocRef, {
+      assignedUsers: [...currentProject.assignedUsers, userId]
+    })
+    projects[docId] = {
+      ...currentProject,
+      assignedUsers: [...currentProject.assignedUsers, userId]
+    }
+    setLoading(false)
+  }
+
   return {
     getProjects,
     getProject,
@@ -123,7 +144,8 @@ const useProjects = () => {
     updateProject,
     updateIncrementalField,
     projects,
-    loading
+    loading,
+    assignUser
   }
 }
 

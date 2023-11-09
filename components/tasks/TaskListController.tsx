@@ -1,114 +1,103 @@
 import React, { useEffect, useState } from 'react'
-import TaskListTable from './TaskListTable'
-import useTasks from '@/hooks/useTasks'
 import ArrowRightIcon from '../icons/ArrowRightIcon'
 import NewTaskList from './NewTaskList'
 import { AnimatePresence } from 'framer-motion'
+import { UserList } from '@/hooks/types/User'
+import { TaskList } from '@/hooks/types/Task'
+import { Phase, PhaseList } from '@/hooks/types/Phase'
+import { formatDate } from '@/services/Utils'
 
 type Props = {
-  projectId: string
+  users: UserList
+  tasks: TaskList
+  requestPhase: (phase: number) => void
+  openTask: (id: string) => void
+  phases: PhaseList
+  handleDelete: (id: string) => void
 }
 
-type PhasesList = {
-  [key: number]: string
-}
+const TaskListController = ({
+  users,
+  tasks,
+  requestPhase,
+  openTask,
+  phases,
+  handleDelete
+}: Props) => {
+  const [openPhases, setOpenPhases] = useState<string[]>([])
 
-const phasesList: PhasesList = {
-  1: 'Formulación del proyecto',
-  2: 'Creación de bases',
-  3: 'Adjudicación del proyecto',
-  4: 'Contratación del proyecto',
-  5: 'Ejecución del proyecto anticipo',
-  6: 'Ejecución del proyecto estimaciones',
-  7: 'Ejecución del proyecto documento de cambio',
-  8: 'Liquidación del proyecto',
-  9: 'Otros'
-}
+  const handleFetchTasks = (phase: Phase) => {
+    requestPhase(phase.index)
 
-const TaskListController = ({ projectId }: Props) => {
-  const [fetchedPhases, setFetchedPhases] = useState<number[]>([])
-  const [openPhases, setOpenPhases] = useState<number[]>([])
-  const { getTaskFiltered, tasks, loading } = useTasks()
-
-  const handleFetchTasks = (phase: number) => {
-    console.log(fetchedPhases)
-    console.log(openPhases)
-
-    if (!fetchedPhases.includes(phase)) {
-      getTaskFiltered(projectId, phase)
-      setFetchedPhases((prev) => [...prev, phase])
-    }
-
-    if (!openPhases.includes(phase)) {
-      setOpenPhases((prev) => [...prev, phase])
+    if (!openPhases.includes(phase.id)) {
+      setOpenPhases((prev) => [...prev, phase.id])
     } else {
-      setOpenPhases((prev) => prev.filter((item) => item !== phase))
+      setOpenPhases((prev) => prev.filter((item) => item !== phase.id))
     }
   }
 
   return (
     <div className="mt-2">
-      <div className="flex flex-col mb-4">
-        <div className="-m-1.5 overflow-x-auto">
-          <div className="p-1.5 min-w-full inline-block">
-            <div className="border border-gray2 rounded-lg overflow-hidden">
-              <table className="min-w-full divide-y divide-gray2">
-                <thead>
-                  <tr>
-                    <th
-                      align="left"
-                      className="py-2 px-6 font-normal text-black2 bg-fondo"
-                    >
-                      Fase y tarea
-                    </th>
-                    <th
-                      align="left"
-                      className="py-2 px-6 font-normal text-black2 bg-fondo w-1/2"
-                    >
-                      Descripción
-                    </th>
-                    <th
-                      align="left"
-                      className="py-2 px-6 font-normal text-black2 bg-fondo"
-                    >
-                      Estado
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-          </div>
-        </div>
+      <div className="border border-gray2 rounded-lg overflow-hidden bg-fondo py-2 px-4 mb-1 grid grid-cols-4">
+        <span className="text-base col-span-1">Fase</span>
+        <span className="text-base col-span-1">Fecha de inicio</span>
+        <span className="text-base col-span-1">
+          Fecha prevista de finalización
+        </span>
+        <span className="text-base col-span-1">Tareas finalizadas</span>
       </div>
-      {Object.keys(phasesList).map((key: string) => (
+      {Object.keys(phases).map((key: string) => (
         <div key={key}>
           <button
-            className="flex items-start justify-between rounded-lg hover:bg-fondo bg-white border-fondo border w-full p-4 h-20 transition-colors mb-1"
-            onClick={() => handleFetchTasks(Number(key))}
+            className="grid grid-cols-4 rounded-lg hover:bg-fondo bg-white border-fondo border w-full p-4 -pb-4 transition-colors mb-1"
+            onClick={() => handleFetchTasks(phases[key])}
           >
-            <span className="text-base">{phasesList[Number(key)]}</span>
-            <div
-              className={
-                'w-5 h-5 mr-2 ' +
-                ` ${
-                  openPhases.includes(Number(key)) ? 'rotate-90' : 'rotate-180'
-                } transition-transform`
-              }
-            >
-              <ArrowRightIcon />
+            <div className="flex col-span-1">
+              <div
+                className={
+                  'w-5 h-5 mr-2 ' +
+                  ` ${
+                    openPhases.includes(key) ? 'rotate-90' : 'rotate-0'
+                  } transition-transform`
+                }
+              >
+                <ArrowRightIcon />
+              </div>
+              <span className="text-base text-left">{phases[key].name}</span>
+            </div>
+            <span className="col-span-1 flex">
+              {formatDate(phases[key].initialDate, 'PPPP')}
+            </span>
+            <span className="col-span-1 flex">
+              {formatDate(phases[key].expectedDate, 'PPPP')}
+            </span>
+            <div className="w-full flex items-center">
+              <div className="bg-fondo rounded-full h-3 w-1/2">
+                <div
+                  style={{
+                    width: `${(phases[key].doneTasks / phases[key].totalTasks) * 100}%`
+                  }}
+                  className={'bg-estadoListo rounded-full h-3 '}
+                />
+              </div>
+              <p className="text-sm ml-4 text-gray2">
+                {phases[key].doneTasks} de {phases[key].totalTasks}
+              </p>
             </div>
           </button>
 
           <AnimatePresence mode="wait">
-            {openPhases.includes(Number(key)) && (
+            {openPhases.includes(key) && (
               <NewTaskList
+                handleDelete={handleDelete}
+                users={users}
+                openTask={(id) => openTask(id)}
                 tasks={Object.keys(tasks)
                   .map((key) => tasks[key])
-                  .filter((task) => task.phase === Number(key))
+                  .filter((task) => task.phase === Number(phases[key].index))
                   .reduce((cur, task) => {
                     return Object.assign(cur, { [task.id]: task })
                   }, {})}
-                loading={false}
               />
             )}
           </AnimatePresence>
