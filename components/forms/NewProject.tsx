@@ -4,6 +4,8 @@ import PlantillaForm from '../main/PlantillaForm'
 import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import { useRouter } from 'next/router'
+import { useToast } from '@chakra-ui/react'
+
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -35,22 +37,39 @@ const NewProject = () => {
   const { createProject } = useProjects()
   const { createDefaultProjectTasks } = useTasks()
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState(false)
 
   const { id } = useSelector((state: any) => state.login)
 
   const onSubmit = async (data: FormValues) => {
     setLoading(true)
-    const projectId = await createProject({
+    const response = await createProject({
       expectedDate: data.expectedDate,
       name: data.name,
       description: data.description,
       initialDate: data.initialDate,
       userId: id
     })
-    await createDefaultProjectTasks(projectId)
-    setLoading(false)
-    router.push(`/projects/${projectId}`)
+    const projectId = response.refId
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+      await createDefaultProjectTasks(projectId)
+      router.push(`/projects/${projectId}`)
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   return (

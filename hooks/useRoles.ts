@@ -14,10 +14,11 @@ import {
 } from 'firebase/firestore'
 import { RoleList, RoleUpdate } from './types/Role'
 import { db } from '@/services/Firebase'
+import HookResponse from './types/HookResponse'
 
 type RoleFormInput = {
-  name: string,
-  permissions: string[],
+  name: string
+  permissions: string[]
 }
 
 const table = 'roles'
@@ -75,37 +76,76 @@ const useRoles = () => {
     setLoading(false)
   }
 
-  const deleteRole = async (id: string) => {
-    setLoading(true)
-    await getRole(id)
-    await deleteDoc(doc(db, table, id))
-    setLoading(false)
+  const deleteRole = async (id: string): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await getRole(id)
+      await deleteDoc(doc(db, table, id))
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Rol eliminado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   const createRole = async ({
     name,
     permissions
-  }: RoleFormInput) => {
-    setLoading(true)
-    await addDoc(collection(db, table), {
-      name,
-      permissions,
-      status: 'created',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
-    setLoading(false)
+  }: RoleFormInput): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await addDoc(collection(db, table), {
+        name,
+        permissions,
+        status: 'created',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Rol creado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
-  const updateRole = async (id: string, { description, name, permissions }: RoleUpdate) => {
-    setLoading(true)
-    await updateDoc(doc(db, table, id), {
-      description: description || null,
-      name: name || null,
-      permissions: permissions || null,
-      updatedAt: new Date()
-    })
-    setLoading(false)
+  const updateRole = async (
+    id: string,
+    { description, name, permissions }: RoleUpdate
+  ): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await updateDoc(doc(db, table, id), {
+        description: description || null,
+        name: name || null,
+        permissions: permissions || null,
+        updatedAt: new Date()
+      })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Rol actualizado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   return {

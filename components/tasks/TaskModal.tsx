@@ -145,11 +145,27 @@ const TaskModal = ({
 
   const { id, permissions } = useSelector((state: any) => state.login)
 
-  const enviarArchivo = () => {
-    if (file.length !== 0) {
-      file.forEach((newFile) => {
+  const enviarArchivo = async () => {
+    if (file.length != 0) {
+      file.map(async newFile => {
         console.log(newFile)
-        uploadFile(newFile, id, currentTask.id, projectId)
+        const response = await uploadFile(newFile, id, currentTask.id, projectId)
+        if (response.status === 'success') {
+          toast({
+            title: response.message,
+            status: 'success',
+            duration: 4000,
+            isClosable: true
+          })
+        }
+        if (response.status === 'error') {
+          toast({
+            title: response.message,
+            status: 'error',
+            duration: 3000,
+            isClosable: true
+          })
+        }
       })
       setWillUpload(false)
     } else {
@@ -161,8 +177,24 @@ const TaskModal = ({
     setWillUpload(false)
   }
 
-  const deleteFileFromList = (idRef: string, urlRef: string) => {
-    deleteFile(idRef, urlRef)
+  const deleteFileFromList = async (idRef: string, urlRef: string) => {
+    const response = await deleteFile(idRef, urlRef)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
   }
 
   const handleChangeTab = (tab: number) => {
@@ -245,7 +277,7 @@ const TaskModal = ({
                       />
                       <Button
                         onClick={() => setEditingDescription(false)}
-                        variant="simple"
+                        variant="secondary"
                         text="Cancelar"
                       />
                     </div>

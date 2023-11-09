@@ -1,7 +1,18 @@
 import { db } from '@/services/Firebase'
-import { addDoc, collection, getDocs, orderBy, query, where, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+  deleteDoc,
+  doc,
+  updateDoc
+} from 'firebase/firestore'
 import { useState } from 'react'
 import { UpdateList } from './types/Update'
+import HookResponse from './types/HookResponse'
 
 const table = 'updates'
 
@@ -19,17 +30,29 @@ const useUpdates = () => {
     userId,
     taskId,
     description
-  }: UpdateInput) => {
-    setLoading(true)
-    const docRef = await addDoc(collection(db, table), {
-      userId,
-      taskId,
-      description,
-      createdAt: new Date(),
-      updateAt: new Date()
-    })
-    console.log(docRef)
-    setLoading(false)
+  }: UpdateInput): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      const docRef = await addDoc(collection(db, table), {
+        userId,
+        taskId,
+        description,
+        createdAt: new Date(),
+        updateAt: new Date()
+      })
+      console.log(docRef)
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Comentario agregado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
   const getUpdatesOfTask = async (taskId: string) => {
@@ -53,18 +76,46 @@ const useUpdates = () => {
     setLoading(false)
   }
 
-  const deteleUpdate = async (id: string) => {
-    setLoading(true)
-    await deleteDoc(doc(db, table, id))
-    setLoading(false)
+  const deteleUpdate = async (id: string): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      await deleteDoc(doc(db, table, id))
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Comentario eliminado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
 
-  const updateUpdate = async (docId: string, newDescription: string) => {
-    setLoading(true)
-    const docRef = doc(db, table, docId)
-    await updateDoc(docRef, { description: newDescription })
-    setLoading(false)
+  const updateUpdate = async (
+    docId: string,
+    newDescription: string
+  ): Promise<HookResponse> => {
+    try {
+      setLoading(true)
+      const docRef = doc(db, table, docId)
+      await updateDoc(docRef, { description: newDescription })
+      setLoading(false)
+      return {
+        status: 'success',
+        message: 'Comentario actualizado correctamente'
+      }
+    } catch (error: any) {
+      setLoading(false)
+      return {
+        status: 'error',
+        message: error.message
+      }
+    }
   }
+
   return {
     getUpdatesOfTask,
     loading,

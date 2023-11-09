@@ -41,7 +41,9 @@ const NewTaskList = ({ tasks, openTask, users, handleDelete }: Props) => {
           {task.assignedUsers.map((userId) => (
             <div key={userId} className="flex items-center">
               <Tooltip
-                label={`${users[userId].firstname} ${users[userId].lastname ?? ''} (${users[userId].email})`}
+                label={`${users[userId].firstname} ${
+                  users[userId].lastname ?? ''
+                } (${users[userId].email})`}
               >
                 <div className="w-8 h-8 mr-2">
                   <ProfilePicture user={users[userId]} />

@@ -70,14 +70,38 @@ const NewUserForm = ({ edit = false, defaultUser }: Props) => {
         })
         router.push('/users/')
       }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     } else if (defaultUser) {
-      await updateUser(defaultUser.id, {
+      const response = await updateUser(defaultUser.id, {
         firstname: data.firstname,
         lastname: data.lastname,
         phone: data.phone,
         role: data.role
       })
-      router.push('/users/')
+      if (response.status === 'success') {
+        toast({
+          title: response.message,
+          status: 'success',
+          duration: 4000,
+          isClosable: true
+        })
+        router.push('/users/')
+      }
+      if (response.status === 'error') {
+        toast({
+          title: response.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        })
+      }
     }
   }
   return (
