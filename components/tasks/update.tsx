@@ -1,30 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
+import { UpdateList } from '@/hooks/types/Update'
+import { UserList } from '@/hooks/types/User'
 import { useSelector } from 'react-redux'
-import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import CommentUpdate from './commentUpdate'
-import { UserList } from '@/hooks/types/User'
+import useUpdates from '@/hooks/useUpdates'
+import { Textarea } from '@chakra-ui/react'
 
 type Props = {
-    currentTask: string
-    users: UserList
+  currentTask: string
+  users: UserList
+  requestUpdate: (task: string) => void
+  updates: UpdateList
 }
 
-const UpdateView = ({ currentTask, users }: Props) => {
-  const { getUpdatesOfTask, updates, createUpdate } = useUpdates()
-  const { id } = useSelector((state) => state.login)
+const UpdateView = ({ currentTask, users, requestUpdate, updates }: Props) => {
+  const { createUpdate } = useUpdates()
+  const { id } = useSelector((state: any) => state.login)
   const [isWrite, setIsWrite] = useState(false)
   const [rows, setRows] = useState(1)
   const [text, setText] = useState('')
-  useEffect(() => {
-    getUpdatesOfTask(currentTask)
-  }, [])
   const writeUpdate = () => {
     setIsWrite(true)
     setRows(4)
   }
 
-  const changeText = (e) => {
+  const changeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
   }
 
@@ -41,41 +42,40 @@ const UpdateView = ({ currentTask, users }: Props) => {
       description: text
     })
     cancel()
-    getUpdatesOfTask(currentTask)
+    requestUpdate(currentTask)
   }
 
   return (
     <>
-      <textarea
-      onClick={() => writeUpdate()}
-      className='rounded-md w-[100%] border-solid border-2'
-      rows={rows}
-      placeholder='Añadir un comentario'
-      value={text}
-      onChange={changeText}
-      ></textarea>
-      {
-        isWrite &&
-            <div className='flex gap-x-1 mt-1'>
-              <Button
-                onClick={() => sendUpdate(id)}
-                variant="primary"
-                text="Enviar"
-              />
-              <Button
-                onClick={cancel}
-                variant="icon"
-                text="Cancelar"
-              />
-            </div>
-      }
-      <div className='mt-2'>
+      <Textarea
+        onClick={() => writeUpdate()}
+        className="rounded-lg w-full border-solid border-2 p-2 mb-2"
+        rows={rows}
+        placeholder="Añadir un comentario"
+        value={text}
+        onChange={changeText}
+      />
+      {isWrite && (
+        <div className="flex gap-x-1 mt-1 mb-8 items-center">
+          <Button
+            onClick={() => sendUpdate(id)}
+            variant="primary"
+            text="Guardar"
+          />
+          <Button onClick={cancel} variant="simple" text="Cancelar" />
+        </div>
+      )}
+      <div className="mt-2">
         {Object.keys(updates)
           .map((key) => updates[key])
           .filter((update) => update.taskId === currentTask)
           .map((update, index) => (
             <div key={update.id}>
-              <CommentUpdate update={update} users={users} currentTask={currentTask}/>
+              <CommentUpdate
+                update={update}
+                users={users}
+                currentTask={currentTask}
+              />
             </div>
           ))}
       </div>

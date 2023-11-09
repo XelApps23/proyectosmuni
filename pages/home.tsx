@@ -3,6 +3,7 @@ import CardFolder from '@/components/main/CardFolder'
 import PageHeader from '@/components/main/PageHeader'
 import NotificationPanel from '@/components/notifications/NotificationPanel'
 import useProjects from '@/hooks/useProjects'
+import { SingleDatepicker } from 'chakra-dayzed-datepicker'
 import { useEffect } from 'react'
 
 const Home = () => {
@@ -24,8 +25,8 @@ const Home = () => {
                 projectId={key}
                 key={key}
                 title={projects[key].name}
-                progress={projects[key].progress || 22}
-              />
+                progress={Number((projects[key].doneTasks / projects[key].totalTasks * 100).toFixed(2))}
+                />
             ))}
           </div>
         </div>

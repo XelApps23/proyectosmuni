@@ -15,6 +15,7 @@ type Project = {
   startedTasks: number
   stoppedTasks: number
   notStartedTasks: number
+  assignedUsers: string[]
   createdAt: Timestamp
   updatedAt: Timestamp
 }

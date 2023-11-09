@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Props = {
-  type: string
+  type: 'Critica' | 'Alta' | 'Media' | 'Baja' | 'Sin definir' | 'Listo' | 'En Curso' | 'Detenido' | 'No Iniciado' | string
 }
 
 type Styles = {
@@ -10,7 +10,8 @@ type Styles = {
   }
 }
 
-const baseStyle = 'text-white text-xs font-bold rounded-full px-2 py-1 flex justify-center '
+const baseStyle =
+  'text-white text-xs font-bold rounded-full px-2 py-1 flex justify-center '
 const styles: Styles = {
   Critica: {
     color: baseStyle + 'bg-prioridadCritica text-white1'

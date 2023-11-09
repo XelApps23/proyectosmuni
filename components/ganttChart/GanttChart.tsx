@@ -1,4 +1,3 @@
-// components
 import { useState, useEffect, useRef } from 'react'
 import Grid from '../../components/ganttChart/Grid'
 import Tasks from '../../components/ganttChart/Tasks'

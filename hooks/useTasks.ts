@@ -92,14 +92,14 @@ const useTasks = () => {
 
   const getTask = async (idRef: string) => {
     setLoading(true)
-    let dato = {}
+    let datos: any = { ...tasks }
     const docRef = doc(db, table, idRef)
-    console.log(docRef)
     const querySnapshot = await getDoc(docRef)
-    dato = {
+    datos = {
+      ...datos,
       [querySnapshot.id]: { ...querySnapshot.data(), id: querySnapshot.id }
     }
-    setTasks(dato)
+    setTasks(datos)
     setLoading(false)
   }
 
@@ -130,10 +130,14 @@ const useTasks = () => {
     setLoading(false)
   }
 
-  const deteleTask = async (id: string) => {
+  const deleteTask = async (id: string) => {
     setLoading(true)
     await getTask(id)
     await deleteDoc(doc(db, table, id))
+    setTasks((prev) => {
+      const { [id]: removed, ...rest } = prev
+      return rest
+    })
     setLoading(false)
   }
 
@@ -145,7 +149,7 @@ const useTasks = () => {
     index
   }: TaskInput) => {
     setLoading(true)
-    const docRef = await addDoc(collection(db, table), {
+    await addDoc(collection(db, table), {
       name: name || null,
       index: index || null,
       description: description || null,
@@ -154,7 +158,7 @@ const useTasks = () => {
       expectedDate: null,
       projectId,
       updated: [],
-      priority: 'Baja',
+      priority: 'Sin definir',
       status: 'No Iniciado',
       phase: Number(phase),
       assignedUsers: [],
@@ -162,7 +166,6 @@ const useTasks = () => {
       createdAt: new Date(),
       updateAt: new Date()
     })
-    console.log(docRef)
     setLoading(false)
   }
 
@@ -193,9 +196,34 @@ const useTasks = () => {
   const updateTask = async (docId: string, field: string, value: any) => {
     setLoading(true)
     const pruebaDocRef = doc(db, 'tasks', docId)
+
     await updateDoc(pruebaDocRef, {
       [field]: value
     })
+    let datos = {}
+    if (
+      field === 'initialDate' ||
+      field === 'expectedDate' ||
+      field === 'endDate'
+    ) {
+      datos = {
+        ...tasks,
+        [docId]: {
+          ...tasks[docId],
+          [field]: Timestamp.fromDate(value)
+        }
+      }
+    } else {
+      datos = {
+        ...tasks,
+        [docId]: {
+          ...tasks[docId],
+          [field]: value
+        }
+      }
+    }
+
+    setTasks(datos)
     setLoading(false)
   }
 
@@ -224,12 +252,30 @@ const useTasks = () => {
     setLoading(false)
   }
 
+  const assignUsers = async (docId: string, userIds: string[]) => {
+    setLoading(true)
+    const currentTask = tasks[docId]
+    const pruebaDocRef = doc(db, 'tasks', docId)
+    await updateDoc(pruebaDocRef, {
+      assignedUsers: [...currentTask.assignedUsers, ...userIds]
+    })
+    setTasks((prev) => ({
+      ...prev,
+      [docId]: {
+        ...prev[docId],
+        assignedUsers: [...currentTask.assignedUsers, ...userIds]
+      }
+    }))
+    setLoading(false)
+  }
+
   return {
     getTasks,
     getTask,
-    deteleTask,
+    deleteTask,
     createTask,
     updateTask,
+    assignUsers,
     tasks,
     loading,
     createDefaultProjectTasks,

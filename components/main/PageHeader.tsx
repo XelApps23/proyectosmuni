@@ -7,9 +7,10 @@ type Props = {
   title: string
   actionText?: string
   actionButton?: () => void
+  permission?: boolean
 }
 
-const PageHeader = ({ title, actionButton, actionText }: Props) => {
+const PageHeader = ({ title, actionButton, actionText, permission = false }: Props) => {
   return (
     <>
       <div className="flex justify-between items-center w-full">
@@ -18,6 +19,7 @@ const PageHeader = ({ title, actionButton, actionText }: Props) => {
             actionButton && actionText && (
               <div className="w-40">
                 <Button
+                  disabled={!permission}
                   variant="primary"
                   text={actionText}
                   icon={<PlusIcon color="white" />}

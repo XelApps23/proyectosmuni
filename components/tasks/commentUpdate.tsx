@@ -4,6 +4,7 @@ import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
 import { Update } from '@/hooks/types/Update'
 import { UserList } from '@/hooks/types/User'
+import ProfilePicture from '../main/ProfilePicture'
 
 type Props = {
   currentTask: string
@@ -34,37 +35,46 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
     setNewText(description)
   }
   return (
-    <div className='flex mb-1 p-1'>
-        <img className="h-[35px] w-[50px] bg-aprobadoHoverig md:bg-black1 mr-2"></img>
-        <div className='text-gray1'>
-        <div className='flex gap-x-1 mb-2'>
-          <p>{users[update.userId]?.firstname} {users[update.userId]?.lastname}</p>
-          <p>{formatDate(update.createdAt, 'PPPPp')}</p>
+    <div className="flex mb-1 p-1">
+      <div className="w-10 h-10 mr-4">
+        <ProfilePicture user={users[update.userId]} />
+      </div>
+      <div className="">
+        <div className="flex gap-x-1 mb-2 items-center">
+          <p className="font-semibold">
+            {users[update.userId]?.firstname} {users[update.userId]?.lastname}
+          </p>
+          <p className="text-sm text-gray1">{formatDate(update.createdAt, 'PPPPp')}</p>
         </div>
         {isEdit
-          ? <div className='mb-1'>
+          ? (
+          <div className="mb-1">
             <textarea
-            className='rounded-md w-[100%] border-solid border-2'
-            rows={2}
-            value={newText}
-            onChange={changeNewText}
+              className="rounded-lg p-2 w-full border-solid border-2"
+              rows={2}
+              value={newText}
+              onChange={changeNewText}
             ></textarea>
-            <div className='flex gap-x-1 mt-1'>
+            <div className="flex gap-x-1 mt-1 items-center">
               <Button
                 onClick={() => sendUpdateUpdate(update.id, newText)}
                 variant="primary"
-                text="Enviar"
+                text="Guardar"
               />
               <Button
                 onClick={() => cancelModification()}
-                variant="icon"
+                variant="simple"
                 text="Cancelar"
               />
             </div>
-            </div>
-          : <p className='mb-1'>{update.description}</p>
-            }
-            <div className='flex'>
+          </div>
+            )
+          : (
+          <p className="mb-1">{update.description}</p>
+            )}
+        <div className="flex">
+          {!isEdit && (
+            <>
               <Button
                 onClick={() => startEditing(update.description)}
                 variant="icon"
@@ -75,8 +85,10 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
                 variant="icon"
                 text="Eliminar"
               />
-            </div>
+            </>
+          )}
         </div>
+      </div>
     </div>
   )
 }
