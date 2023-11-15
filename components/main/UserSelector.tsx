@@ -110,7 +110,7 @@ const UserSelector = ({
   const triggerDialog = () => {
     setOpenDialog(!openDialog)
     if (!firstFetch) {
-      getUsers({ perPage: 1 })
+      getUsers({ perPage: 100 })
       setFirstFetch(true)
     }
   }
@@ -153,6 +153,7 @@ const UserSelector = ({
           <input
             type="text"
             id="users"
+            autoComplete='off'
             value={text}
             onChange={(e) => handleChange(e.target.value)}
             name="users"
@@ -169,7 +170,6 @@ const UserSelector = ({
                 <span className="text-base text-gray1">Personas sugeridas</span>
                 <div className="mt-2">
                   {Object.keys(users)
-                    .filter((key) => key !== id)
                     .filter((key) => !localIds.includes(key))
                     .filter((key) => !project.assignedUsers.includes(key))
                     .filter((key) =>
@@ -185,7 +185,7 @@ const UserSelector = ({
                             .includes(text.toLowerCase())
                         : true
                     )
-                    .filter((key, index) => index < 10)
+                    .filter((key, index) => index < 100)
                     .map((key) => (
                       <button
                         onClick={() => handleAddUser(key)}
@@ -193,7 +193,7 @@ const UserSelector = ({
                         className="flex items-center px-2 py-1 rounded-lg hover:bg-fondo focus:bg-skyBlue"
                       >
                         <div className="w-8 h-8">
-                          <ProfilePicture user={users[id]} />
+                          <ProfilePicture user={users[key]} />
                         </div>
                         <span className="ml-2">
                           {users[key].firstname} {users[key].lastname ?? ''} (

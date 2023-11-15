@@ -179,19 +179,19 @@ const NewRoleForm = ({ edit = false, defaultRole }: Props) => {
             <h2 className="text-lg">Usuarios y roles</h2>
             <div className="grid grid-cols-2">
               <Checkbox
-                label="Crear usuarios"
+                label="Crear usuarios y roles"
                 value="users/create"
                 controller={add}
                 checked={permissions?.includes('users/create')}
               />
               <Checkbox
-                label="Ver usuarios"
+                label="Ver usuarios y roles"
                 value="users/view-all"
                 controller={add}
                 checked={permissions?.includes('users/view-all')}
               />
               <Checkbox
-                label="Editar usuarios"
+                label="Editar usuarios y roles"
                 value="users/update"
                 controller={add}
                 checked={permissions?.includes('users/update')}

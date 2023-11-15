@@ -6,6 +6,7 @@ import { Update } from '@/hooks/types/Update'
 import { UserList } from '@/hooks/types/User'
 import { useToast } from '@chakra-ui/react'
 import ProfilePicture from '../main/ProfilePicture'
+import { useSelector } from 'react-redux'
 
 type Props = {
   currentTask: string
@@ -17,6 +18,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   const { deteleUpdate, updateUpdate } = useUpdates()
   const [isEdit, setIsEdit] = useState(false)
   const [newText, setNewText] = useState('')
+  const { id } = useSelector((state: any) => state.login)
   const [updatedText, setUpdatedText] = useState(undefined)
   const toast = useToast()
   const changeNewText = (e) => {
@@ -112,7 +114,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
           <p className="mb-1">{updatedText || update.description}</p>
             )}
         <div className="flex gap-2">
-          {!isEdit && (
+          {!isEdit && id === update.userId && (
             <>
               <Button
                 onClick={() => startEditing(updatedText || update.description)}

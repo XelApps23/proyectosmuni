@@ -10,24 +10,28 @@ type Props = {
   permission?: boolean
 }
 
-const PageHeader = ({ title, actionButton, actionText, permission = false }: Props) => {
+const PageHeader = ({
+  title,
+  actionButton,
+  actionText,
+  permission = false
+}: Props) => {
   return (
     <>
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl">{title}</div>
-          {
-            actionButton && actionText && (
-              <div className="w-40">
-                <Button
-                  disabled={!permission}
-                  variant="primary"
-                  text={actionText}
-                  icon={<AddIcon />}
-                  onClick={actionButton}
-                />
-              </div>
-            )
-          }
+        {actionButton && actionText && (
+          <div className="w-40">
+            {permission && (
+              <Button
+                variant="primary"
+                text={actionText}
+                icon={<AddIcon />}
+                onClick={actionButton}
+              />
+            )}
+          </div>
+        )}
       </div>
       <Divider />
     </>

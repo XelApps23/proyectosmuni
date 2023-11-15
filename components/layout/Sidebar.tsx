@@ -8,8 +8,9 @@ import { PiLayoutLight } from 'react-icons/pi'
 import ProyectoIcon from '../icons/ProyectoIcon'
 import ProfilePicture from '../main/ProfilePicture'
 import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import useUsers from '@/hooks/useUsers'
+import { MenuContext } from '@/context/MenuContext'
 
 // const sidebarItems = [
 //   {
@@ -68,7 +69,7 @@ const sidebarItems = [
   {
     name: 'Proyectos',
     href: '/projects',
-    icon: <Icon as={PiLayoutLight}/>
+    icon: <Icon as={PiLayoutLight} />
   },
   {
     name: 'Usuarios',
@@ -83,15 +84,16 @@ const sidebarItems = [
   {
     name: 'Cerrar Sesión',
     href: '/logout',
-    icon: <Icon as={IoLogOutOutline}/>
+    icon: <Icon as={IoLogOutOutline} />
   }
 ]
 
 const Sidebar = () => {
   const router = useRouter()
 
-  const { id } = useSelector((state) => state.login)
+  const { id, permissions } = useSelector((state) => state.login)
   const { getUser, users } = useUsers()
+  const { openMenu } = useContext(MenuContext)
 
   useEffect(() => {
     if (id) {
@@ -100,7 +102,12 @@ const Sidebar = () => {
   }, [id])
 
   return (
-    <div className="fixed z-20 top-0 bg-white1 h-screen w-48 transition-all md:block hidden">
+    <div
+      className={
+        'fixed z-20 top-0 bg-white1 h-screen w-48 transition-all md:block ' +
+        (openMenu ? 'block drop-shadow-2xl' : 'hidden')
+      }
+    >
       <div className="sm:h-36 h-24 relative">
         <div className="bg-blue1 h-1/2" />
         <div className="absolute bg-fondo w-20 h-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full">
@@ -109,22 +116,33 @@ const Sidebar = () => {
       </div>
       <div className="px-4">
         {sidebarItems.map(({ name, href, icon: Icon }) => {
-          return (
-            <div key={name}>
-              <Button
-                text={name}
-                icon={Icon}
-                onlyIcon={false}
-                variant="menu"
-                fullWidth
-                onClick={() =>
-                  router.push({
-                    pathname: href
-                  })
-                }
-              />
-            </div>
-          )
+          return <div key={name}>{(name === 'Usuarios' || name === 'Roles')
+            ? (permissions.includes('users/view-all') ||
+          permissions.includes('users/create') ||
+          permissions.includes('users/update')) && <Button
+          text={name}
+          icon={Icon}
+          onlyIcon={false}
+          variant="menu"
+          fullWidth
+          onClick={() =>
+            router.push({
+              pathname: href
+            })
+          }
+        />
+            : <Button
+          text={name}
+          icon={Icon}
+          onlyIcon={false}
+          variant="menu"
+          fullWidth
+          onClick={() =>
+            router.push({
+              pathname: href
+            })
+          }
+        />}</div>
         })}
       </div>
     </div>

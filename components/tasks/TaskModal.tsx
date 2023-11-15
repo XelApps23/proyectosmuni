@@ -52,6 +52,8 @@ type Props = {
   requestUser: (id: string) => void
   updateTask: (id: string, field: string, value: any) => void
   assignUsers: (ids: any[]) => void
+  deleteFile: (idRef: string, urlRef: string) => void
+  fetchFiles: (id: string) => void
 }
 
 const statusBubbles = ['Listo', 'En Curso', 'Detenido', 'No Iniciado']
@@ -76,14 +78,16 @@ const TaskModal = ({
   requestFiles,
   requestUpdates,
   updateTask,
-  assignUsers
+  assignUsers,
+  deleteFile,
+  fetchFiles
 }: Props) => {
   const expectedDateRef = useRef()
   const endDateRef = useRef()
   const initialDateRef = useRef()
   const [file, setFile] = useState<globalThis.File[]>([])
   const [isAssignOpen, setIsAssignOpen] = useState(false)
-  const { uploadFile, deleteFile } = useFile()
+  const { uploadFile, loading } = useFile()
   const [willUpload, setWillUpload] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
   const [text, setText] = useState(currentTask.description)
@@ -150,6 +154,7 @@ const TaskModal = ({
         console.log(newFile)
         const response = await uploadFile(newFile, id, currentTask.id, projectId)
         if (response.status === 'success') {
+          fetchFiles(currentTask.id)
           toast({
             title: response.message,
             status: 'success',
@@ -174,26 +179,6 @@ const TaskModal = ({
 
   const cancelUpload = () => {
     setWillUpload(false)
-  }
-
-  const deleteFileFromList = async (idRef: string, urlRef: string) => {
-    const response = await deleteFile(idRef, urlRef)
-    if (response.status === 'success') {
-      toast({
-        title: response.message,
-        status: 'success',
-        duration: 4000,
-        isClosable: true
-      })
-    }
-    if (response.status === 'error') {
-      toast({
-        title: response.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true
-      })
-    }
   }
 
   const handleChangeTab = (tab: number) => {
@@ -489,7 +474,7 @@ const TaskModal = ({
             icon: <ArchiveIcon />,
             component: (
               <>
-                {willUpload
+                {(willUpload || loading)
                   ? (
                   <>
                     <div
@@ -498,7 +483,7 @@ const TaskModal = ({
                           'w-full px-4 py-7 border-2 border-dashed rounded-xl cursor-pointer'
                       })}
                     >
-                      <span className="flex justify-start space-x-2">
+                      <div className="flex justify-start space-x-2">
                         <input {...getInputProps()} />
                         {file.length > 0
                           ? (
@@ -525,11 +510,12 @@ const TaskModal = ({
                                 )}
                           </div>
                             )}
-                      </span>
+                      </div>
                     </div>
                     <br />
                     <div className="flex justify-start space-x-2">
                       <Button
+                        loading={loading}
                         onClick={enviarArchivo}
                         variant="primary"
                         text="Guardar"
@@ -572,10 +558,7 @@ const TaskModal = ({
                           <div className="flex w-10">
                             <Button
                               onClick={() =>
-                                deleteFileFromList(
-                                  listedFile.id,
-                                  listedFile.url
-                                )
+                                deleteFile(listedFile.id, listedFile.url)
                               }
                               variant="icon"
                               icon={<div className="w-5 h-5"><TrashIcon /></div>}

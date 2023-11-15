@@ -13,6 +13,7 @@ import { useState } from 'react'
 type Props = {
   files: FileList
   tasks: TaskList
+  deleteFile: (idRef: string, urlRef: string) => void
 }
 
 type TargetFile = {
@@ -20,8 +21,7 @@ type TargetFile = {
   urlRef: string
 }
 
-const FilesTable = ({ files, tasks }: Props) => {
-  const { deleteFile } = useFile()
+const FilesTable = ({ files, tasks, deleteFile }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const [targetFile, setTargetFile] = useState<TargetFile>({} as TargetFile)
 
@@ -35,7 +35,6 @@ const FilesTable = ({ files, tasks }: Props) => {
 
   const confirmDelete = () => {
     deleteFile(targetFile.idRef, targetFile.urlRef)
-    delete files[targetFile.idRef]
     onClose()
   }
 
