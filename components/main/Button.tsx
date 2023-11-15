@@ -72,8 +72,8 @@ const Button = ({
             variant === 'menu'
               ? <ButtonGroup onClick={onClick} isAttached className='w-full'>
                   <IconButton aria-label='' icon={icon} />
-                  <ChButton className={buttonVariants[variant].style}>
-                    <p className={buttonVariants[variant].text}>{text}</p>
+                  <ChButton className={buttonVariants[variant]?.style}>
+                    <p className={buttonVariants[variant]?.text}>{text}</p>
                   </ChButton>
             </ButtonGroup>
               : <ChButton
@@ -82,12 +82,12 @@ const Button = ({
             loadingText='Cargando'
             spinnerPlacement='start'
             onClick={onClick}
-            className={buttonVariants[variant].style}
+            className={buttonVariants[variant]?.style}
             leftIcon={icon}
-            colorScheme={buttonVariants[variant].color}
+            colorScheme={buttonVariants[variant]?.color}
             type={type}
           >
-             <p className={buttonVariants[variant].text}>{text}</p>
+             <p className={buttonVariants[variant]?.text}>{text}</p>
           </ChButton>
           }
         </div>

@@ -39,20 +39,27 @@ const TaskListController = ({
   return (
     <div className="mt-2">
       <div className="border border-gray2 rounded-lg overflow-hidden bg-fondo py-2 px-4 mb-1 grid grid-cols-4">
-        <span className="text-base col-span-1">Fase</span>
-        <span className="text-base col-span-1">Fecha de inicio</span>
-        <span className="text-base col-span-1">
+        <div className="text-base col-div-1">Fase</div>
+        <div className="text-base col-div-1">Fecha de inicio</div>
+        <div className="text-base col-div-1">
           Fecha prevista de finalización
-        </span>
-        <span className="text-base col-span-1">Tareas finalizadas</span>
+        </div>
+        <div className="text-base col-div-1">Tareas finalizadas</div>
       </div>
-      {Object.keys(phases).map((key: string) => (
+      {Object.keys(
+        Object.keys(phases)
+          .map((key) => phases[key])
+          .filter((phase) => phase.index !== 9)
+          .reduce((cur, phase) => {
+            return Object.assign(cur, { [phase.id]: phase })
+          }, {})
+      ).map((key: string) => (
         <div key={key}>
           <button
             className="grid grid-cols-4 rounded-lg hover:bg-fondo bg-white border-fondo border w-full p-4 -pb-4 transition-colors mb-1"
             onClick={() => handleFetchTasks(phases[key])}
           >
-            <div className="flex col-span-1">
+            <div className="flex col-div-1">
               <div
                 className={
                   'w-5 h-5 mr-2 ' +
@@ -63,19 +70,21 @@ const TaskListController = ({
               >
                 <ArrowRightIcon />
               </div>
-              <span className="text-base text-left">{phases[key].name}</span>
+              <div className="text-base text-left">{phases[key].name}</div>
             </div>
-            <span className="col-span-1 flex">
+            <div className="col-div-1 flex">
               {formatDate(phases[key].initialDate, 'PPPP')}
-            </span>
-            <span className="col-span-1 flex">
+            </div>
+            <div className="col-div-1 flex">
               {formatDate(phases[key].expectedDate, 'PPPP')}
-            </span>
+            </div>
             <div className="w-full flex items-center">
               <div className="bg-fondo rounded-full h-3 w-1/2">
                 <div
                   style={{
-                    width: `${(phases[key].doneTasks / phases[key].totalTasks) * 100}%`
+                    width: `${
+                      (phases[key].doneTasks / phases[key].totalTasks) * 100
+                    }%`
                   }}
                   className={'bg-estadoListo rounded-full h-3 '}
                 />

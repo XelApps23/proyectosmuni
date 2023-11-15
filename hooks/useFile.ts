@@ -54,9 +54,12 @@ const useFile = () => {
     setLoading(false)
   }
 
-  const getFilesOfProject = async (projectId: string) => {
+  const getFilesOfProject = async (
+    projectId: string,
+    override: boolean = false
+  ) => {
     setLoading(true)
-    if (!fetchedProjects.includes(projectId)) {
+    if (!fetchedProjects.includes(projectId) || override) {
       setFetchedProjects((prev) => [...prev, projectId])
       let datos: any = { ...files }
 
@@ -114,51 +117,29 @@ const useFile = () => {
     }
   }
 
-  const uploadFile = async (file: File, userId: string, taskId: string, projectId: string) => {
+  const uploadFile = async (
+    file: File,
+    userId: string,
+    taskId: string,
+    projectId: string
+  ) => {
     try {
+      setLoading(true)
       const storageRef = ref(storage, `/${file.name}`)
-      const uploadTask = uploadBytesResumable(storageRef, file)
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          // Progreso de carga
-          setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-
-          // Estado de la carga
-          switch (snapshot.state) {
-            case 'paused':
-              setLoading(false)
-              break
-            case 'running':
-              setLoading(true)
-              break
-            case 'canceled':
-              setLoading(false)
-              break
-          }
-        },
-        (error) => {
-          console.log(error.message)
-          setLoading(false)
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
-            setDownloadURL(url)
-            const docRef = await addDoc(collection(db, table), {
-              name: file.name,
-              url,
-              extension: file.type,
-              userId,
-              taskId,
-              projectId,
-              createdAt: new Date(),
-              updateAt: new Date()
-            })
-            getFilesOfTask(taskId)
-            setLoading(false)
-          })
-        }
-      )
+      const uploadTask = await uploadBytesResumable(storageRef, file)
+      const url = await getDownloadURL(uploadTask.ref)
+      setDownloadURL(url)
+      await addDoc(collection(db, table), {
+        name: file.name,
+        url,
+        extension: file.type,
+        userId,
+        taskId,
+        projectId,
+        createdAt: new Date(),
+        updateAt: new Date()
+      })
+      getFilesOfTask(taskId)
       setLoading(false)
       return {
         status: 'success',

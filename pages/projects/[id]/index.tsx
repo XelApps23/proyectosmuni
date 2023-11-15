@@ -21,7 +21,7 @@ import useProjects from '@/hooks/useProjects'
 import useTasks from '@/hooks/useTasks'
 import useUpdates from '@/hooks/useUpdates'
 import useUsers from '@/hooks/useUsers'
-import { Tooltip, useDisclosure } from '@chakra-ui/react'
+import { Tooltip, useDisclosure, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { AddIcon } from '@chakra-ui/icons'
@@ -57,7 +57,7 @@ const ProjectIndex = () => {
     useProjects()
   const { users, getUser } = useUsers()
   const { getUpdatesOfTask, updates } = useUpdates()
-  const { getFilesOfProject, getFilesOfTask, files } = useFile()
+  const { getFilesOfProject, getFilesOfTask, files, deleteFile } = useFile()
   const {
     getPhasesOfProject,
     phases,
@@ -80,6 +80,7 @@ const ProjectIndex = () => {
   }, [projects])
 
   useEffect(() => {
+    console.log(files)
     Object.keys(files).forEach((key) => {
       getTask(files[key].taskId)
     })
@@ -193,6 +194,29 @@ const ProjectIndex = () => {
     }
   }
 
+  const toast = useToast()
+
+  const handleDeleteFile = async (idRef: string, urlRef: string) => {
+    const response = await deleteFile(idRef, urlRef)
+    if (response.status === 'success') {
+      toast({
+        title: response.message,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+    if (response.status === 'error') {
+      toast({
+        title: response.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      })
+    }
+    delete files[idRef]
+  }
+
   const { permissions } = useSelector((state) => state.login)
 
   const handleDelete = async (taskId: string) => {
@@ -262,7 +286,11 @@ const ProjectIndex = () => {
         title="¿Estás seguro de que deseas eliminar esta tarea?"
         actions={
           <div className="flex items-center justify-between">
-            <Button text="Cancelar" variant="secondary" onClick={onCloseDelete} />
+            <Button
+              text="Cancelar"
+              variant="secondary"
+              onClick={onCloseDelete}
+            />
             <Button
               text="Confirmar"
               variant="cancelar"
@@ -333,7 +361,9 @@ const ProjectIndex = () => {
               <div className="mt-4">
                 <Table
                   cells={Object.keys(users).map((key) => ({
-                    name: `${users[key].firstname} ${users[key].lastname ?? ''}`,
+                    name: `${users[key].firstname} ${
+                      users[key].lastname ?? ''
+                    }`,
                     email: users[key].email,
                     testt: (
                       <Tooltip label="Eliminar del proyecto">
@@ -354,7 +384,13 @@ const ProjectIndex = () => {
             icon: <UserIcon />
           },
           {
-            component: <FilesTable files={files} tasks={tasks} />,
+            component: (
+              <FilesTable
+                deleteFile={(idRef, urlRef) => handleDeleteFile(idRef, urlRef)}
+                files={files}
+                tasks={tasks}
+              />
+            ),
             name: 'Archivos',
             icon: <ArchiveIcon />
           }
@@ -362,6 +398,10 @@ const ProjectIndex = () => {
       />
       {selectedTask && (
         <TaskModal
+          fetchFiles={(file) => {
+            getFilesOfProject(query.id as string, true)
+          }}
+          deleteFile={(idRef, urlRef) => handleDeleteFile(idRef, urlRef)}
           assignUsers={(ids) => handleAssign(ids)}
           updateTask={async (id, field, value) => {
             console.log(field, value)
