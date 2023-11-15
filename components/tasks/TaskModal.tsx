@@ -11,9 +11,9 @@ import ChatIcon from '../icons/ChatIcon'
 import Divider from '../main/Divider'
 import DocumentAddIcon from '../icons/DocumentAddIcon'
 import EditIcon from '../icons/EditIcon'
-import ExcelIcon from '../icons/ExcelIcon'
 import MenuIcon from '../icons/MenuIcon'
 import Modal from '../main/Modal'
+import { PiMicrosoftWordLogoThin, PiMicrosoftExcelLogoThin } from 'react-icons/pi'
 import React, {
   ChangeEvent,
   useCallback,
@@ -26,7 +26,6 @@ import TrashIcon from '../icons/TrashIcon'
 import UpdateView from './update'
 import useFile from '@/hooks/useFile'
 import VisibilityIcon from '../icons/VisibilityIcon'
-import WordIcon from '../icons/WordIcon'
 import { FileList } from '@/hooks/types/File'
 import {
   Menu,
@@ -561,13 +560,13 @@ const TaskModal = ({
                       <div className="w-[75px]">
                         {listedFile.extension.includes('word')
                           ? (
-                          <WordIcon />
+                          <PiMicrosoftWordLogoThin className='w-20 h-20' />
                             )
                           : (
-                          <ExcelIcon />
+                          <PiMicrosoftExcelLogoThin className='w-20 h-20'/>
                             )}
                       </div>
-                      <div className="grid grid-rows-2 items-center gap-y-[50%]">
+                      <div className="grid grid-rows-2 items-center gap-y-[50%] p-2">
                         <div className="flex justify-between">
                           <p key={listedFile.id}>{listedFile.name}</p>
                           <div className="flex w-10">
@@ -589,7 +588,7 @@ const TaskModal = ({
                             </a>
                           </div>
                         </div>
-                        <div className="flex space-x-8">
+                        <div className="flex space-x-2">
                           {Object.keys(users)
                             .map((key) => users[key])
                             .filter((user) => user.id === listedFile.userId)

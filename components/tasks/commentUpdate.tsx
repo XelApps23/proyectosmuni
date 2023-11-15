@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { formatDate } from '@/services/Utils'
 import useUpdates from '@/hooks/useUpdates'
 import Button from '@/components/main/Button'
@@ -19,7 +19,6 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
   const [newText, setNewText] = useState('')
   const [updatedText, setUpdatedText] = useState(undefined)
   const toast = useToast()
-
   const changeNewText = (e) => {
     setNewText(e.target.value)
   }
@@ -112,7 +111,7 @@ const CommentUpdate = ({ update, users, currentTask }: Props) => {
           : (
           <p className="mb-1">{updatedText || update.description}</p>
             )}
-        <div className="flex">
+        <div className="flex gap-2">
           {!isEdit && (
             <>
               <Button
